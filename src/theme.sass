@@ -1,0 +1,16 @@
+@use 'sass:color'
+
+// Navarrotech Brand
+$orange: #FF7700
+$red: #FF3554
+$redLight: #E13834
+$gray: #333333
+
+// Only alter Bulma colors
+$primary: $red
+
+@mixin primaryGradient
+    background: linear-gradient(45deg, $red 0%, $redLight 100%)
+
+@mixin primaryGradientLight
+    background: linear-gradient(45deg, color.scale($red, $lightness: 10%) 0%, color.scale($redLight, $lightness: 10%) 100%)
