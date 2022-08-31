@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import { Navigate, NavLink, Link, Outlet } from 'react-router-dom'
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -7,6 +7,8 @@ import Loader from '../common/Loader'
 import Styles from './AuthenticatedWrapper.module.sass'
 // import { FontAwesomeIcon as FontAwesome6 } from '@fortawesome/react-fontawesome';
 // import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+
+export const UserContext = createContext({  });
 
 export default function Authenticated({ ...props }){
 
@@ -25,10 +27,12 @@ export default function Authenticated({ ...props }){
     if(state.authenticated === true){
         return (
             <div className={Styles.Dashboard}>
-                <Sidebar user={state.user}/>
-                <div className={Styles.Application}>
-                    <Outlet/>
-                </div>
+                <UserContext.Provider value={state.user}>
+                    <Sidebar user={state.user}/>
+                    <div className={Styles.Application}>
+                        <Outlet/>
+                    </div>
+                </UserContext.Provider>
             </div>
         )
     }
@@ -37,13 +41,15 @@ export default function Authenticated({ ...props }){
 
 function Sidebar({ user, ...props }){
 
-    console.log(user)
-
     return (
         <div className={Styles.Sidebar}>
             <div className={"nametag " + Styles.nametag}>
                 <figure className="image is-64x64 is-rounded">
-                    <img src={user.photoURL} alt={ user.displayName }/>
+                    <img
+                        src={ user.photoURL }
+                        alt={ user.displayName }
+                        referrerPolicy="no-referrer"
+                    />
                 </figure>
                 <div className="titles">
                     <p>{ user.displayName }</p>

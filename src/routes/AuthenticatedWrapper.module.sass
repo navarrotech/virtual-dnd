@@ -23,6 +23,12 @@
 
         padding: 2em 1.5em
 
+        .nametag
+            padding-bottom: 3em
+            margin: auto
+            width: fit-content
+            max-width: calc(350px - 2em)
+
         .SidebarItem
             display: flex
             align-items: center
@@ -63,4 +69,7 @@
         max-width: calc(100vw - 350px)
         max-height: 100vh
         overflow: auto
-        padding: 0 1em
+        // padding: 2em
+
+        > div:first-child
+            padding-top: 2em
