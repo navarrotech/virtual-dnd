@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
-import Authentication, { AuthPage } from './Login'
+// Routes
+import Authentication from './Login'
+import Authenticated from "./AuthenticatedWrapper";
 import Campaigns from './Campaigns'
 
 export default function AppRoutes({ ...props }){
@@ -8,9 +10,11 @@ export default function AppRoutes({ ...props }){
     return (
         <BrowserRouter>
             <Routes>
-                <Route index path="/"       element={ <AuthPage mode="login"/>  }/>
                 { Authentication }
-                { Campaigns }
+                <Route path="/" element={ <Authenticated/> }>
+                    { Campaigns }
+                </Route>
+                <Route path="*" element={ <Navigate to="/"/> }/>
             </Routes>
         </BrowserRouter>
     )

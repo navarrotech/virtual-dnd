@@ -4,18 +4,17 @@ export function ViewAll({ ...props }){
 
     return (
         <div className="">
-            
+            <div>Character will go here</div>
+            <div>Character will go here</div>
+            <div>Character will go here</div>
+            <div>Character will go here</div>
+            <div>Character will go here</div>
+            <div>Character will go here</div>
         </div>
     )
 
 }
 
-export default function Campaigns({ ...props }){
-
-    return (
-        <>
-            <Route path="/campaigns" element={ <ViewAll/> } />
-        </>
-    )
-
-}
+export default (<>
+    <Route path="/campaigns" element={ <ViewAll/> } />
+</>)

@@ -1,0 +1,66 @@
+@use '../theme' as *
+
+.Dashboard
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-direction: row
+    position: relative
+    width: 100vw
+    height: 100vh
+    // background: $light
+
+    .Sidebar
+        @include shadow($strength: 5)
+        display: inline-block
+        position: relative
+        background: #ffffff
+
+        height: 100vh
+        max-height: 100vh
+        width: 350px
+        max-width: 350px
+
+        padding: 2em 1.5em
+
+        .SidebarItem
+            display: flex
+            align-items: center
+            gap: 0.5em
+            position: relative
+            padding-left: 1em
+            font-size: 1.5rem
+            color: $gray
+            transition: color 300ms ease
+
+            &:not(:last-child)
+                margin-bottom: 1em
+
+            &::before
+                content: ' '
+                display: block
+                position: absolute
+                left: 0.25em
+                top: 0
+                bottom: 0
+                background: $primary
+                width: 3px
+                height: 0%
+                margin: auto
+                transition: height 300ms ease
+
+            &.isActive,
+            &:hover
+                color: $primary
+
+                &::before
+                    height: 100%
+
+    .Application
+        display: inline-block
+        width: 100%
+        height: 100%
+        max-width: calc(100vw - 350px)
+        max-height: 100vh
+        overflow: auto
+        padding: 0 1em
