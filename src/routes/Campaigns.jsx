@@ -51,7 +51,7 @@ export function ViewAll({ ...props }){
                 </div>
             </div>
             <div className={"block " + Styles.CharacterList}>
-                { state.campaigns.map(character => {
+                { state.campaigns && state.campaigns.map(character => {
                     return <div className={Styles.Character} key={ character.name }>
                         <div className={Styles.image} style={{ backgroundImage:`url(${character.image})` }}/>
                         <div className={Styles.titles}>

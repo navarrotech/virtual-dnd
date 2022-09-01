@@ -31,7 +31,7 @@ function Settings({ ...props }){
     const fileInput = useRef();
 
     function save(update){
-        if(!update || !Object.keys(update.length)){ return; }
+        if(!update || !Object.keys(update).length){ return; }
         updateProfile(user.auth.currentUser, update)
         .catch((error) => console.log(error));
     }
