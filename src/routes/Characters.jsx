@@ -6,36 +6,33 @@ import { getDatabase, ref, set, onValue } from "firebase/database";
 
 import Loader from '../common/Loader'
 
-import Styles from './Campaigns.module.sass'
+import Styles from './Characters.module.sass'
 
 export function ViewAll({ ...props }){
 
     const [ user ] = useContext(UserContext)
     const [ state, setState ] = useState({
-        campaigns: [],
+        characters: [],
         loading: true
     });
 
     useEffect(() => {
         onValue(
-            ref(getDatabase(), 'campaigns/' + user.uid),
+            ref(getDatabase(), 'characters/' + user.uid),
             (snapshot) => {
                 console.log(snapshot.val())
-                setState(state => { return { ...state, loading:false, campaigns: snapshot.val() } })
+                setState(state => { return { ...state, loading:false, characters: snapshot.val() } })
             }
         )
     }, [user])
 
     function create(){
         const database = getDatabase();
-        ref(database, 'campaigns/' + user.uid);
-        set(ref(database, 'campaigns/' + user.uid), [
-            ...state.campaigns,
-            {
-                characters:[
-                    { player: 'user_123', character:{  } }
-                ]
-            }
+        ref(database, 'characters/' + user.uid);
+        set(ref(database, 'characters/' + user.uid), [
+            { name: "Cho'Gath", image:"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Chogath_0.jpg", abilities:{ slot_1:"punch" } },
+            { name: "Shyvanna", image:"https://static.wikia.nocookie.net/leagueoflegends/images/5/51/Shyvana_OriginalCentered.jpg/revision/latest/scale-to-width-down/1280?cb=20180414203547", abilities:{ slot_1:"bite"  } },
+            { name: "Spike",    image:"https://www.mangajam.com/wp-content/uploads/2016/09/How_Draw_Spike-Spiegel_Cowboy_Bebop.jpg", abilities:{ slot_1:"spike" } },
         ]);
     }
 
@@ -51,7 +48,7 @@ export function ViewAll({ ...props }){
                 </div>
             </div>
             <div className={"block " + Styles.CharacterList}>
-                { state.campaigns.map(character => {
+                { state.characters.map(character => {
                     return <div className={Styles.Character} key={ character.name }>
                         <div className={Styles.image} style={{ backgroundImage:`url(${character.image})` }}/>
                         <div className={Styles.titles}>
@@ -66,5 +63,5 @@ export function ViewAll({ ...props }){
 }
 
 export default (<>
-    <Route path="/campaigns" element={ <ViewAll/> } />
+    <Route path="/characters" element={ <ViewAll/> } />
 </>)

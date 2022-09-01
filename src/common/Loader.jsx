@@ -1,7 +1,7 @@
-export default function Loader({ fullpage=false }) {
+export default function Loader({ size="200px", fullpage=false }) {
 
     const SVG = (
-        <svg xmlns="http://www.w3.org/2000/svg" style={{ "margin":"auto", "display":"block"}} width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+        <svg xmlns="http://www.w3.org/2000/svg" style={{ "margin":"auto", "display":"block"}} width={size} height={size} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
             <defs>
                 <filter id="ldio-q3jex1j075k-filter" x="-100%" y="-100%" width="300%" height="300%" colorInterpolationFilters="sRGB">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="3"></feGaussianBlur>

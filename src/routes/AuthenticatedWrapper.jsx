@@ -27,7 +27,7 @@ export default function Authenticated({ ...props }){
     if(state.authenticated === true){
         return (
             <div className={Styles.Dashboard}>
-                <UserContext.Provider value={state.user}>
+                <UserContext.Provider value={[ state.user, function(user){ setState({ ...state, user }) } ]}>
                     <Sidebar user={state.user}/>
                     <div className={Styles.Application}>
                         <Outlet/>

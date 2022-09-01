@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Navigate, Route, Link } from 'react-router-dom'
 
 import {
-    getAuth, onAuthStateChanged, signOut,
+    getAuth, signOut,
+    onAuthStateChanged, updateProfile,
     GoogleAuthProvider, signInWithPopup,
     createUserWithEmailAndPassword, signInWithEmailAndPassword,
     sendPasswordResetEmail
@@ -21,6 +22,7 @@ export function AuthPanel({ ...props }){
     const [ state, setState ] = useState({
         redirect: false,
         mode: props.mode?props.mode:'login',
+        name:'',
         email: '',
         password: '',
         GoogleButtonLoading: false,
@@ -78,7 +80,11 @@ export function AuthPanel({ ...props }){
         else if(state.mode === 'signup'){
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // const user = userCredential.user;
+                    const user = userCredential.user;
+                    return updateProfile(user, {
+                        displayName: state.name,
+                        photoURL: "/images/user.svg"
+                    })
                 })
                 .catch((error) => {
                     console.log({ errorCode: error.code, message: error.message })
@@ -114,10 +120,34 @@ export function AuthPanel({ ...props }){
         </div>
         <div className="is-divider" data-content="OR"></div>
         <div className="block">
+            { state.mode === 'signup'
+                ? <div className="field">
+                    <div className="control has-icons-left">
+                        <input
+                            autoFocus={state.mode === 'signup'}
+                            className="input"
+                            type="text"
+                            placeholder="Full Name"
+                            // autoComplete="email"
+                            value={state.name}
+                            onKeyDown={(e) => {
+                                if(e.key === 'Enter'){ NativeSignin() }
+                            }}
+                            onChange={(e) => {
+                                setState({ ...state, name: e.target.value })
+                            }}
+                        />
+                        <span className="icon is-left">
+                            <FontAwesome6 icon={faEnvelope}/>
+                        </span>
+                    </div>
+                </div>
+                : <></>
+            }
             <div className="field">
                 <div className="control has-icons-left">
                     <input
-                        autoFocus
+                        autoFocus={state.mode === 'login'}
                         className="input"
                         type="email"
                         placeholder="Email"
@@ -164,7 +194,12 @@ export function AuthPanel({ ...props }){
             }
         </div>
         <div className="block buttons is-centered">
-            <button className={"button is-primary is-fullwidth" + (state.NativeButtonLoading?' is-loading':'')} type="button">
+            <button
+                onClick={() => NativeSignin()}
+                disabled={state.email && state.email.includes('@') && state.password.length > 8 && (state.mode === 'signup'?!!state.name:true)}
+                className={"button is-primary is-fullwidth" + (state.NativeButtonLoading?' is-loading':'')} 
+                type="button"
+            >
                 { state.mode==='login'
                     ? <><span>Login</span><span className="icon"><FontAwesome6 icon={faArrowRight}/></span></>
                     : <><span>Sign Up</span><span className="icon"><FontAwesome6 icon={faPlus}/></span></>
