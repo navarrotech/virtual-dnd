@@ -65,6 +65,40 @@ export function ViewAll({ ...props }){
 
 }
 
+export function Create({ ...props }){
+
+    const [ state, setState ] = useState({
+        name: "",
+        set: '5e'
+    });
+
+    return (
+        <div className="container is-fluid">
+            <div className="field">
+                <label className="label">Campaign Name:</label>
+                <div className="control">
+                    <input className="input is-large" type="text" placeholder="Epic Adventure #1"/>
+                </div>
+            </div>
+            <div className="field">
+                <label className="label">DnD Set</label>
+                <div className="control">
+                    <div
+                        className="select"
+                        value={state.set}
+                        onChange={({ target:{ value } }) => { setState({ ...state, set:value }) }}
+                     >
+                        <select>
+                            <option value="5e">DnD 5e</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default (<>
     <Route path="/campaigns" element={ <ViewAll/> } />
+    <Route path="/campaigns/create" element={ <Create/> } />
 </>)
