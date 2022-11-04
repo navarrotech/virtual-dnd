@@ -1,23 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import Routes from './routes/Routes';
+// Router
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
-// Firebase
-import firebaseConfig from './firebase.json'
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// Widgets
+import Dashboard from './widget/Dashboard.jsx'
 
+// Pages
+import Auth from './pages/Login.jsx'
+
+// Context
+import { FirebaseProvider } from './context/Firebase.jsx'
+
+// Stylesheet
 import './index.sass'
-
-// Initialize Firebase
-const firebaseapp = initializeApp(firebaseConfig);
-getAnalytics(firebaseapp);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
-  <React.StrictMode>
-        <Routes />
-  </React.StrictMode>
+    <React.StrictMode>
+        <FirebaseProvider>
+            <BrowserRouter>
+                <Routes>
+                    { Auth }
+                    <Route path="/" element={ <Dashboard /> }>
+                        {/* { Campaigns }
+                        { Characters } */}
+                    </Route>
+                    <Route path="*" element={ <Navigate to="/"/> }/>
+                </Routes>
+            </BrowserRouter>
+        </FirebaseProvider>
+    </React.StrictMode>
 );
