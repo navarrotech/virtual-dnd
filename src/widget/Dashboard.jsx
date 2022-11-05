@@ -1,14 +1,34 @@
-import { useState, useContext } from "react"
-import { Outlet, Link, Navigate } from "react-router-dom"
+import { useState, useEffect, useContext, useRef } from "react"
+import { Outlet, Link, Navigate, NavLink } from "react-router-dom"
 
+import { FontAwesomeIcon as FontAwesome6 } from "@fortawesome/react-fontawesome"
+import { faGears, faRightFromBracket, faHatWizard, faEnvelope, faUserGroup, faPlus } from "@fortawesome/free-solid-svg-icons"
+
+import { Image } from "image-js"
+import ReactCrop from "react-image-crop"
+import "react-image-crop/src/ReactCrop.scss"
+
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"
+import { getDatabase, ref, onValue } from "firebase/database"
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth"
+
+import UserContext from "../context/User.jsx"
 import FirebaseContext from "../context/Firebase.jsx"
+
+import Loader from "../common/Loader.jsx"
+import Watermark from "../images/logo.svg"
 
 import Styles from "../styles/Dashboard.module.sass"
 
 export default function Dashboard({ ...props }) {
-    const Firebase = useContext(FirebaseContext)
+    const [state, setState] = useState({
+        showFriends: false,
+        showSettings: false,
+    })
 
-    if (!Firebase.user || !Firebase.user.email) {
+    const [user] = useContext(UserContext)
+
+    if (!(user && user.email)) {
         return <Navigate to="/" replace={true} />
     }
 
@@ -16,7 +36,7 @@ export default function Dashboard({ ...props }) {
         <div className={Styles.Dashboard + (state.showFriends ? " " + Styles.friendsActive : "")}>
             <SettingsModal active={state.showSettings} closeModal={() => setState({ ...state, showSettings: false })} />
             <FriendsList />
-            <Sidebar user={state.user} getState={[state, setState]} />
+            <Sidebar getState={[state, setState]} />
             <div className={Styles.Application}>
                 <Outlet />
             </div>
@@ -27,7 +47,8 @@ export default function Dashboard({ ...props }) {
     )
 }
 
-function Sidebar({ user, getState, ...props }) {
+function Sidebar({ getState, ...props }) {
+    const [user] = useContext(UserContext)
     const [state, setState] = getState
 
     return (
@@ -37,8 +58,8 @@ function Sidebar({ user, getState, ...props }) {
                     <img src={user.photoURL} alt={user.displayName} referrerPolicy="no-referrer" />
                 </figure>
                 <div className="titles">
-                    <p>{user.displayName}</p>
-                    <p>Level 1 Apprentice</p>
+                    <p className="has-text-black has-text-weight-bold">{user.displayName}</p>
+                    <p className="has-text-black">Level 1 Apprentice</p>
                 </div>
             </div>
             <div className={"buttons is-centered has-addons " + Styles.sidebarButtons}>
@@ -81,12 +102,12 @@ function Sidebar({ user, getState, ...props }) {
 }
 
 function FriendsList({ ...props }) {
-    const [user] = useContext(UserContext)
     const [state, setState] = useState({
         friends: [{ username: "nebulablade", photoURL: "https://lh3.googleusercontent.com/a-/AFdZucqCeVtwa2SaFFasbdIciOk840rZpYuBwP2OUqVm=s96-c", online: true }],
         addFriendModal: false,
         loading: true,
     })
+    const [user] = useContext(UserContext)
 
     useEffect(() => {
         onValue(ref(getDatabase(), "user/" + user.uid + "/friends"), (snapshot) => {

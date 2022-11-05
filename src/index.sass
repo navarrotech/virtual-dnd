@@ -10,9 +10,12 @@ $family-sans-serif: 'Nunito', 'Noto Sans', 'Cabin', Arial, Helvetica, sans-serif
 @import 'bulma-navarrotech/bulma'
 @import 'bulma-divider'
 
+html
+    background: #fbfbfa
+
 .button.is-primary
     @include primaryGradient
-    
+
     &:hover
         @include primaryGradientLight
 
@@ -31,18 +34,18 @@ input
 
     .icon
         position: absolute
-        width:  calc($googleButtonHeight - 6px)
+        width: calc($googleButtonHeight - 6px)
         height: calc($googleButtonHeight - 6px)
         background: white
         border-radius: 2px
         left: 2px
-        top:  2px
-        margin-left:  0 !important
+        top: 2px
+        margin-left: 0 !important
         margin-right: 0 !important
 
 .nametag
     figure.is-64x64
-        min-width:  64px
-        max-width:  64px
+        min-width: 64px
+        max-width: 64px
         max-height: 64px
         max-height: 64px

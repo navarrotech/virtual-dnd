@@ -1,8 +1,7 @@
-import { createContext, useState, useEffect } from "react"
+import { createContext } from "react"
 import { initializeApp } from "firebase/app"
 import { getAnalytics } from "firebase/analytics"
 import { getDatabase } from "firebase/database"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 const config = {
     apiKey: "AIzaSyCzdOBWa4Pt5KXE2q9O5ZEIFp6HWMC6XMY",
@@ -31,25 +30,5 @@ const Context = createContext()
 export default Context
 
 export function FirebaseProvider({ children }) {
-    const [user, setUser] = useState({})
-
-    // When the user state changes in the cloud, update it here too.
-    useEffect(() => {
-        onAuthStateChanged(getAuth(), (u) => setUser(u))
-    }, [])
-
-    return (
-        <Context.Provider
-            value={{
-                user,
-                setUser,
-                app,
-                config,
-                analytics,
-                database,
-            }}
-        >
-            {children}
-        </Context.Provider>
-    )
+    return <Context.Provider value={value}>{children}</Context.Provider>
 }
