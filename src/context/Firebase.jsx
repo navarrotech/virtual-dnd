@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import { createContext, useState } from "react"
 import { initializeApp } from "firebase/app"
 import { getAnalytics } from "firebase/analytics"
 import { getDatabase } from "firebase/database"
@@ -18,17 +18,17 @@ const app = initializeApp(config)
 const analytics = getAnalytics(app)
 const database = getDatabase(app)
 
-const value = {
-    app,
-    config,
-    analytics,
-    database,
-}
-
 const Context = createContext()
 
 export default Context
 
 export function FirebaseProvider({ children }) {
-    return <Context.Provider value={value}>{children}</Context.Provider>
+    // We use state to prevent code from looping
+    const [state] = useState({
+        app,
+        config,
+        analytics,
+        database,
+    })
+    return <Context.Provider value={state}>{children}</Context.Provider>
 }

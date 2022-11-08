@@ -13,5 +13,5 @@ export function UserProvider({ children }) {
         onAuthStateChanged(getAuth(), (u) => setUser(u))
     }, [])
 
-    return <Context.Provider value={[user, setUser]}>{children}</Context.Provider>
+    return <Context.Provider value={user}>{children}</Context.Provider>
 }
