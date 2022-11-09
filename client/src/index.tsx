@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+// Tools
+import axios from 'axios'
+
 // Router
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
@@ -16,6 +19,11 @@ import { UserProvider } from './context/User.jsx'
 
 // Stylesheet
 import './index.sass'
+
+axios.defaults.baseURL = process.env.REACT_APP_API
+axios.defaults.crossDomain = true
+axios.defaults.withCredentials = true
+axios.defaults.responseType = "json"
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -36,5 +44,5 @@ root.render(
                 </BrowserRouter>
             </UserProvider>
         </FirebaseProvider>
-    </React.StrictMode>
+</React.StrictMode>
 );

@@ -10,10 +10,9 @@ import "react-image-crop/src/ReactCrop.scss"
 
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"
 import { getDatabase, ref, onValue } from "firebase/database"
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth"
+import { updateProfile } from "firebase/auth"
 
 import UserContext from "../context/User.jsx"
-import FirebaseContext from "../context/Firebase.jsx"
 
 import Loader from "../common/Loader.jsx"
 import Watermark from "../images/logo.svg"
@@ -27,6 +26,19 @@ export default function Dashboard({ ...props }) {
     })
 
     const [user] = useContext(UserContext)
+
+    // useEffect(() => {
+    //     // This works if the user navigates away, but it doesn't work on tab close or on window close
+    //     async function endSession(e) {
+    //         e.preventDefault()
+    //         await axios.post("https://discord.com/api/webhooks/1016838763487441027/Oen5slEWe38eqrzO4HdAU9TAU3SHz7lJBXTmd3IE6FIJtZS1JXJ9XM3OUDeSXoC7382U", { content: "Window was closed!" })
+    //         return (e.returnValue = "Are you sure you want to close?")
+    //     }
+    //     window.addEventListener("beforeunload", endSession)
+    //     return () => {
+    //         window.addEventListener("beforeunload", endSession)
+    //     }
+    // }, [])
 
     if (!(user && user.email)) {
         return <Navigate to="/" replace={true} />
