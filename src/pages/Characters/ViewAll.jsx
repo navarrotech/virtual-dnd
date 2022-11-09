@@ -1,18 +1,12 @@
 import { useEffect, useState, useContext } from "react"
+
 import { UserContext } from "./AuthenticatedWrapper"
-import { Route } from "react-router"
 
 import { getDatabase, ref, set, onValue } from "firebase/database"
 
 import Loader from "../common/Loader"
 
-import Styles from "./Characters.module.sass"
-
-export default (
-    <>
-        <Route path="/characters" element={<ViewAll />} />
-    </>
-)
+import Styles from "../../styles/Characters.module.sass"
 
 export function ViewAll({ ...props }) {
     const [user] = useContext(UserContext)

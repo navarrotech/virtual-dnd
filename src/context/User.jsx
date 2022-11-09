@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 
+import axios from "axios"
+
 const Context = createContext()
 
 export default Context
@@ -13,5 +15,5 @@ export function UserProvider({ children }) {
         onAuthStateChanged(getAuth(), (u) => setUser(u))
     }, [])
 
-    return <Context.Provider value={user}>{children}</Context.Provider>
+    return <Context.Provider value={[user, setUser]}>{children}</Context.Provider>
 }
