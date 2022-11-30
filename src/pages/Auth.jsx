@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react"
 import { Navigate, Route, Link } from "react-router-dom"
 
-import { getAuth, signOut, onAuthStateChanged, updateProfile, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
+import { getAuth, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
 
 // Icons + Images
 import { FontAwesomeIcon as FontAwesome6 } from "@fortawesome/react-fontawesome"
@@ -29,7 +29,9 @@ export function AuthPanel({ ...props }) {
     function GoogleSignin() {
         setState({ ...state, GoogleButtonLoading: true })
         const auth = getAuth()
+
         const provider = new GoogleAuthProvider()
+
         signInWithPopup(auth, provider)
             .then((result) => {
                 // const credential = GoogleAuthProvider.credentialFromResult(result);

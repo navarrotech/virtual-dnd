@@ -1,0 +1,17 @@
+{
+    "uid": "A1B2C3",
+    "name": "My Campaign",
+    "owner": "navarro",
+    "created": "2022-11-30T18:01:26.440Z",
+    "updated": "2022-11-30T18:01:26.440Z",
+    "chat":[
+        { "what":"Hey!", "who":"evader", "when":"2022-11-30T18:01:26.440Z" }
+    ],
+    "players":[
+        {
+            "player_name":"Alex Navarro",
+            "player_username":"navarro",
+            "...character":{}
+        }
+    ]
+}

@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useRef } from "react"
 import { Outlet, Link, Navigate, NavLink } from "react-router-dom"
 
 import { FontAwesomeIcon as FontAwesome6 } from "@fortawesome/react-fontawesome"
-import { faGears, faRightFromBracket, faHatWizard, faEnvelope, faUserGroup, faPlus } from "@fortawesome/free-solid-svg-icons"
+import { faGears, faRightFromBracket, faHatWizard, faEnvelope, faUserGroup, faPlus, faUser } from "@fortawesome/free-solid-svg-icons"
 
 import { Image } from "image-js"
 import ReactCrop from "react-image-crop"
@@ -10,10 +10,9 @@ import "react-image-crop/src/ReactCrop.scss"
 
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"
 import { getDatabase, ref, onValue } from "firebase/database"
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth"
+import { updateProfile } from "firebase/auth"
 
 import UserContext from "../context/User.jsx"
-import FirebaseContext from "../context/Firebase.jsx"
 
 import Loader from "../common/Loader.jsx"
 import Watermark from "../images/logo.svg"
@@ -28,7 +27,8 @@ export default function Dashboard({ ...props }) {
 
     const [user] = useContext(UserContext)
 
-    if (!(user && user.email)) {
+    // Protect the route. Only authorized users can be in here!
+    if (!(user && user.uid)) {
         return <Navigate to="/" replace={true} />
     }
 
@@ -220,6 +220,7 @@ function SettingsModal({ active, closeModal, ...props }) {
         uploading: false,
         cropModal: false,
         displayName: user.displayName,
+        username: user.username||''
     })
 
     const fileInput = useRef()
@@ -406,11 +407,33 @@ function SettingsModal({ active, closeModal, ...props }) {
                                     </span>
                                 </div>
                             </div>
-
+                            <div className="field">
+                                <label className="label">Username</label>
+                                <div className="control has-icons-left">
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="Username"
+                                        value={state.username}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.target.blur()
+                                            }
+                                        }}
+                                        onChange={(e) => {
+                                            setState({ ...state, username: e.target.value })
+                                        }}
+                                        onBlur={() => save({ username: state.username })}
+                                    />
+                                    <span className="icon is-left">
+                                        <FontAwesome6 icon={faUser} />
+                                    </span>
+                                </div>
+                            </div>
                             <div className="field">
                                 <label className="label">Email Address</label>
                                 <div className="control has-icons-left">
-                                    <input className="input" type="text" placeholder="Name" value={user.email} disabled={true} />
+                                    <input className="input" type="email" placeholder="Email" value={user.email} disabled={true} />
                                     <span className="icon is-left">
                                         <FontAwesome6 icon={faEnvelope} />
                                     </span>

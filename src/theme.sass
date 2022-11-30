@@ -18,4 +18,4 @@ $text: $gray
     background: linear-gradient(45deg, color.scale($red, $lightness: 10%) 0%, color.scale($redLight, $lightness: 10%) 100%)
 
 @mixin shadow($strength)
-    box-shadow: 0 0 10px 4px rgba(0,0,0,$strength/100)
+    box-shadow: 0 0 10px 4px rgba(0,0,0,calc($strength/100))

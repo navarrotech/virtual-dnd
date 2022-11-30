@@ -1,19 +1,32 @@
 import { createContext, useState, useEffect } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
-
-import axios from "axios"
+import Loader from "../common/Loader.jsx"
 
 const Context = createContext()
 
 export default Context
 
 export function UserProvider({ children }) {
-    const [user, setUser] = useState({})
+    const [state, setState] = useState({
+        loading: true,
+        user: [null, () => {}],
+    })
 
     // When the user state changes in the cloud, update it here too.
     useEffect(() => {
-        onAuthStateChanged(getAuth(), (u) => setUser(u))
+        function setSubstate(newState) {
+            setState((oldState) => {
+                return { ...oldState, loading: false, user: [newState, setSubstate] }
+            })
+        }
+        onAuthStateChanged(getAuth(), (user) => {
+            setSubstate(user)
+        })
     }, [])
 
-    return <Context.Provider value={[user, setUser]}>{children}</Context.Provider>
+    if (state.loading) {
+        return <Loader />
+    }
+
+    return <Context.Provider value={state.user}>{children}</Context.Provider>
 }
