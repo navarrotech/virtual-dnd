@@ -1,4 +1,4 @@
-@use '../theme' as *
+@use './src/theme' as *
 
 .CharacterList
     display: flex
@@ -6,12 +6,16 @@
     gap: 1em
         
     .Character
-        width: 380px
-        height: 450px
+        width: 300px
+        height: 150px
         @include shadow(10)
         border-radius: 4px
         cursor: pointer
         transition: transform 300ms ease, background 300ms ease
+
+        display: flex
+        align-items: center
+        justify-content: center
 
         &:hover
             background: $primary
@@ -21,11 +25,12 @@
                 color: white
 
         .image
-            width: 100%
-            height: calc(100% - 36px - 1.5em)
-            background-size: cover
-            background-position: 50% 0%
-            border-radius: 4px 4px 0 0
+            height: 0
+            // width: 100%
+            // height: calc(100% - 36px - 1.5em)
+            // background-size: cover
+            // background-position: 50% 0%
+            // border-radius: 4px 4px 0 0
 
         .titles
             padding: 0.75em

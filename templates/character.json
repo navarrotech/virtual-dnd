@@ -1,5 +1,8 @@
 {
     "name":"Cinderella",
+    "image":"",
+    "created":"",
+    "updated":"",
     "current":{
         "health": "",
         "maxHealth":0,
@@ -65,7 +68,6 @@
         "eyes":"",
         "skin":"",
         "hair":"",
-        "image":"",
         "backstory":"",
         "additionalFeatures":"",
         "ideals":"",

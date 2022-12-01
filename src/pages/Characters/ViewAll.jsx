@@ -1,37 +1,122 @@
 import { useEffect, useState, useContext } from "react"
+import { useNavigate } from "react-router-dom"
 
-import { UserContext } from "./AuthenticatedWrapper"
+import { getDatabase, ref, push, onValue } from "firebase/database"
 
-import { getDatabase, ref, set, onValue } from "firebase/database"
+import UserContext from "../../context/User.jsx"
 
-import Loader from "../common/Loader"
+import CharacterTile from './Components/CharacterTile.jsx'
+import Loader from "../../common/Loader"
 
-import Styles from "../../styles/Characters.module.sass"
+import Styles from "./_.module.sass"
 
-export function ViewAll({ ...props }) {
+export default function ViewAll({ ...props }) {
     const [user] = useContext(UserContext)
-    const [state, setState] = useState({
-        characters: [],
-        loading: true,
-    })
+    const [state, setState] = useState({ characters: [], loading: true, })
+    const navigate = useNavigate()
 
     useEffect(() => {
         onValue(ref(getDatabase(), "characters/" + user.uid), (snapshot) => {
-            console.log(snapshot.val())
+            let doc = snapshot.val() || {}
+            let characters = Object.keys(doc).map(key => {
+                return { ...doc[key], uid: key }
+            })
             setState((state) => {
-                return { ...state, loading: false, characters: snapshot.val() }
+                return { ...state, loading: false, characters }
             })
         })
     }, [user])
 
     function create() {
-        const database = getDatabase()
-        ref(database, "characters/" + user.uid)
-        set(ref(database, "characters/" + user.uid), [
-            { name: "Cho'Gath", image: "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Chogath_0.jpg", abilities: { slot_1: "punch" } },
-            { name: "Shyvanna", image: "https://static.wikia.nocookie.net/leagueoflegends/images/5/51/Shyvana_OriginalCentered.jpg/revision/latest/scale-to-width-down/1280?cb=20180414203547", abilities: { slot_1: "bite" } },
-            { name: "Spike", image: "https://www.mangajam.com/wp-content/uploads/2016/09/How_Draw_Spike-Spiegel_Cowboy_Bebop.jpg", abilities: { slot_1: "spike" } },
-        ])
+        push(ref(getDatabase(), "characters/" + user.uid), {
+            name: "New Character",
+            image: "",
+            stats: {
+                inspiration: 0,
+                proficienyBonus: 0,
+
+                strength: 0,
+                strengthAdd: 0,
+                dexterity: 0,
+                dexterityAdd: 0,
+                constitution: 0,
+                constitutionAdd: 0,
+                intelligence: 0,
+                intelligenceAdd: 0,
+                wisdom: 0,
+                wisdomAdd: 0,
+                charisma: 0,
+                charismaAdd: 0,
+
+                acrobatics: 0,
+                animalHandling: 0,
+                arcana: 0,
+                athletics: 0,
+                deception: 0,
+                history: 0,
+                insight: 0,
+                intimidation: 0,
+                investigation: 0,
+                medicine: 0,
+                nature: 0,
+                perception: 0,
+                performance: 0,
+                persuasion: 0,
+                religion: 0,
+                sleightOfHand: 0,
+                stealth: 0,
+                survival: 0,
+            },
+            savingThrows: {
+                strength: 0,
+                dexterity: 0,
+                constituion: 0,
+                intelligence: 0,
+                wisdom: 2,
+                charisma: 2,
+            },
+            features: {
+                class: "",
+                race: "",
+                background: "",
+                alignment: "",
+                age: "",
+                height: "",
+                weight: "",
+                eyes: "",
+                skin: "",
+                hair: "",
+                image: "",
+                backstory: "",
+                additionalFeatures: "",
+                ideals: "",
+                bonds: "",
+                flaws: "",
+                features: "",
+                languagesKnown: [],
+            },
+            spells: {
+                class: "",
+                ability: "",
+                saveDC: "",
+                attackBonus: "",
+                cantrips: [],
+                slot1: [],
+                slot2: [],
+                slot3: [],
+                slot4: [],
+                slot5: [],
+                slot6: [],
+                slot7: [],
+                slot8: [],
+                slot9: [],
+            },
+            created: new Date().toISOString(),
+            updated: new Date().toISOString(),
+        }).then((document) => {
+            const { key } = document
+            navigate("/characters/" + key, { replace: false })
+        })
     }
 
     if (state.loading) {
@@ -48,16 +133,7 @@ export function ViewAll({ ...props }) {
                 </div>
             </div>
             <div className={"block " + Styles.CharacterList}>
-                {state.characters.map((character) => {
-                    return (
-                        <div className={Styles.Character} key={character.name}>
-                            <div className={Styles.image} style={{ backgroundImage: `url(${character.image})` }} />
-                            <div className={Styles.titles}>
-                                <h1 className="title">{character.name}</h1>
-                            </div>
-                        </div>
-                    )
-                })}
+                {state.characters.map((character) => <CharacterTile key={character.uid} character={character} />)}
             </div>
         </div>
     )

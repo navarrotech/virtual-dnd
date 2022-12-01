@@ -89,7 +89,7 @@ export function AuthPanel({ ...props }) {
     }
 
     if (state.redirect || (user && user.email)) {
-        return <Navigate to="/dashboard" />
+        return <Navigate to="/campaigns" />
     }
 
     return (

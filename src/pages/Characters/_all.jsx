@@ -1,11 +1,11 @@
 import { Route } from "react-router-dom"
 
-import ViewAll from "./ViewAll.jsx"
-import ViewOne from "./ViewOne.jsx"
+import AllCharacters from "./ViewAll.jsx"
+import EditCharacter from "./ViewOne.jsx"
 
 export default (
     <>
-        <Route to="/characters" element={<ViewAll />} />
-        <Route to="/character/:id" element={<ViewOne />} />
+        <Route path="/characters" element={<AllCharacters />} />
+        <Route path="/characters/:id" element={<EditCharacter />} />
     </>
 )

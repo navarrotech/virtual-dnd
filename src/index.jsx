@@ -10,6 +10,7 @@ import Dashboard from "./widget/Dashboard.jsx"
 // Pages
 import Auth from "./pages/Auth.jsx"
 import Campaigns from "./pages/Campaigns/_all.jsx"
+import Characters from "./pages/Characters/_all.jsx"
 import Play from './pages/Play/_all.jsx'
 
 // Context
@@ -29,9 +30,8 @@ root.render(
                     <Routes>
                         {Auth}
                         <Route path="/" element={<Dashboard />}>
-                            {Campaigns}
-                            {/* { Characters } */}
-                            <Route path="/dashboard" element={<h1>Hello World!</h1>} />
+                            { Campaigns  }
+                            { Characters }
                         </Route>
                         { Play }
                         <Route path="*" element={<Navigate to="/" />} />

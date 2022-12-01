@@ -17,7 +17,7 @@ import UserContext from "../context/User.jsx"
 import Loader from "../common/Loader.jsx"
 import Watermark from "../images/logo.svg"
 
-import Styles from "../styles/Dashboard.module.sass"
+import Styles from "./Dashboard.module.sass"
 
 export default function Dashboard({ ...props }) {
     const [state, setState] = useState({
@@ -29,6 +29,7 @@ export default function Dashboard({ ...props }) {
 
     // Protect the route. Only authorized users can be in here!
     if (!(user && user.uid)) {
+        console.log("Redirecting user to / because no user was found!")
         return <Navigate to="/" replace={true} />
     }
 

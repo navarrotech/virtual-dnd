@@ -72,9 +72,9 @@ export default function ViewAll({ ...props }) {
             </div>
             <div className={"block " + Styles.CampaignList}>
                 {
-                    Object.keys(state.campaigns).length
+                    Object.keys(state.campaigns||[]).length
                         ? Object.keys(state.campaigns).map((key) => <CampaignItem key={key} id={key} campaign={state.campaigns[key]} />)
-                        : <></>
+                        : <div className=""><p>You don't have any campaigns created yet!</p></div>
                 }
             </div>
         </div>

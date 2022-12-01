@@ -1,13 +1,13 @@
 import { useEffect, useState, useContext } from "react"
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import moment from "moment"
 
 import UserContext from '../../context/User.jsx'
 
-import { getDatabase, ref, onValue } from "firebase/database"
+import { getDatabase, remove, ref, onValue } from "firebase/database"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons"
+import { faArrowRight, faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 
 import Loader from "../../common/Loader"
 import CampaignPlayerListItem from "./CampaignPlayerListItem.jsx"
@@ -21,6 +21,7 @@ export default function ViewOne({ ...props }) {
         loading: true,
         campaign: {}
     })
+    const navigate = useNavigate()
     const { id } = useParams()
 
     useEffect(() => {
@@ -63,15 +64,23 @@ export default function ViewOne({ ...props }) {
             <div className="columns">
                 <div className="column">
                     {
-                        campaign.players.map((player, index) => (
-                            <CampaignPlayerListItem key={player.player_uid} player={player} campaign_uid={id} index={index} />
-                        ))
+                        campaign.players.map((player, index) => {
+                            return <CampaignPlayerListItem key={player.player_uid||index} player={player} campaign_uid={id} index={index} />
+                        })
                     }
                 </div>
-                <div className="column is-3">
+                <div className="column is-4">
                     <div className="box">
                         <p>Campaign Created</p>
                         <p>{moment(campaign.created).format("MMMM Do YYYY")}</p>
+                        <button className="button is-danger is-fullwidth is-small is-light" type={"button"} onClick={async () => {
+                            remove(ref(getDatabase(), `/campaigns/${user.uid}/${id}`)).finally(() => { navigate("/campaigns") })
+                        }}>
+                            <span className="icon">
+                                <FontAwesomeIcon icon={faTrashAlt}/>
+                            </span>
+                            <span>Delete Campaign</span>
+                        </button>
                     </div>
                 </div>
             </div>
