@@ -19,11 +19,12 @@ export default function ViewAll({ ...props }) {
 
     useEffect(() => {
         const reference = ref(getDatabase(), "campaigns/" + user.uid)
-        onValue(reference, (snapshot) => {
+        const unsubscribe = onValue(reference, (snapshot) => {
             setState((s) => {
                 return { ...s, loading: false, campaigns: snapshot.val() }
             })
         })
+        return () => { unsubscribe(); }
     }, [user])
 
     function create() {
@@ -34,23 +35,7 @@ export default function ViewAll({ ...props }) {
             created: new Date().toISOString(),
             updated: new Date().toISOString(),
             chat: [],
-            players: [
-                {
-                    player_name: user.displayName,
-                    player_username: user.username || "",
-                    player_uid: user.uid,
-                    character: null,
-                    current: {
-                        health: "",
-                        maxHealth: 0,
-                        armorClass: 0,
-                        initiative: 0,
-                        speed: 30,
-                        level: 1,
-                        experience: 0
-                    },
-                },
-            ],
+            players: {},
         }).then((document) => {
             const { key } = document
             navigate("/campaigns/" + key, { replace: false })

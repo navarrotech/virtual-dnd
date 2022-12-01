@@ -16,7 +16,7 @@ export default function ViewAll({ ...props }) {
     const navigate = useNavigate()
 
     useEffect(() => {
-        onValue(ref(getDatabase(), "characters/" + user.uid), (snapshot) => {
+        const unsubscribe = onValue(ref(getDatabase(), "characters/" + user.uid), (snapshot) => {
             let doc = snapshot.val() || {}
             let characters = Object.keys(doc).map(key => {
                 return { ...doc[key], uid: key }
@@ -25,6 +25,7 @@ export default function ViewAll({ ...props }) {
                 return { ...state, loading: false, characters }
             })
         })
+        return () => { unsubscribe(); }
     }, [user])
 
     function create() {

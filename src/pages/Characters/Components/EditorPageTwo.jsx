@@ -1,4 +1,4 @@
-import Styles from "../_.module.sass"
+// import Styles from "../_.module.sass"
 
 function listenForKeydown({ key, target }) {
     if (key === "Enter" || key === 'Esc') {
@@ -7,13 +7,6 @@ function listenForKeydown({ key, target }) {
 }
 
 export default function EditorPageOne({ character, save }) {
-    function changeListener(key) {
-        return function ({ target: { value } }) {
-            let k = {}
-            k[key] = value
-            save(k, false)
-        }
-    }
 
     function Textarea({ value, rows = 3 }) {
         return (

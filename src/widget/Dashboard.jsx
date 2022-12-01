@@ -111,7 +111,7 @@ function FriendsList({ ...props }) {
     const [user] = useContext(UserContext)
 
     useEffect(() => {
-        onValue(ref(getDatabase(), "user/" + user.uid + "/friends"), (snapshot) => {
+        const unsubscribe = onValue(ref(getDatabase(), "user/" + user.uid + "/friends"), (snapshot) => {
             setState((state) => {
                 return {
                     ...state,
@@ -119,7 +119,8 @@ function FriendsList({ ...props }) {
                     // friends: snapshot.val() || []
                 }
             })
-        })
+        });
+        return () => { unsubscribe(); }
     }, [user])
 
     if (state.loading) {

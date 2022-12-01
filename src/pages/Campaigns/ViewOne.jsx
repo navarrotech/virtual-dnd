@@ -26,11 +26,12 @@ export default function ViewOne({ ...props }) {
 
     useEffect(() => {
         const reference = ref(getDatabase(), "campaigns/" + user.uid + '/' + id)
-        onValue(reference, (snapshot) => {
+        const unsubscribe = onValue(reference, (snapshot) => {
             setState((s) => {
                 return { ...s, loading: false, campaign: snapshot.val() }
             })
         })
+        return () => { unsubscribe(); }
     }, [id, user])
 
     if (state.loading || !state.campaign || !state.campaign.name) {
@@ -52,7 +53,7 @@ export default function ViewOne({ ...props }) {
                 </div>
                 <div className="column">
                     <div className="block buttons is-right">
-                        <Link className="button is-primary" to={"/play/"+id}>
+                        <Link className="button is-primary" to={`/play/${user.uid}/${id}`}>
                             <span className="icon">
                                 <FontAwesomeIcon icon={faArrowRight} />
                             </span>
@@ -64,8 +65,10 @@ export default function ViewOne({ ...props }) {
             <div className="columns">
                 <div className="column">
                     {
-                        campaign.players.map((player, index) => {
-                            return <CampaignPlayerListItem key={player.player_uid||index} player={player} campaign_uid={id} index={index} />
+                        Object.keys(campaign.players).map((player_key, index) => {
+                            let player_uid = player_key,
+                                player_value = campaign.players[player_key]
+                            return <CampaignPlayerListItem key={player_uid} player={player_value} campaign_uid={id} index={index} />
                         })
                     }
                 </div>
