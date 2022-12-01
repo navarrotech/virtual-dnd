@@ -37,14 +37,23 @@ export default function ViewAll({ ...props }) {
             players: [
                 {
                     player_name: user.displayName,
-                    player_username: user.username || '',
+                    player_username: user.username || "",
                     player_uid: user.uid,
+                    character: null,
+                    current: {
+                        health: "",
+                        maxHealth: 0,
+                        armorClass: 0,
+                        initiative: 0,
+                        speed: 30,
+                        level: 1,
+                        experience: 0
+                    },
                 },
             ],
-        })
-        .then((document) => {
+        }).then((document) => {
             const { key } = document
-            navigate('/campaigns/' + key, { replace: false })
+            navigate("/campaigns/" + key, { replace: false })
         })
     }
 

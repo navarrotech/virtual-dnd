@@ -11,7 +11,9 @@
         {
             "player_name":"Alex Navarro",
             "player_username":"navarro",
-            "...character":{}
+            "character_uid":"",
+            "character":{},
+            "current":{}
         }
     ]
 }

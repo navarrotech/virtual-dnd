@@ -63,8 +63,8 @@ export default function ViewOne({ ...props }) {
             <div className="columns">
                 <div className="column">
                     {
-                        campaign.players.map((player) => (
-                            <CampaignPlayerListItem key={player.player_uid} player={player} />
+                        campaign.players.map((player, index) => (
+                            <CampaignPlayerListItem key={player.player_uid} player={player} campaign_uid={id} index={index} />
                         ))
                     }
                 </div>
