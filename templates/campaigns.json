@@ -7,6 +7,9 @@
     "chat":[
         { "what":"Hey!", "who":"evader", "when":"2022-11-30T18:01:26.440Z" }
     ],
+    "map":{
+        
+    },
     "players":{
         "uid_123":{
             "player_name":"Alex Navarro",

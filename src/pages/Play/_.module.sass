@@ -4,6 +4,7 @@
     position: relative
 
 .LiveChat
+    z-index: 10
     position: relative
 
     .history
@@ -18,4 +19,41 @@
         position: relative
 
 .WelcomeAndJoin
+    z-index: 100
     position: relative
+
+.Healthbar
+    position: relative
+
+.Map
+    position: fixed
+    z-index: 1
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    width: 100vw
+    height: 100vh
+
+    .MapBox
+        position: absolute
+        display: block
+        background: purple
+
+        &.isDragging
+            cursor: grabbing
+
+        .Entity
+            // background: $success
+            background: $red
+            border: 3px solid white
+            border-radius: 50%
+            position: absolute
+            width: 20px
+            height: 20px
+
+        &.isPlayer
+            background: #2ccf47
+
+        .Building
+            border: 1px solid blue

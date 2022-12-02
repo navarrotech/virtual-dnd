@@ -10,6 +10,7 @@ import LiveChat from "./components/LiveChat.jsx"
 import CharacterPanel from "./components/CharacterPanel.jsx"
 import PlayerList from "./components/PlayerList.jsx"
 import WelcomeAndJoin from "./components/WelcomeAndJoin.jsx"
+import Map from './components/Map.jsx'
 
 import Loader from "../../common/Loader"
 
@@ -56,7 +57,7 @@ export default function Play() {
             <PlayerList players={campaign.players} api={api}/>
             <LiveChat chat={campaign.chat} me={user.username} api={api}/>
             <CharacterPanel myCharacter={myPlayerToken.character} api={api}/>
-            {/* <Map map={campaign.map}/> */}
+            <Map map={campaign.map} players={campaign.players} />
         </div>
     )
 }
