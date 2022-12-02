@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react"
-import { Navigate, Route, Link } from "react-router-dom"
+import { Navigate, Route, Link, useNavigate } from "react-router-dom"
 
 import { getAuth, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
 
@@ -14,17 +14,22 @@ import Loader from "../common/Loader"
 import UserContext from "../context/User.jsx"
 
 export function AuthPanel({ ...props }) {
+
+    const navigate = useNavigate()
+    const [ user ] = useContext(UserContext)
     const [state, setState] = useState({
-        redirect: false,
         mode: props.mode ? props.mode : "login",
         name: "",
         email: "",
         password: "",
         GoogleButtonLoading: false,
         NativeButtonLoading: false,
+        message: ""
     })
 
-    const [user] = useContext(UserContext)
+    useEffect(() => {
+        if(user && user.uid){ navigate('/campaigns', { replace: false }) }
+    }, [user, navigate])
 
     function GoogleSignin() {
         setState({ ...state, GoogleButtonLoading: true })
@@ -37,19 +42,16 @@ export function AuthPanel({ ...props }) {
                 // const credential = GoogleAuthProvider.credentialFromResult(result);
                 // const token = credential.accessToken;
                 // const user = result.user;
+                navigate('/campaigns', { replace: false })
             })
             .catch((error) => {
-                // Handle Errors here.
-                const errorCode = error.code
-                const errorMessage = error.message
-                // The email of the user's account used.
-                const email = error.customData.email
-                // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error)
-                console.log({ errorCode, errorMessage, email, credential })
-            })
-            .finally(() => {
-                setState({ ...state, GoogleButtonLoading: false, redirect: true })
+                console.log({
+                    code: error.code,
+                    message: error.message,
+                    email: error.customData.email,
+                    credential: GoogleAuthProvider.credentialFromError(error)
+                })
+                setState({ ...state, GoogleButtonLoading: false, message: error.message })
             })
     }
 
@@ -62,34 +64,37 @@ export function AuthPanel({ ...props }) {
         if (state.mode === "login") {
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
+                    navigate('/campaigns', { replace: false })
                     // const user = userCredential.user;
                 })
                 .catch((error) => {
-                    console.log({ errorCode: error.code, message: error.message })
-                })
-                .finally(() => {
-                    setState({ ...state, NativeButtonLoading: false, redirect: true })
+                    let message = error.message
+                    if (error.code === 'auth/wrong-password') {
+                        message = "Invalid username or password! Please try again."
+                    }
+                    setState({ ...state, message })
+                    console.log({ errorCode: error.code, message: error.message, NativeButtonLoading: false })
                 })
         } else if (state.mode === "signup") {
             createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
+                .then(async (userCredential) => {
                     const user = userCredential.user
-                    return updateProfile(user, {
+                    await updateProfile(user, {
                         displayName: state.name,
                         photoURL: "/images/user.svg",
                     })
+                    navigate('/campaigns', { replace: false })
                 })
                 .catch((error) => {
+                    setState({ ...state, message: error.message, NativeButtonLoading: false, })
                     console.log({ errorCode: error.code, message: error.message })
-                })
-                .finally(() => {
-                    setState({ ...state, NativeButtonLoading: false, redirect: true })
                 })
         }
     }
 
-    if (state.redirect || (user && user.email)) {
-        return <Navigate to="/campaigns" />
+    let isNextDisabled = true
+    if (state.email && state.email.includes("@") && state.password.length >= 8 && (state.mode === 'login' || (state.name))) {
+        isNextDisabled = false
     }
 
     return (
@@ -204,6 +209,14 @@ export function AuthPanel({ ...props }) {
                         </span>
                     </div>
                 </div>
+                <div className="field">
+                    { state.message
+                        ? <div className="notification is-danger">
+                            { state.message }
+                        </div>
+                        : <></>
+                    }
+                </div>
                 {state.mode === "login" ? (
                     <div className="field level also-mobile">
                         <p className="is-size-6">&nbsp;</p>
@@ -216,7 +229,7 @@ export function AuthPanel({ ...props }) {
                 )}
             </div>
             <div className="block buttons is-centered">
-                <button onClick={() => NativeSignin()} disabled={state.email && state.email.includes("@") && state.password.length < 8 && (state.mode === "signup" ? !!state.name : true)} className={"button is-primary is-fullwidth" + (state.NativeButtonLoading ? " is-loading" : "")} type="button">
+                <button onClick={() => NativeSignin()} disabled={isNextDisabled} type="button" className={"button is-primary is-fullwidth" + (state.NativeButtonLoading ? " is-loading" : "")}>
                     {state.mode === "login" ? (
                         <>
                             <span>Login</span>

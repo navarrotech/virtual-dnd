@@ -23,6 +23,43 @@ html
 input
     font-family: 'Noto Sans', 'Cabin', Arial, Helvetica, sans-serif !important
 
+.no-image
+    background: #1B4296
+    display: flex
+    justify-content: center
+    align-items: center
+
+    &.is-rounded
+        border-radius: 50%
+
+    span
+        color: white
+        font-size: 1.35rem
+        font-weight: 600
+        user-select: none
+        pointer-events: none
+
+.label.input-label
+    font-weight: 300
+    background: white
+    margin-bottom: -0.75em
+    margin-left: 1.5em
+    z-index: 2
+    width: fit-content
+    padding: 0 0.15em
+    position: relative
+
+    &+.control
+        z-index: 1
+
+        &.has-icons-left
+            .icon.is-left
+                height: 2.75em
+
+        .input
+            height: 2.75em
+            font-weight: 700
+
 .button.is-google
     $googleButtonHeight: 2.75em
     height: $googleButtonHeight !important

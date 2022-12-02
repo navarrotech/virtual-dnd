@@ -8,6 +8,7 @@ import UserContext from "../../context/User.jsx"
 
 import EditorPageOne from "./Components/EditorPageOne.jsx"
 import EditorPageTwo from "./Components/EditorPageTwo.jsx"
+import EditorPageThr from "./Components/EditorPageThr.jsx"
 
 import Loader from "../../common/Loader"
 
@@ -87,37 +88,31 @@ export default function ViewOne({ ...props }) {
 
     return (
         <div className="container is-max-widescreen">
-            <div className="block columns">
+            <div className="block columns mt-5">
+                <div className="column"></div>
                 <div className="column">
-                    <input
-                        className="input"
-                        value={character.name}
-                        onChange={({ target: { value } }) => {
-                            save({ name: value }, false)
-                        }}
-                        onKeyDown={({ key, target }) => {
-                            if (key === "Enter") {
-                                target.blur()
-                            }
-                        }}
-                        onBlur={() => save({}, true)}
-                    />
-                </div>
-                <div className="column">
-                    <div className="block buttons is-right has-addons">
-                        <button className={"button" + (state.page === 0 ? " is-primary" : "")} type="button">
-                            <span>1</span>
+                    <div className="block buttons is-right has-addons are-medium">
+                        <button className={"button" + (state.page === 0 ? " is-primary" : "")} type="button" onClick={() => { setState({ ...state, page:0 }) }}>
+                            <span>Stats</span>
                         </button>
-                        <button className={"button" + (state.page === 1 ? " is-primary" : "")} type="button">
-                            <span>2</span>
+                        <button className={"button" + (state.page === 1 ? " is-primary" : "")} type="button" onClick={() => { setState({ ...state, page:1 }) }}>
+                            <span>Appearance</span>
                         </button>
-                        <button className={"button" + (state.page === 2 ? " is-primary" : "")} type="button">
-                            <span>3</span>
+                        <button className={"button" + (state.page === 2 ? " is-primary" : "")} type="button" onClick={() => { setState({ ...state, page:2 }) }}>
+                            <span>Spells</span>
                         </button>
                     </div>
                 </div>
             </div>
-            <div className={Styles.CharacterSheet}>{state.page === 0 ? <EditorPageOne character={character} save={save} /> : state.page === 1 ? <EditorPageTwo character={character} save={save} /> : state.page === 2 ? <></> : <></>}</div>
+            <div className={Styles.CharacterSheet}>
+                {
+                    state.page === 0
+                        ? <EditorPageOne character={character} save={save} />
+                        : state.page === 1
+                        ? <EditorPageTwo character={character} save={save} />
+                        : <EditorPageThr character={character} save={save} />
+                }
+            </div>
         </div>
     )
 }

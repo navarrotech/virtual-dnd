@@ -16,6 +16,7 @@
     "stats":{
         "inspiration":0,
         "proficienyBonus":0,
+        "passiveWisdom":0,
         
         "strength":0,
         "strengthAdd":0,

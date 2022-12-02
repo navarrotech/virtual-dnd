@@ -35,6 +35,7 @@ export default function ViewAll({ ...props }) {
             stats: {
                 inspiration: 0,
                 proficienyBonus: 0,
+                passiveWisdom: 0,
 
                 strength: 0,
                 strengthAdd: 0,
@@ -125,7 +126,7 @@ export default function ViewAll({ ...props }) {
     }
 
     return (
-        <div className="container is-fluid">
+        <div className="container is-max-widescreen">
             <div className="block level">
                 <div className="block buttons is-left">
                     <button className="button is-primary is-medium" type="button" onClick={create}>

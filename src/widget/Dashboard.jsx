@@ -14,6 +14,8 @@ import { updateProfile } from "firebase/auth"
 
 import UserContext from "../context/User.jsx"
 
+import ErrorBoundary from './ErrorBoundary.jsx'
+
 import Loader from "../common/Loader.jsx"
 import Watermark from "../images/logo.svg"
 
@@ -39,7 +41,9 @@ export default function Dashboard({ ...props }) {
             <FriendsList />
             <Sidebar getState={[state, setState]} />
             <div className={Styles.Application}>
-                <Outlet />
+                <ErrorBoundary>
+                    <Outlet />
+                </ErrorBoundary>
             </div>
             <Link className={Styles.watermark} to="/">
                 <img src={Watermark} alt="NavarroTech" />
@@ -104,7 +108,7 @@ function Sidebar({ getState, ...props }) {
 
 function FriendsList({ ...props }) {
     const [state, setState] = useState({
-        friends: [{ username: "nebulablade", photoURL: "https://lh3.googleusercontent.com/a-/AFdZucqCeVtwa2SaFFasbdIciOk840rZpYuBwP2OUqVm=s96-c", online: true }],
+        friends: [{ username: "Alex Navarro", photoURL: "https://lh3.googleusercontent.com/a-/AFdZucqCeVtwa2SaFFasbdIciOk840rZpYuBwP2OUqVm=s96-c", online: true }],
         addFriendModal: false,
         loading: true,
     })
@@ -156,8 +160,9 @@ function FriendsList({ ...props }) {
                         // friend: { username: 'nebulablade', photoURL: '', online:true }
                         return (
                             <div className={Styles.myFriend} key={friend.username}>
-                                <figure className="image is-48x48 is-rounded">
-                                    <img src={friend.photoURL} alt={friend.username} />
+                                <figure className="image is-48x48 is-rounded no-image">
+                                    {/* <img src={friend.photoURL} alt={friend.username.substring(0, 1)} /> */}
+                                    <span>{friend.username.split(' ').map(a => a.substring(0,1))}</span>
                                 </figure>
                                 <p>{friend.username}</p>
                             </div>
