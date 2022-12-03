@@ -50,13 +50,18 @@ export default function ViewOne({ ...props }) {
         }
 
         if (saveToDatabase) {
+            console.log('Saving to database...')
             set(reference, character)
+            if(location.state){
+                location.state = character
+            }
         }
     }
 
     useEffect(() => {
         if (location.state) {
             console.log("Gathered information from state!")
+            navigate({ state: {} })
             return setState((s) => {
                 return { ...s, loading: false, character: location.state }
             })
@@ -88,7 +93,7 @@ export default function ViewOne({ ...props }) {
 
     return (
         <div className="container is-max-widescreen">
-            <div className="block columns mt-5">
+            <div className="block columns">
                 <div className="column"></div>
                 <div className="column">
                     <div className="block buttons is-right has-addons are-medium">

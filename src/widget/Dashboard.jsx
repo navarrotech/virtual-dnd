@@ -439,8 +439,8 @@ function SettingsModal({ active, closeModal, ...props }) {
                             </div>
                             <div className="field">
                                 <label className="label">Email Address</label>
-                                <div className="control has-icons-left">
-                                    <input className="input" type="email" placeholder="Email" value={user.email} disabled={true} />
+                                <div className="control has-icons-left"  onClick={() => console.log(user)}>
+                                    <input className="input" type="email" placeholder="Email" value={user.email} disabled={true}/>
                                     <span className="icon is-left">
                                         <FontAwesome6 icon={faEnvelope} />
                                     </span>

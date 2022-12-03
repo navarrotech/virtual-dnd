@@ -39,6 +39,25 @@ input
         user-select: none
         pointer-events: none
 
+.box
+    position: relative
+
+    .box-label
+        position: absolute
+        top: -0.5em
+        left: 0.75em
+        margin-bottom: 0
+        background: white
+        font-weight: 300
+        padding: 0 0.15em
+
+        &.is-centered
+            margin-left: auto
+            margin-right: auto
+            right: 0
+            left: 0
+            width: fit-content
+
 .label.input-label
     font-weight: 300
     background: white

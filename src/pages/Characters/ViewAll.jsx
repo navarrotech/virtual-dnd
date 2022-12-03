@@ -72,7 +72,7 @@ export default function ViewAll({ ...props }) {
             savingThrows: {
                 strength: 0,
                 dexterity: 0,
-                constituion: 0,
+                constitution: 0,
                 intelligence: 0,
                 wisdom: 2,
                 charisma: 2,
@@ -94,7 +94,6 @@ export default function ViewAll({ ...props }) {
                 ideals: "",
                 bonds: "",
                 flaws: "",
-                features: "",
                 languagesKnown: [],
             },
             spells: {

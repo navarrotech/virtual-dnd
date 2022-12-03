@@ -5,68 +5,121 @@ import { faHandSpock, faHatWizard, faShieldHalved, faStarAndCrescent, faWandMagi
 
 import Styles from '../_.module.sass'
 
+const ability_score_modifier_map = {
+    1: -5,
+    2: -4,
+    3: -4,
+    4: -3,
+    5: -3,
+    6: -2,
+    7: -2,
+    8: -1,
+    9: -1,
+    10: 0,
+    11: 0,
+    12: 1,
+    13: 1,
+    14: 2,
+    15: 2,
+    16: 3,
+    17: 3,
+    18: 4,
+    19: 4,
+    20: 5,
+    21: 5,
+    22: 6,
+    23: 6,
+    24: 7,
+    25: 7,
+    26: 8,
+    27: 8,
+    28: 9,
+    29: 9,
+    30: 10
+}
+
 function listenForKeydown({ key, target }) {
-    if (key === "Enter" || key === "Esc") {
+    if (['Enter', 'Esc', 'Escape'].includes(key)) {
+        console.log("Blurring due to Enter or Escape key pressed")
         target.blur()
     }
 }
-export default function EditorPageOne({ character, save }) {
 
-    const [showSkillsModal, setShowSkillsModal] = useState(false)
-    const [showSavingThrowsModal, setShowSavingThrowsModal] = useState(false)
-    
-    function changeListener(key) {
-        return function ({ target: { value } }) {
-            let k = {}; k[key] = value; save(k, false);
-        }
-    }
+function BigStat({ value, character, save, changeListener }) {
+    let v = character.stats[value]
+    v = parseInt(v)
 
-    function BigStat({ value }) {
-        return (
-            <div className={"block " + Styles.BigStat}>
-                <div className="field">
-                    <label className="label is-capitalized">{value}</label>
-                    <div className="control">
-                        <input
-                            className="input has-text-centered is-large"
-                            type="number"
-                            value={character.stats[value]}
-                            onKeyDown={listenForKeydown}
-                            onChange={changeListener('stats.'+value)}
-                            onBlur={() => save({}, true)}
-                            placeholder=""
-                        />
-                    </div>
-                    <div className="control">
-                        <input
-                            className="input has-text-centered is-small"
-                            type="number"
-                            value={character.stats[value+'Add']}
-                            onKeyDown={listenForKeydown}
-                            onChange={changeListener('stats.'+value+'Add')}
-                            onBlur={() => save({}, true)}
-                            placeholder=""
-                        />
-                    </div>
+    let ability_score_modifier = isNaN(v) || !v
+        ? 0
+        : v > 30
+        ? 10
+        : v < 1
+        ? 0
+        : ability_score_modifier_map[v]
+
+    return (
+        <div className={"block box " + Styles.BigStat}>
+            <label className="box-label is-centered has-text-weight-bold is-capitalized">{value}</label>
+            <div className="field">
+                <div className="control">
+                    <input
+                        className="input has-text-centered is-large"
+                        type="number"
+                        value={v}
+                        onKeyDown={listenForKeydown}
+                        onChange={changeListener('stats.'+value)}
+                        onBlur={() => save({}, true)}
+                        placeholder=""
+                    />
+                </div>
+                <div className="control">
+                    <input
+                        className="input has-text-centered"
+                        // type="number"
+                        // value={'+ ' + character.stats[value+'Add']}
+                        value={'+ ' + ability_score_modifier}
+                        // onKeyDown={listenForKeydown}
+                        // onChange={changeListener('stats.'+value+'Add')}
+                        // onBlur={() => save({}, true)}
+                        placeholder=""
+                        readOnly
+                    />
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+}
 
-    function InlineInput({ value_1, value_2, text="" }) {
-        return <div className={Styles.inlineInput}>
+function InlineInput({ value_1, value_2, text="", character, changeListener, save }) {
+    return <div className={'field ' + Styles.inlineInput}>
+        <label className="label is-capitalized mb-0">{value_2}{<strong> {text}</strong>}</label>
+        <div className="control">
             <input
                 className="input"
                 type="number"
                 onKeyDown={listenForKeydown}
-                onChange={changeListener(`${value_1}.${value_2}`)}
+                onChange={changeListener(`${value_1}.${value_2}`, true, true)}
                 value={character[value_1][value_2]}
                 onBlur={() => {
                     save({}, true)
                 }}
             />
-            <label className="label is-capitalized">{value_2}{text ? <strong> {text}</strong>:<></>}</label>
         </div>
+    </div>
+}
+
+export default function EditorPageOne({ character, save }) {
+
+    const [showSkillsModal, setShowSkillsModal] = useState(false)
+    const [showSavingThrowsModal, setShowSavingThrowsModal] = useState(false)
+    
+    function changeListener(key, is_integer=false, save_to_db=false) {
+        return function ({ target: { value } }) {
+            let k = {};
+            if(is_integer){ value = parseInt(value) }
+            k[key] = value;
+            save(k, save_to_db);
+        }
     }
     
     return (
@@ -157,11 +210,28 @@ export default function EditorPageOne({ character, save }) {
                         </div>
                         
                     </div>
-                    <div className="field box is-clickable" onClick={() => setShowSkillsModal(true)}>
+                    <div className="block box is-clickable" onClick={() => setShowSkillsModal(true)}>
                         <label className="label box-label is-clickable">Skills</label>
+                        { Object.keys(character.stats)
+                            .filter(key => {
+                                let value = character.stats[key]
+                                return (!['strength', 'wisdom', 'dexterity', 'intelligence', 'charisma', 'constitution', 'inspiration', 'proficienyBonus', 'passiveWisdom'].includes(key) && value)
+                            })
+                            .map(key => {
+                                let value = character.stats[key]
+                                return <p className={"is-size-6 " + Styles.skillDisplay} key={key}><strong className="is-size-5">+{value}</strong> {key}</p>
+                            })
+                        }
                     </div>
-                    <div className="field box is-clickable" onClick={() => setShowSavingThrowsModal(true)}>
+                    <div className="block box is-clickable" onClick={() => setShowSavingThrowsModal(true)}>
                         <label className="label box-label is-clickable">Saving Throws</label>
+                        { Object.keys(character.savingThrows)
+                            .filter(key => !!character.savingThrows[key])
+                            .map(key => {
+                                let value = character.savingThrows[key]
+                                return <p className={"is-size-6 " + Styles.skillDisplay} key={key}><strong className="is-size-5">+{value}</strong> {key}</p>
+                            })
+                        }
                     </div>
                     <div className="block columns">
                         
@@ -224,29 +294,29 @@ export default function EditorPageOne({ character, save }) {
                 </div>
                 <div className="column">
                     <div className="block box is-flex is-justify-content-center is-align-items-center" style={{ height: '100%' }}>
-                        <h1 className="title has-text-centered" style={{ opacity:'0.2' }}>More Coming Soon</h1>
+                        <h1 className="title has-text-centered" style={{ opacity:'0.2' }} onClick={() => console.log(character)}>More Coming Soon</h1>
                     </div>
                 </div>
             </div>
 
             <div className="block columns">
                 <div className="column">
-                    <BigStat value="strength" />
+                    <BigStat value="strength" character={character} changeListener={changeListener} save={save}/>
                 </div>
                 <div className="column">
-                    <BigStat value="dexterity" />
+                    <BigStat value="dexterity" character={character} changeListener={changeListener} save={save}/>
                 </div>
                 <div className="column">
-                    <BigStat value="constitution" />
+                    <BigStat value="constitution" character={character} changeListener={changeListener} save={save}/>
                 </div>
                 <div className="column">
-                    <BigStat value="intelligence" />
+                    <BigStat value="intelligence" character={character} changeListener={changeListener} save={save}/>
                 </div>
                 <div className="column">
-                    <BigStat value="wisdom" />
+                    <BigStat value="wisdom" character={character} changeListener={changeListener} save={save}/>
                 </div>
                 <div className="column">
-                    <BigStat value="charisma" />
+                    <BigStat value="charisma" character={character} changeListener={changeListener} save={save}/>
                 </div>
             </div>
 
@@ -259,24 +329,32 @@ export default function EditorPageOne({ character, save }) {
                                 <button className="delete" onClick={() => { setShowSkillsModal(false) }}></button>
                             </header>
                             <section className="modal-card-body">
-                                <InlineInput value_1="stats" value_2="acrobatics"     text="(Dex)" />
-                                <InlineInput value_1="stats" value_2="animalHandling" text="(Wis)" />
-                                <InlineInput value_1="stats" value_2="arcana"         text="(Int)" />
-                                <InlineInput value_1="stats" value_2="athletics"      text="(Str)" />
-                                <InlineInput value_1="stats" value_2="deception"      text="(Cha)" />
-                                <InlineInput value_1="stats" value_2="history"        text="(Int)" />
-                                <InlineInput value_1="stats" value_2="insight"        text="(Wis)" />
-                                <InlineInput value_1="stats" value_2="intimidation"   text="(Cha)" />
-                                <InlineInput value_1="stats" value_2="investigation"  text="(Int)" />
-                                <InlineInput value_1="stats" value_2="medicine"       text="(Wis)" />
-                                <InlineInput value_1="stats" value_2="nature"         text="(Int)" />
-                                <InlineInput value_1="stats" value_2="perception"     text="(Wis)" />
-                                <InlineInput value_1="stats" value_2="performance"    text="(Cha)" />
-                                <InlineInput value_1="stats" value_2="persuasion"     text="(Cha)" />
-                                <InlineInput value_1="stats" value_2="religion"       text="(Int)" />
-                                <InlineInput value_1="stats" value_2="sleightOfHand"  text="(Dex)" />
-                                <InlineInput value_1="stats" value_2="stealth"        text="(Dex)" />
-                                <InlineInput value_1="stats" value_2="survival"       text="(Wis)" />
+                                <div className="block columns">
+                                    
+                                    <div className="column">
+                                        <InlineInput value_1="stats" value_2="acrobatics"     text="(Dex)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="animal Handling"text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="arcana"         text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="athletics"      text="(Str)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="deception"      text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="history"        text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="insight"        text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="intimidation"   text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="investigation"  text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                    </div>
+                                    <div className="column">
+                                        <InlineInput value_1="stats" value_2="medicine"       text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="nature"         text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="perception"     text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="performance"    text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="persuasion"     text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="religion"       text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="sleight Of Hand"text="(Dex)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="stealth"        text="(Dex)" character={character} changeListener={changeListener} save={save}/>
+                                        <InlineInput value_1="stats" value_2="survival"       text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                    </div>
+                                    
+                                </div>
                             </section>
                             <footer className="modal-card-foot buttons is-right">
                                 <button className="button" type="button" onClick={() => { setShowSkillsModal(false) }}>
@@ -296,12 +374,12 @@ export default function EditorPageOne({ character, save }) {
                                 <button className="delete" onClick={() => { setShowSavingThrowsModal(false) }}></button>
                             </header>
                             <section className="modal-card-body">
-                                <InlineInput value_1="savingThrows" value_2="strength" />
-                                <InlineInput value_1="savingThrows" value_2="dexterity" />
-                                <InlineInput value_1="savingThrows" value_2="constitution" />
-                                <InlineInput value_1="savingThrows" value_2="intelligence" />
-                                <InlineInput value_1="savingThrows" value_2="wisdom" />
-                                <InlineInput value_1="savingThrows" value_2="charisma" />
+                                <InlineInput value_1="savingThrows" value_2="strength"     character={character} changeListener={changeListener} save={save} />
+                                <InlineInput value_1="savingThrows" value_2="dexterity"    character={character} changeListener={changeListener} save={save} />
+                                <InlineInput value_1="savingThrows" value_2="constitution" character={character} changeListener={changeListener} save={save} />
+                                <InlineInput value_1="savingThrows" value_2="intelligence" character={character} changeListener={changeListener} save={save} />
+                                <InlineInput value_1="savingThrows" value_2="wisdom"       character={character} changeListener={changeListener} save={save} />
+                                <InlineInput value_1="savingThrows" value_2="charisma"     character={character} changeListener={changeListener} save={save} />
                             </section>
                             <footer className="modal-card-foot buttons is-right">
                                 <button className="button" type="button" onClick={() => { setShowSavingThrowsModal(false) }}>

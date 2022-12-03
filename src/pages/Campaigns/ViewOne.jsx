@@ -64,12 +64,13 @@ export default function ViewOne({ ...props }) {
             </div>
             <div className="columns">
                 <div className="column">
-                    {
-                        Object.keys(campaign.players).map((player_key, index) => {
+                    { campaign.players
+                        ? Object.keys(campaign.players).map((player_key, index) => {
                             let player_uid = player_key,
                                 player_value = campaign.players[player_key]
                             return <CampaignPlayerListItem key={player_uid} player={player_value} campaign_uid={id} index={index} />
                         })
+                        : <></>
                     }
                 </div>
                 <div className="column is-4">

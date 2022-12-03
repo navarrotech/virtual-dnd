@@ -68,7 +68,7 @@ export default function EditorPageOne({ character, save }) {
             <div className="block columns">
                 <div className="column">
                     <Textarea value="backstory" label="backstory" rows={9} />
-                    <Textarea value="features" label="features" />
+                    <Textarea value="additionalFeatures" label="features" />
                 </div>
                 <div className="column">
                     <Textarea value="ideals" label="ideals" />
