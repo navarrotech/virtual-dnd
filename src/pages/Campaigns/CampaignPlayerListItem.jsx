@@ -1,7 +1,7 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSync } from "@fortawesome/free-solid-svg-icons";
+import { faBan, faEllipsis, faSync, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // Firebase
 import { getDatabase, ref, onValue, update } from "firebase/database"
@@ -10,10 +10,10 @@ import { getDatabase, ref, onValue, update } from "firebase/database"
 
 export default function CampaignPlayerListItem({ player, index, campaign_uid }) {
 
-    const [state, setState] = useState({ syncing: false })
+    // const [state, setState] = useState({ syncing: false })
 
     async function sync() {
-        setState({ syncing: true })
+        // setState({ syncing: true })
 
         onValue(ref(getDatabase(), "/characters/" + player.character_uid), async (snapshot) => {
             const updates = {};
@@ -22,19 +22,54 @@ export default function CampaignPlayerListItem({ player, index, campaign_uid }) 
 
             await update(ref(getDatabase()), updates)
 
-            setState({ syncing: false })
+            // setState({ syncing: false })
 
         }, { onlyOnce: true });
     }
 
     return (
-        <div className="box level">
+        <div className="level">
             <p>{player.player_name}</p>
-            <button className={"button is-light"+(state.syncing?' is-loading':'')} type="button" data-tooltip="Resync Character Data" onClick={sync}>
-                <span className="icon">
-                    <FontAwesomeIcon icon={faSync} />
-                </span>
-            </button>
+            <div className="dropdown is-right">
+                <div className="dropdown-trigger">
+
+                    <button className="button is-primary">
+                        <span>Dropdown button</span>
+                        <span className="icon is-small">
+                            <FontAwesomeIcon icon={faEllipsis}/>
+                        </span>
+                    </button>
+            
+                </div>
+                <div className="dropdown-menu">
+                    <div className="dropdown-content">
+            
+                        <div className="dropdown-item icon-text" onClick={sync}>
+                            <span className="icon">
+                                <FontAwesomeIcon icon={faSync} />
+                            </span>
+                            <span>Resync Character Data</span>
+                        </div>
+
+                        <hr className="dropdown-divider" />
+                        
+                        <div className="dropdown-item icon-text is-danger" onClick={sync}>
+                            <span className="icon">
+                                <FontAwesomeIcon icon={faXmark} />
+                            </span>
+                            <span>Kick Player</span>
+                        </div>
+                        
+                        <div className="dropdown-item icon-text is-danger" onClick={sync}>
+                            <span className="icon">
+                                <FontAwesomeIcon icon={faBan} />
+                            </span>
+                            <span>Ban Player</span>
+                        </div>
+            
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

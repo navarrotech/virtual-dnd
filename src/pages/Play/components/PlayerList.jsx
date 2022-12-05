@@ -1,26 +1,39 @@
+import Healthbar from './Healthbar';
+
 import Styles from '../_.module.sass'
 
 export default function PlayerList({ players }) {
 
+    if(!players){
+        players = {}
+    }
+
     return (
         <div className={Styles.Players}>
             {
-                Object.values(players).map(player => {
-                    return <div>
-                        <figure className="image is-48x48">
-                            <img src={""} alt={player.player_name} />
-                        </figure>
-                        <p>{player.player_name}</p>
-                        <div className={Styles.Healthbar}>
-                            <div className={Styles.health} style={{ width: '100%' }}>
-                                <span>30 / 30</span>
-                            </div>
-                        </div>
-                    </div>
-                })
+                Object.keys(players).map(player_uid => <PlayerItem key={player_uid} player={players[player_uid]}/>)
             }
-            {/* <p>{myCharacter.name}</p> */}
         </div>
     )
 
+}
+
+function PlayerItem({ player }){
+    const { character:{ name }, player_name="" } = player;
+
+    let player_first_name = player_name.split(' ')[0]
+
+    return <div className={Styles.Player}>
+        <figure className={"image " + Styles.image}>
+            <div style={{ backgroundImage:`url('https://www.outdoorlife.com/uploads/2019/01/23/LRKQTDWTBHYTDVD37SOTHNSCQI.jpg?auto=webp')` }}/>
+        </figure>
+        <div className={Styles.body}>
+            <div className={Styles.titles}>
+                <p>{name}</p>
+                <p>({player_first_name})</p>
+            </div>
+            <p className={Styles.subtitle}>Human | Ex-Jedi</p>
+            <Healthbar current={15} max={30}/>
+        </div>
+    </div>
 }

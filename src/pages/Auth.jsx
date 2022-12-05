@@ -13,6 +13,26 @@ import Loader from "../common/Loader"
 
 import UserContext from "../context/User.jsx"
 
+// function validateUserDoc(user_uid){
+//     return new Promise(acc => {
+//         if(!user_uid){ return acc(null); }
+//         const reference = ref(getDatabase(), 'account/' + user_uid)
+//         onValue(reference, async (snapshot) => {
+//             let exists = snapshot.exists()
+//             // Only take action if it doesn't exist!
+//             if(exists){
+//                 return acc(snapshot.val())
+//             }
+//             const newDoc = {
+//                 campaigns: []
+//             }
+            
+//             await set(reference, newDoc)
+//             acc(newDoc)
+//         }, { onlyOnce: true })
+//     })
+// }
+
 export function AuthPanel({ ...props }) {
 
     const navigate = useNavigate()
@@ -63,14 +83,15 @@ export function AuthPanel({ ...props }) {
 
         if (state.mode === "login") {
             signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
+                .then(async (userCredential) => {
+                    // await validateUserDoc(userCredential.user.uid)
                     navigate('/campaigns', { replace: false })
                     // const user = userCredential.user;
                 })
                 .catch((error) => {
                     let message = error.message
                     if (error.code === 'auth/wrong-password') {
-                        message = "Invalid username or password! Please try again."
+                        message = "Invalid email or password! Please try again."
                     }
                     setState({ ...state, message })
                     console.log({ errorCode: error.code, message: error.message, NativeButtonLoading: false })
@@ -78,11 +99,12 @@ export function AuthPanel({ ...props }) {
         } else if (state.mode === "signup") {
             createUserWithEmailAndPassword(auth, email, password)
                 .then(async (userCredential) => {
-                    const user = userCredential.user
-                    await updateProfile(user, {
+                    // const user = userCredential.user
+                    await updateProfile(userCredential.user, {
                         displayName: state.name,
-                        photoURL: "/images/user.svg",
+                        // photoURL: "/images/user.svg",
                     })
+                    // await validateUserDoc(userCredential.user.uid)
                     navigate('/campaigns', { replace: false })
                 })
                 .catch((error) => {

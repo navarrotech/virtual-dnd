@@ -3,6 +3,7 @@
 .CharacterList
     display: flex
     flex-flow: row wrap
+    justify-content: center
     gap: 1em
         
     .Character
@@ -17,8 +18,9 @@
         align-items: center
         justify-content: center
 
+        &.isSelected,
         &:hover
-            background: $primary
+            background: $primary !important
             transform: scale(1.05)
 
             .titles *
@@ -37,6 +39,12 @@
 
             *
                 transition: color 200ms ease
+
+    &.onDark .Character
+        background: $gray
+
+        .titles *
+            color: white
 
 .skillDisplay
     display: inline-block

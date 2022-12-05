@@ -5,7 +5,7 @@
     "created": "2022-11-30T18:01:26.440Z",
     "updated": "2022-11-30T18:01:26.440Z",
     "chat":[
-        { "what":"Hey!", "who":"evader", "when":"2022-11-30T18:01:26.440Z" }
+        { "what":"Hey!", "who":"user.uid", "when":"2022-11-30T18:01:26.440Z", "name":"user.displayName" }
     ],
     "map":{
         
@@ -13,10 +13,17 @@
     "players":{
         "uid_123":{
             "player_name":"Alex Navarro",
-            "player_username":"navarro",
             "character_uid":"",
             "character":{},
-            "current":{}
+            "current":{
+                "health": 30,
+                "maxHealth":0,
+                "armorClass":0,
+                "initiative":0,
+                "speed":30,
+                "level":1,
+                "experience":0
+            }
         }
     }
 }

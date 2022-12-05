@@ -4,6 +4,6 @@ import Play from "./Play.jsx"
 
 export default (
     <>
-        <Route to="/play/:useruid/:id" element={<Play />} />
+        <Route path="/play/:id" element={<Play />} />
     </>
 )

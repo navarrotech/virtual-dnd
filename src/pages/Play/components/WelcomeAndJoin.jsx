@@ -3,14 +3,18 @@ import { Link } from 'react-router-dom'
 
 import { ref, getDatabase, onValue, set } from "firebase/database"
 
-import UserContext from '../../../context/User.jsx'
+import UserContext from 'context/User.jsx'
 
 import Styles from '../_.module.sass'
+import CharacterStyles from "pages/Characters/_.module.sass"
 
-import Loader from '../../../common/Loader.jsx'
+import CharacterItem from 'pages/Characters/Components/CharacterTile.jsx'
+import Loader from 'common/Loader.jsx'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
+
+import NavarrotechLogo from 'images/logo.svg'
 
 export default function WelcomeAndJoin({ campaign, owneruid, api }) {
 
@@ -24,13 +28,19 @@ export default function WelcomeAndJoin({ campaign, owneruid, api }) {
     function joinGame() {
         const { selected_character: character } = state
 
-        set(ref(getDatabase(), `campaigns/${owneruid}/players/${user.uid}`), {
+        set(ref(getDatabase(), `campaigns/${campaign.uid}/players/${user.uid}`), {
             player_name: user.displayName,
-            player_username: user.username,
-            player_uid: user.uid,
             character_uid: character.uid,
             character,
-            current:{}
+            current:{
+                health: 30,
+                maxHealth: 0,
+                armorClass: 0,
+                initiative: 0,
+                speed: 30,
+                level: 1,
+                experience: 0
+            }
         })
     }
 
@@ -48,43 +58,58 @@ export default function WelcomeAndJoin({ campaign, owneruid, api }) {
     }, [user])
 
     return (
-        <div className={Styles.WelcomeAndJoin}>
-            <div className="block">
-                <h1 className="title has-text-centered is-size-1">Welcome</h1>
-                <h2 className="subtitle has-text-centered is-size-3">To join this game, select a character to play as.</h2>
-            </div>
-            <div className="block">
-                { state.loading
-                    ? <Loader />
-                    : state.characters.map(character => {
-                        return <div className="block box" onClick={() => {
-                            setState({ ...state, selected_character: character })
-                        }}>
-                            <p>{character.name}</p>
-                            <p>{character.features.class}</p>
+        <div className={'section ' + Styles.WelcomeAndJoin}>
+            <div className="hero is-halfheight">
+                <div className="hero-body">
+                    <div className="container is-max-desktop">
+                        <figure className="block image is-64x64 is-centered">
+                            <img src={NavarrotechLogo} alt="Navarrotech"/>
+                        </figure>
+                        <div className="block">
+                            <h1 className="title has-text-centered is-size-1 has-text-white">Join Game</h1>
+                            <h2 className="subtitle has-text-centered is-size-3 has-text-white">
+                                {
+                                    !state.loading && !state.characters.length
+                                        ? <>To join this game, you need to create a character first.</>
+                                        : <>Select a character to play as.</>
+                                }
+                                
+                            </h2>
                         </div>
-                    })
-                }
-                { !state.loading && !state.characters.length
-                    ? <div>
-                        <p className="has-text-centered">You don't have any characters created! Click below to create your first character</p>
-                        <Link className="button is-primary" to="/characters">
-                            <span>Create A Character</span>
-                            <span className="icon">
-                                <FontAwesomeIcon icon={faPlus}/>
-                            </span>
-                        </Link>
+                        <div className={"block " + CharacterStyles.CharacterList + " " + CharacterStyles.onDark}>
+                            { state.loading
+                                ? <Loader />
+                                : state.characters.map(character => {
+                                    return <CharacterItem
+                                        key={character.uid}
+                                        character={character}
+                                        selected={state.selected_character ? state.selected_character.uid === character.uid : false}
+                                        onClick={() => {
+                                            setState({ ...state, selected_character: character });
+                                        }}
+                                    />
+                                    // return <p>Character</p>
+                                })
+                            }
+                        </div>
+                        <div className="block buttons is-centered">
+                        { !state.loading && !state.characters.length
+                            ? <Link className="button is-primary" to="/characters">
+                                <span>Create A Character</span>
+                                <span className="icon">
+                                    <FontAwesomeIcon icon={faPlus}/>
+                                </span>
+                            </Link>
+                            : <button className="button is-primary" type="button" disabled={!state.selected_character} onClick={joinGame}>
+                                <span>Join Game</span>
+                                <span className="icon">
+                                    <FontAwesomeIcon icon={faArrowRight}/>
+                                </span>
+                            </button>
+                        }
+                        </div>
                     </div>
-                    : <></>
-                }
-            </div>
-            <div className="block buttons is-centered">
-                <button className="button is-primary" type="button" disabled={!state.selected_character} onClick={joinGame}>
-                    <span>Join Game</span>
-                    <span className="icon">
-                        <FontAwesomeIcon icon={faArrowRight}/>
-                    </span>
-                </button>
+                </div>
             </div>
         </div>
     )

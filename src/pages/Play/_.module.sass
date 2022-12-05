@@ -1,28 +1,121 @@
 @use './src/theme' as *
 
+$livechatWidth:  600px
+$livechatHeight: 400px
+$livechatRadius: 7px
+$playerImage: 80px
+$playerBorderRadius: 4px
+
 .Game
+    background: #fafafb
     position: relative
+    height: 100vh
+    max-height: 100vh
+    width: 100vw
+    max-width: 100vw
 
 .LiveChat
     z-index: 10
-    position: relative
+    position: absolute
+    left: calc(50vw - ($livechatWidth/2))
+    // top: calc(50vh - $livechatHeight)
+    // top: 80px
+    bottom: 350px
+    height: $livechatHeight
+    width:  $livechatWidth
+    border-radius: $livechatRadius
+    border: 1px solid rgba(255,255,255,0.3)
 
     .history
+        height: calc($livechatHeight - 100px)
+        min-height: calc($livechatHeight - 100px)
+        max-height: calc($livechatHeight - 100px)
+        overflow-y: auto
+        position: relative
+        display: block
+        // display: flex
+        // align-items: flex-end
 
-        .message
-            color: white
+        .messages
+            padding: 2.5em 0 0.75em
+            height: fit-content
 
-        &.isMe
-            color: $primary
+            .message
+                // color: white
+                padding: 0.3em 0.65em
+                transition: opacity 300ms ease
+                // width: fit-content
+
+                // strong
+                //     color: white
+
+                &.isMe
+                    // color: #5aa0ff
+
+                    strong
+                        color: $primary
+                        // color: #5aa0ff
+
+                &.isInvisible
+                    opacity: 0
+                    pointer-events: none
 
     .actions
+        // background: rgba(255,255,255,0.2)
+        border-radius: 0 0 $livechatRadius $livechatRadius
+        margin-top: auto
+        height: 100px
         position: relative
 
-.WelcomeAndJoin
-    z-index: 100
-    position: relative
+        :global(.textarea)
+            opacity: 0
+            pointer-events: none
+            width: calc($livechatWidth - 49px)
+            max-width: calc($livechatWidth - 49px)
+            height: 100px
+            max-height: 100px
+            resize: none
+            min-height: unset
+            min-width: unset
 
-.Healthbar
+            background: transparent
+            border: none
+            outline: none
+            box-shadow: none
+            // color: white
+
+            &::placeholder
+                color: rgba(255,255,255,0.5)
+
+        .sendButton
+            position: absolute
+            right: 0.5em
+            top: 0.5em
+
+    &.showAll
+        // background: pink
+
+        .message
+            opacity: 1 !important
+            pointer-events: all !important
+
+        :global(.textarea)
+            opacity: 1
+            pointer-events: all
+
+    &:not(.showAll)
+        .history
+            overflow-y: hidden
+
+.navbar
+    @include shadow($strength: 8)
+    padding: 0.25em 1em
+    // background-color: $gray !important
+
+.WelcomeAndJoin
+    background: black
+    height: 100vh
+    z-index: 100
     position: relative
 
 .Map
@@ -46,7 +139,7 @@
         .Entity
             // background: $success
             background: $red
-            border: 3px solid white
+            // border: 3px solid white
             border-radius: 50%
             position: absolute
             width: 20px
@@ -57,3 +150,93 @@
 
         .Building
             border: 1px solid blue
+
+.Players
+    position: absolute
+    top: 100px
+    right: 1em
+
+    .Player
+        background: white
+        @include shadow(10)
+        min-width: 300px
+        max-width: 300px
+        height: 80px
+        border-radius: $playerBorderRadius
+
+        .image
+            display: inline-block
+            width: $playerImage
+            height: $playerImage
+            div
+                width: $playerImage
+                height: $playerImage
+                border-radius: $playerBorderRadius 0 0 $playerBorderRadius
+                background-size: cover
+                background-position: 50%
+
+        .body
+            width: calc(100% - 80px)
+            display: inline-block
+            vertical-align: top
+
+            .titles
+                width: 100%
+                display: flex
+                justify-content: space-between
+                align-items: center
+                padding: 0.25em 0.75em 0 0.75em
+
+                p
+                    font-weight: bold
+                    font-size: 1.1rem
+
+                    &:nth-child(2)
+                        opacity: 0.65
+
+
+            .subtitle
+                padding: 0 0.75em
+                font-size: 0.9rem
+
+        .Healthbar
+            font-size: 0.9rem
+            margin-top: 0.5em
+            border-radius: 0 0 $playerBorderRadius 0
+
+.Healthbar
+    position: relative
+    display: block
+    background: black
+    height: 1.5em
+    width: 100%
+    overflow: hidden
+
+    .healthText
+        position: absolute
+        display: block
+        top: 0
+        bottom: 0
+        left: 0
+        right: 0
+        width: 100%
+        display: flex
+        align-items: center
+        justify-content: center
+        color: white
+        text-align: center
+
+    .current
+        height: 1.5em
+        
+    &:global(.is-success)
+        .current
+            background: #48c78e
+    &:global(.is-link)
+        .current
+            background: #4868c7
+
+.CharacterPanel
+
+    .Healthbar
+        font-size: 1.2rem !important

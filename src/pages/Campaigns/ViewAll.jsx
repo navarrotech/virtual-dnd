@@ -5,7 +5,7 @@ import { useNavigate } from "react-router"
 import UserContext from "../../context/User.jsx"
 
 // Firebase
-import { getDatabase, ref, push, onValue } from "firebase/database"
+import { getDatabase, ref, push, onValue, set } from "firebase/database"
 
 // Components & Styles
 import Loader from "../../common/Loader"
@@ -18,17 +18,23 @@ export default function ViewAll({ ...props }) {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const reference = ref(getDatabase(), "campaigns/" + user.uid)
+        const reference = ref(getDatabase(), "accounts/" + user.uid + "/campaigns")
+        console.log("Gathering data!")
         const unsubscribe = onValue(reference, (snapshot) => {
+            console.log("Incoming sync")
+            let campaigns = snapshot.val()
+            if(!snapshot.exists()){
+                campaigns = []
+            }
             setState((s) => {
-                return { ...s, loading: false, campaigns: snapshot.val() }
+                return { ...s, loading: false, campaigns }
             })
-        })
+        }, )
         return () => { unsubscribe(); }
     }, [user])
 
     function create() {
-        const reference = ref(getDatabase(), "campaigns/" + user.uid)
+        const reference = ref(getDatabase(), "/campaigns")
         push(reference, {
             name: "New Campaign",
             owner: user.uid,
@@ -36,8 +42,17 @@ export default function ViewAll({ ...props }) {
             updated: new Date().toISOString(),
             chat: [],
             players: {},
-        }).then((document) => {
-            const { key } = document
+        }).then((doc) => {
+            let { key } = doc
+            push(ref(getDatabase(), "accounts/"+user.uid+'/campaigns'), {
+                name: "New Campaign",
+                owner: user.uid,
+                campaign_uid: key
+            })
+            .then((doc) => {
+                let { key:key2 } = doc
+                set(ref(getDatabase(), "campaigns/"+key+"/accountLink"), key2)
+            })
             navigate("/campaigns/" + key, { replace: false })
         })
     }
@@ -58,7 +73,7 @@ export default function ViewAll({ ...props }) {
             <div className={"block " + Styles.CampaignList}>
                 {
                     Object.keys(state.campaigns||[]).length
-                        ? Object.keys(state.campaigns).map((key) => <CampaignItem key={key} id={key} campaign={state.campaigns[key]} />)
+                        ? Object.keys(state.campaigns).map((key) => <CampaignItem key={key} campaign={state.campaigns[key]} />)
                         : <div className=""><p>You don't have any campaigns created yet!</p></div>
                 }
             </div>
