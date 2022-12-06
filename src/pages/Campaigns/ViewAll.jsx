@@ -5,7 +5,7 @@ import { useNavigate } from "react-router"
 import UserContext from "../../context/User.jsx"
 
 // Firebase
-import { getDatabase, ref, push, onValue, set } from "firebase/database"
+import { getDatabase, onValue, ref, push, set } from "firebase/database"
 
 // Components & Styles
 import Loader from "../../common/Loader"
@@ -14,23 +14,21 @@ import Styles from "./_.module.sass"
 
 export default function ViewAll({ ...props }) {
     const [user] = useContext(UserContext)
-    const [state, setState] = useState({ campaigns: [], loading: true })
+    const [state, setState] = useState({
+        campaigns: [],
+        joinedCampaigns: [],
+        loading: true
+    })
     const navigate = useNavigate()
 
     useEffect(() => {
-        const reference = ref(getDatabase(), "accounts/" + user.uid + "/campaigns")
-        console.log("Gathering data!")
-        const unsubscribe = onValue(reference, (snapshot) => {
-            console.log("Incoming sync")
-            let campaigns = snapshot.val()
-            if(!snapshot.exists()){
-                campaigns = []
-            }
+        const reference = ref(getDatabase(), "accounts/" + user.uid)
+        onValue(reference, (snapshot) => {
+            let { campaigns=[], joinedCampaigns=[] } = snapshot.val() || {}
             setState((s) => {
-                return { ...s, loading: false, campaigns }
+                return {...s, loading: false, campaigns, joinedCampaigns }
             })
-        }, )
-        return () => { unsubscribe(); }
+        })
     }, [user])
 
     function create() {
@@ -70,13 +68,35 @@ export default function ViewAll({ ...props }) {
                     </button>
                 </div>
             </div>
-            <div className={"block " + Styles.CampaignList}>
-                {
-                    Object.keys(state.campaigns||[]).length
-                        ? Object.keys(state.campaigns).map((key) => <CampaignItem key={key} campaign={state.campaigns[key]} />)
-                        : <div className=""><p>You don't have any campaigns created yet!</p></div>
-                }
-            </div>
+            {
+                Object.keys(state.campaigns||[]).length
+                    ? <>
+                        <div className="block">
+                            <h2 className="is-size-3">Campaigns created:</h2>
+                        </div>
+                        <div className={"block " + Styles.CampaignList}>
+                            { Object.keys(state.campaigns).map((key) => <CampaignItem key={key} uid={key} campaign={state.campaigns[key]} owner="me"/>) }
+                        </div>
+                    </>
+                    : <></>
+            }
+            {
+                Object.keys(state.joinedCampaigns||[]).length
+                    ? <>
+                        <div className="block">
+                            <h2 className="is-size-3">Campaigns joined:</h2>
+                        </div>
+                        <div className={"block " + Styles.CampaignList}>
+                            { Object.keys(state.joinedCampaigns).map((key) => <CampaignItem key={key} uid={key} campaign={state.joinedCampaigns[key]} owner="other"/>) }
+                        </div>
+                    </>
+                    : <></>
+            }
+            {
+                Object.keys(state.campaigns||[]).length || Object.keys(state.joinedCampaigns||[]).length
+                    ? <></>
+                    : <div className=""><p>You haven't created or joined any campaigns yet!</p></div>
+            }
         </div>
     )
 }

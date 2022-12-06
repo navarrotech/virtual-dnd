@@ -59,7 +59,7 @@ export default function Play() {
     if (!user || !user.uid) { console.log('User not found!'); return <Navigate to="/login" replace={false} /> }
 
     // Loading check
-    if (state.loading || !state.campaign || !state.campaign.name) { return <Loader /> }
+    if (state.loading || !state.campaign_name) { return <Loader /> }
 
     // let myPlayerToken = campaign.owner !== user.uid && campaign.players ? campaign.players.find(a => a.player_uid === user.uid) || null : null
     let myPlayerToken = state.campaign_owner !== user.uid && players
@@ -67,7 +67,7 @@ export default function Play() {
         : null
 
     if (state.campaign_owner !== user.uid && (!myPlayerToken || !myPlayerToken.character)) {
-        return <WelcomeAndJoin campaign_uid={id} api={api} />
+        return <WelcomeAndJoin campaign_uid={id} campaign_name={state.campaign_name} api={api} />
     }
 
     return (

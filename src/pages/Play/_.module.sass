@@ -164,6 +164,9 @@ $playerBorderRadius: 4px
         height: 80px
         border-radius: $playerBorderRadius
 
+        &:not(:last-child)
+            margin-bottom: 1.5em
+
         .image
             display: inline-block
             width: $playerImage
@@ -237,6 +240,23 @@ $playerBorderRadius: 4px
             background: #4868c7
 
 .CharacterPanel
+    position: absolute
+    bottom: 3em
+    left: 0
+    right: 0
+    margin: auto
+
+    .Stats
+        .OddColumn
+            max-height: 140px
+            overflow-y: auto
+
+        :global(.box)
+            padding: 0.35rem 0.25em 0.75rem
+            margin: 0.25em
 
     .Healthbar
-        font-size: 1.2rem !important
+        font-size: 1.35rem !important
+    
+        &:not(:last-child)
+            margin-bottom: 0.35em

@@ -16,7 +16,7 @@ import { faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import NavarrotechLogo from 'images/logo.svg'
 
-export default function WelcomeAndJoin({ campaign_uid, owneruid, api }) {
+export default function WelcomeAndJoin({ campaign_uid, campaign_name, api }) {
 
     const [user] = useContext(UserContext)
     const [state, setState] = useState({
@@ -41,6 +41,9 @@ export default function WelcomeAndJoin({ campaign_uid, owneruid, api }) {
                 level: 1,
                 experience: 0
             }
+        })
+        set(ref(getDatabase(), `accounts/${user.uid}/joinedCampaigns/${campaign_uid}`), {
+            name: campaign_name
         })
     }
 
