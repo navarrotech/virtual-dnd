@@ -21,7 +21,14 @@ import getAPI from './api/_all.js'
 export default function Play() {
     const [user] = useContext(UserContext)
     const { id } = useParams()
-    const [state, setState] = useState({ loading: true, initialized: false, campaign: {} })
+    const [state, setState] = useState({
+        loading: true,
+        initialized: false,
+        players: {},
+        campaign_name: '',
+        campaign_owner: ''
+    })
+    const [players, setPlayers] = useState(null)
     const api = useMemo(() => { return getAPI(id, user); }, [id, user])
     const database = useMemo(() => getDatabase(), [])
 
@@ -29,11 +36,22 @@ export default function Play() {
     useEffect(() => {
         if (!user || !user.uid) { return; }
         // let initialized = false;
-        const unsubscribe = onValue(ref(database, "campaigns/" + id), async (snapshot) => {
-            console.log("Data syncing...")
-            const doc = snapshot.val()
-            setState((s) => { return { ...s, loading: false, campaign:{ ...doc, uid:id } } })
+        // This updates whenever the players update
+        const unsubscribe = onValue(ref(database, "campaigns/" + id + '/players'), async (snapshot) => {
+            console.log("Player data syncing...")
+            setPlayers(snapshot.val())
         })
+        onValue(ref(database, "campaigns/" + id), async (snapshot) => {
+            const doc = snapshot.val()
+            setState((s) => {
+                return {
+                    ...s,
+                    loading: false,
+                    campaign_name: doc.name,
+                    campaign_owner: doc.owner
+                }
+            })
+        }, { onlyOnce: true })
         return () => { unsubscribe(); }
     }, [id, user, database])
 
@@ -43,23 +61,20 @@ export default function Play() {
     // Loading check
     if (state.loading || !state.campaign || !state.campaign.name) { return <Loader /> }
 
-    // Gather variables
-    const { campaign } = state
-
     // let myPlayerToken = campaign.owner !== user.uid && campaign.players ? campaign.players.find(a => a.player_uid === user.uid) || null : null
-    let myPlayerToken = campaign.owner !== user.uid && campaign.players
-        ? campaign.players[user.uid] || null
+    let myPlayerToken = state.campaign_owner !== user.uid && players
+        ? players[user.uid] || null
         : null
 
-    if (campaign.owner !== user.uid && (!myPlayerToken || !myPlayerToken.character)) {
-        return <WelcomeAndJoin campaign={campaign} api={api} />
+    if (state.campaign_owner !== user.uid && (!myPlayerToken || !myPlayerToken.character)) {
+        return <WelcomeAndJoin campaign_uid={id} api={api} />
     }
 
     return (
         <div className={Styles.Game}>
-            <Navbar campaign={campaign} />
-            <PlayerList players={campaign.players} api={api}/>
-            <LiveChat chat={campaign.chat} me={user.uid} api={api}/>
+            <Navbar campaign_name={state.campaign_name} />
+            <PlayerList players={players} api={api}/>
+            <LiveChat me={user.uid} api={api}/>
             <CharacterPanel player={myPlayerToken} api={api}/>
             {/* <Map map={campaign.map} players={campaign.players} /> */}
         </div>

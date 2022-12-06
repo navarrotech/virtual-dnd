@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom'
+
+import { getDatabase, ref, onValue } from "firebase/database"
 
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 // import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -7,27 +10,17 @@ import Styles from '../_.module.sass'
 
 import moment from "moment"
 
-export default function LiveChat({ chat:rawChat, me, api }){
+export default function LiveChat({ me, api }){
 
     const [ state, setState ] = useState({
         message: '',
         show: false
     })
+    const { id } = useParams()
     const [ time, setTime ] = useState(moment())
+    const [ chat, setChat ] = useState([])
     const textarea = useRef()
     const historyPanel = useRef()
-
-    const chat = rawChat
-        ? Object.keys(rawChat)
-            .map(key => {
-                let values = rawChat[key];
-                return { ...values, uid:key }
-            })
-            // Sort: May be unnecessary?
-            .sort((a,b) => {
-                return a.when - b.when
-            })
-        : []
 
     function scrollToBottom(){
         try{ historyPanel.current.scroll(0, 100000)
@@ -42,6 +35,33 @@ export default function LiveChat({ chat:rawChat, me, api }){
         if(textarea && textarea.current){ textarea.current.blur() }
     }
 
+    // Get and sync chat data from db
+    useEffect(() => {
+        // let initialized = false;
+        // This updates whenever the players update
+        console.log("Resubscribing to chat!")
+        const unsubscribe = onValue(ref(getDatabase(), "campaigns/" + id + '/chat'), async (snapshot) => {
+            console.log("Chat data syncing...")
+
+            let rawChat = snapshot.val()
+            let chat = rawChat
+                ? Object.keys(rawChat)
+                    .map(key => {
+                        let values = rawChat[key];
+                        return { ...values, uid:key }
+                    })
+                    // Sort: May be unnecessary, but we should do it to verify our data is always legit.
+                    .sort((a,b) => {
+                        return a.when - b.when
+                    })
+                : []
+
+            setChat(chat)
+        })
+        return () => { unsubscribe(); }
+    }, [id])
+
+    // Listen to "Enter" and "Escape" key globally to trigger input text
     useEffect(() => {
         const listener = function(event){
 
@@ -64,6 +84,7 @@ export default function LiveChat({ chat:rawChat, me, api }){
         }
     }, [state])
 
+    // Set interval for every 1 second, that checks when the messages were sent and styles them
     useEffect(() => {
         const interval = setInterval(() => {
             setTime(moment())
@@ -71,10 +92,11 @@ export default function LiveChat({ chat:rawChat, me, api }){
         return () => { clearInterval(interval) }
     }, [])
 
+    // Scroll to the bottom of the messages every time it's necessary
     useEffect(() => {
         if(state.show){ return }
         scrollToBottom()
-    }, [state, rawChat])
+    }, [state, chat])
 
     return (
         <div className={Styles.LiveChat + (state.show?' '+Styles.showAll:'')}>

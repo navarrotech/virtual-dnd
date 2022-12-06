@@ -7,7 +7,7 @@ import NameTag from 'common/NameTag.jsx'
 
 import Styles from '../_.module.sass'
 
-export default function Navbar({ campaign, ...props }) {
+export default function Navbar({ campaign_name, ...props }) {
     
     const [state, setState] = useState({ sharing: false })
 
@@ -27,7 +27,7 @@ export default function Navbar({ campaign, ...props }) {
                 <NameTag/>
             </div>
             <div className="column">
-                <h1 className="title has-text-centered m-0">{campaign.name}</h1>
+                <h1 className="title has-text-centered m-0">{campaign_name}</h1>
             </div>
             <div className="column">
                 <div className="block buttons is-right">

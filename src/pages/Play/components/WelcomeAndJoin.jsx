@@ -16,7 +16,7 @@ import { faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import NavarrotechLogo from 'images/logo.svg'
 
-export default function WelcomeAndJoin({ campaign, owneruid, api }) {
+export default function WelcomeAndJoin({ campaign_uid, owneruid, api }) {
 
     const [user] = useContext(UserContext)
     const [state, setState] = useState({
@@ -28,7 +28,7 @@ export default function WelcomeAndJoin({ campaign, owneruid, api }) {
     function joinGame() {
         const { selected_character: character } = state
 
-        set(ref(getDatabase(), `campaigns/${campaign.uid}/players/${user.uid}`), {
+        set(ref(getDatabase(), `campaigns/${campaign_uid}/players/${user.uid}`), {
             player_name: user.displayName,
             character_uid: character.uid,
             character,
