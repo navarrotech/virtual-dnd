@@ -31,7 +31,7 @@ export default function ViewAll({ ...props }) {
     function create() {
         push(ref(getDatabase(), "characters/" + user.uid), {
             name: "New Character",
-            image: "",
+            image: "https://firebasestorage.googleapis.com/v0/b/dnd-virtual.appspot.com/o/avatars%2Fanonymous.png?alt=media",
             stats: {
                 inspiration: 0,
                 proficienyBonus: 0,

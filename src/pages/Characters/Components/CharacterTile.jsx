@@ -3,9 +3,13 @@ import Styles from '../_.module.sass'
 
 export default function CharacterTile({ character, onClick, selected=false }) {
     const content = (<>
-        <div className={Styles.image} style={{ backgroundImage: `url(${character.image})` }} />
+        {/* <div className={Styles.image} style={{ backgroundImage: `url(${character.image})` }} /> */}
+        <figure className={"image " + Styles.image}>
+            <img src={character.image} alt={character.name}/>
+        </figure>
         <div className={Styles.titles}>
-            <h1 className="title has-text-centered">{character.name}</h1>
+            <h1 className="title">{character.name}</h1>
+            <h2 className="subtitle">{character.features.race} {character.features.class?'|':''} {character.features.class}</h2>
         </div>
     </>)
 

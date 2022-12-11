@@ -1,14 +1,9 @@
-import { useState, useEffect, useContext, useRef } from "react"
+import { useState, useEffect, useContext } from "react"
 import { Outlet, Link, Navigate, NavLink } from "react-router-dom"
 
 import { FontAwesomeIcon as FontAwesome6 } from "@fortawesome/react-fontawesome"
 import { faGears, faRightFromBracket, faHatWizard, faEnvelope, faUserGroup, faPlus, faUser } from "@fortawesome/free-solid-svg-icons"
 
-import { Image } from "image-js"
-import ReactCrop from "react-image-crop"
-import "react-image-crop/src/ReactCrop.scss"
-
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"
 import { getDatabase, ref, onValue } from "firebase/database"
 import { updateProfile } from "firebase/auth"
 
@@ -16,8 +11,9 @@ import UserContext from "../context/User.jsx"
 
 import ErrorBoundary from './ErrorBoundary.jsx'
 
-import Loader from "../common/Loader.jsx"
 import Watermark from "../images/logo.svg"
+
+import ChooseAvatar from "pages/Characters/Components/ChooseAvatar.jsx"
 
 import Styles from "./Dashboard.module.sass"
 
@@ -213,24 +209,12 @@ function FriendsList({ ...props }) {
 
 function SettingsModal({ active, closeModal, ...props }) {
     const [user, setUser] = useContext(UserContext)
-    const [crop, setCrop] = useState({
-        unit: "px",
-        width: 64,
-        height: 64,
-        x: 25,
-        y: 25,
-    })
+
     const [state, setState] = useState({
-        file: null,
-        files: [],
-        filePreview: "",
-        uploading: false,
-        cropModal: false,
+        showChooseAvatar: false,
         displayName: user.displayName,
         username: user.username||''
     })
-
-    const fileInput = useRef()
 
     function save(update) {
         if (!update || !Object.keys(update).length) {
@@ -239,124 +223,17 @@ function SettingsModal({ active, closeModal, ...props }) {
         updateProfile(user.auth.currentUser, update).catch((error) => console.log(error))
     }
 
-    function upload() {
-        const { file } = state
-        const storage = getStorage()
-        const filereader = new FileReader()
-        const storageReference = storageRef(storage, `/user/${user.uid}/profile.png`)
-
-        setState({
-            ...state,
-            cropModal: false,
-            file: null,
-            filePreview: null,
-            uploading: true,
-        })
-
-        filereader.onload = function () {
-            Image.load(filereader.result)
-                .then(function (image) {
-                    const x = image.width * (crop.x / 100),
-                        y = image.height * (crop.y / 100),
-                        width = image.width * (crop.width / 100),
-                        height = image.height * (crop.height / 100)
-
-                    return image
-                        .crop({
-                            x,
-                            y,
-                            width,
-                            height,
-                        })
-                        .toBlob()
-                })
-                .then((image) => {
-                    setCrop({
-                        unit: "%",
-                        width: 50,
-                        height: 50,
-                        x: 25,
-                        y: 25,
-                    })
-                    return uploadBytes(storageReference, image)
-                })
-                .then((snapshot) => {
-                    setState({ uploading: false })
-                    return getDownloadURL(storageReference)
-                })
-                .then((photoURL) => {
+    if(state.showChooseAvatar){
+        return <ChooseAvatar
+            current={user.photoURL}
+            onChoose={(photoURL) => {
+                if(photoURL){
+                    save({ photoURL })
                     setUser({ ...user, photoURL })
-                    return save({ photoURL })
-                })
-        }
-        filereader.readAsArrayBuffer(file)
-    }
-
-    function startCrop([file]) {
-        if (!file) {
-            return
-        }
-
-        const megabyte = 1048576
-        if (file.size > megabyte * 2) {
-            return
-        }
-
-        let reader = new FileReader()
-        reader.onload = function () {
-            setState({
-                ...state,
-                cropModal: true,
-                file,
-                filePreview: reader.result,
-            })
-        }
-        reader.readAsDataURL(file)
-    }
-
-    if (state.cropModal) {
-        return (
-            <div className="modal is-active">
-                <div
-                    className="modal-background"
-                    onClick={() => {
-                        setState({ ...state, cropModal: false })
-                    }}
-                ></div>
-                <div className="modal-card">
-                    <header className="modal-card-head">
-                        <p className="modal-card-title">Crop Image</p>
-                        <button
-                            className="delete is-medium"
-                            onClick={() => {
-                                setState({ ...state, cropModal: false })
-                            }}
-                        ></button>
-                    </header>
-                    <section className="modal-card-body">
-                        <div className="block mx-auto">
-                            <ReactCrop minWidth={64} aspect={1} keepSelection={true} crop={crop} onChange={(pixels, percent) => setCrop(percent)}>
-                                <img src={state.filePreview} alt="Thumbnail Preview" />
-                            </ReactCrop>
-                        </div>
-                    </section>
-                    <footer className="modal-card-foot buttons is-right">
-                        <button
-                            className="button"
-                            type="button"
-                            onClick={() => {
-                                setState({ ...state, cropModal: false })
-                            }}
-                        >
-                            <span>Cancel</span>
-                        </button>
-                        <button className="button is-primary" type="button" onClick={upload}>
-                            <span>Save</span>
-                        </button>
-                    </footer>
-                </div>
-            </div>
-        )
+                }
+                setState({ ...state, showChooseAvatar: false })
+            }}
+        />
     }
 
     return (
@@ -372,22 +249,10 @@ function SettingsModal({ active, closeModal, ...props }) {
                         <div className="column is-3">
                             <figure
                                 className="image is-128x128 is-centered is-rounded is-clickable"
-                                onClick={() => {
-                                    fileInput && fileInput.current && fileInput.current.click()
-                                }}
+                                onClick={() => { setState({ ...state, showChooseAvatar: true }) }}
                             >
-                                {state.uploading ? <Loader size="128px" /> : <img src={user.photoURL} alt={user.displayName} />}
+                                <img src={user.photoURL} alt={user.displayName} />
                             </figure>
-                            <input
-                                ref={fileInput}
-                                accept="image/png, image/jpeg"
-                                type="file"
-                                onChange={(e) => {
-                                    setState({ files: e.target.files })
-                                    startCrop(e.target.files)
-                                }}
-                                className="is-hidden"
-                            />
                         </div>
 
                         <div className="column">
@@ -453,7 +318,7 @@ function SettingsModal({ active, closeModal, ...props }) {
                     <button className="button" type="button" onClick={closeModal}>
                         <span>Cancel</span>
                     </button>
-                    <button className="button is-primary" type="button">
+                    <button className="button is-primary" type="button" onClick={closeModal}>
                         <span>Save</span>
                     </button>
                 </footer>

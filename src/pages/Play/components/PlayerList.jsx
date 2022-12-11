@@ -19,13 +19,13 @@ export default function PlayerList({ players }) {
 }
 
 function PlayerItem({ player }){
-    const { character:{ name }, player_name="" } = player;
+    const { character:{ name, image }, player_name="" } = player;
 
     let player_first_name = player_name.split(' ')[0]
 
     return <div className={Styles.Player}>
-        <figure className={"image " + Styles.image}>
-            <div style={{ backgroundImage:`url('https://www.outdoorlife.com/uploads/2019/01/23/LRKQTDWTBHYTDVD37SOTHNSCQI.jpg?auto=webp')` }}/>
+        <figure className={"image is1by1 " + Styles.image}>
+            <img src={image} alt=""/>
         </figure>
         <div className={Styles.body}>
             <div className={Styles.titles}>

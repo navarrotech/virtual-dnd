@@ -1,8 +1,11 @@
 import { useEffect, useState, useContext } from "react"
-import { useParams, useLocation, useNavigate } from "react-router-dom"
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom"
     
 import { onValue, set } from "firebase/database"
 import useReference from '../../hooks/useReference.jsx'
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 
 import UserContext from "../../context/User.jsx"
 
@@ -94,7 +97,14 @@ export default function ViewOne({ ...props }) {
     return (
         <div className="container is-max-widescreen">
             <div className="block columns">
-                <div className="column"></div>
+                <div className="column">
+                    <Link className="button is-primary is-outlined" to={"/characters"}>
+                        <span className="icon">
+                            <FontAwesomeIcon icon={faArrowLeft}/>
+                        </span>
+                        <span>Back</span>
+                    </Link>
+                </div>
                 <div className="column">
                     <div className="block buttons is-right has-addons are-medium">
                         <button className={"button" + (state.page === 0 ? " is-primary" : "")} type="button" onClick={() => { setState({ ...state, page:0 }) }}>

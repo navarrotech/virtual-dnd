@@ -1,42 +1,11 @@
 import { useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHandSpock, faHatWizard, faShieldHalved, faStarAndCrescent, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faHandSpock, faHatWizard, faShieldHalved, faStarAndCrescent, faSync, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+
+import ChooseAvatar from "./ChooseAvatar";
 
 import Styles from '../_.module.sass'
-
-const ability_score_modifier_map = {
-    1: -5,
-    2: -4,
-    3: -4,
-    4: -3,
-    5: -3,
-    6: -2,
-    7: -2,
-    8: -1,
-    9: -1,
-    10: 0,
-    11: 0,
-    12: 1,
-    13: 1,
-    14: 2,
-    15: 2,
-    16: 3,
-    17: 3,
-    18: 4,
-    19: 4,
-    20: 5,
-    21: 5,
-    22: 6,
-    23: 6,
-    24: 7,
-    25: 7,
-    26: 8,
-    27: 8,
-    28: 9,
-    29: 9,
-    30: 10
-}
 
 function listenForKeydown({ key, target }) {
     if (['Enter', 'Esc', 'Escape'].includes(key)) {
@@ -112,6 +81,7 @@ export default function EditorPageOne({ character, save }) {
 
     const [showSkillsModal, setShowSkillsModal] = useState(false)
     const [showSavingThrowsModal, setShowSavingThrowsModal] = useState(false)
+    const [showChooseAvatar, setShowChooseAvatar] = useState(false)
     
     function changeListener(key, is_integer=false, save_to_db=false) {
         return function ({ target: { value } }) {
@@ -292,9 +262,23 @@ export default function EditorPageOne({ character, save }) {
                         
                     </div>
                 </div>
-                <div className="column">
-                    <div className="block box is-flex is-justify-content-center is-align-items-center" style={{ height: '100%' }}>
+                <div className="column is-one-third">
+                    {/* <div className="block box is-flex is-justify-content-center is-align-items-center" style={{ height: '100%' }}>
                         <h1 className="title has-text-centered" style={{ opacity:'0.2' }} onClick={() => console.log(character)}>More Coming Soon</h1>
+                    </div> */}
+                    <div className="block box">
+                        <label className="label box-label">Character Avatar</label>
+                        <figure className="block image is-1by1 mt-3">
+                            <img src={character.image} alt="character.name"/>
+                        </figure>
+                        <div className="block buttons is-centered">
+                            <button className="button is-light is-fullwidth" type="button" onClick={() => { setShowChooseAvatar(true) }}>
+                                <span className="icon">
+                                    <FontAwesomeIcon icon={faSync}/>
+                                </span>
+                                <span>Change Image</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -321,75 +305,117 @@ export default function EditorPageOne({ character, save }) {
             </div>
 
             { showSkillsModal 
-                    ? <div className="modal is-active">
-                        <div className="modal-background" onClick={() => { setShowSkillsModal(false) }}></div>
-                        <div className="modal-card">
-                            <header className="modal-card-head">
-                                <p className="modal-card-title">Skills</p>
-                                <button className="delete" onClick={() => { setShowSkillsModal(false) }}></button>
-                            </header>
-                            <section className="modal-card-body">
-                                <div className="block columns">
-                                    
-                                    <div className="column">
-                                        <InlineInput value_1="stats" value_2="acrobatics"     text="(Dex)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="animal Handling"text="(Wis)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="arcana"         text="(Int)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="athletics"      text="(Str)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="deception"      text="(Cha)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="history"        text="(Int)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="insight"        text="(Wis)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="intimidation"   text="(Cha)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="investigation"  text="(Int)" character={character} changeListener={changeListener} save={save}/>
-                                    </div>
-                                    <div className="column">
-                                        <InlineInput value_1="stats" value_2="medicine"       text="(Wis)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="nature"         text="(Int)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="perception"     text="(Wis)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="performance"    text="(Cha)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="persuasion"     text="(Cha)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="religion"       text="(Int)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="sleight Of Hand"text="(Dex)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="stealth"        text="(Dex)" character={character} changeListener={changeListener} save={save}/>
-                                        <InlineInput value_1="stats" value_2="survival"       text="(Wis)" character={character} changeListener={changeListener} save={save}/>
-                                    </div>
-                                    
+                ? <div className="modal is-active">
+                    <div className="modal-background" onClick={() => { setShowSkillsModal(false) }}></div>
+                    <div className="modal-card">
+                        <header className="modal-card-head">
+                            <p className="modal-card-title">Skills</p>
+                            <button className="delete" onClick={() => { setShowSkillsModal(false) }}></button>
+                        </header>
+                        <section className="modal-card-body">
+                            <div className="block columns">
+                                
+                                <div className="column">
+                                    <InlineInput value_1="stats" value_2="acrobatics"     text="(Dex)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="animal Handling"text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="arcana"         text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="athletics"      text="(Str)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="deception"      text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="history"        text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="insight"        text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="intimidation"   text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="investigation"  text="(Int)" character={character} changeListener={changeListener} save={save}/>
                                 </div>
-                            </section>
-                            <footer className="modal-card-foot buttons is-right">
-                                <button className="button" type="button" onClick={() => { setShowSkillsModal(false) }}>
-                                    <span>Close</span>
-                                </button>
-                            </footer>
-                        </div>
+                                <div className="column">
+                                    <InlineInput value_1="stats" value_2="medicine"       text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="nature"         text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="perception"     text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="performance"    text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="persuasion"     text="(Cha)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="religion"       text="(Int)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="sleight Of Hand"text="(Dex)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="stealth"        text="(Dex)" character={character} changeListener={changeListener} save={save}/>
+                                    <InlineInput value_1="stats" value_2="survival"       text="(Wis)" character={character} changeListener={changeListener} save={save}/>
+                                </div>
+                                
+                            </div>
+                        </section>
+                        <footer className="modal-card-foot buttons is-right">
+                            <button className="button" type="button" onClick={() => { setShowSkillsModal(false) }}>
+                                <span>Close</span>
+                            </button>
+                        </footer>
                     </div>
-                    : <></>
+                </div>
+                : <></>
             }
             { showSavingThrowsModal 
-                    ? <div className="modal is-active">
-                        <div className="modal-background" onClick={() => { setShowSavingThrowsModal(false) }}></div>
-                        <div className="modal-card">
-                            <header className="modal-card-head">
-                                <p className="modal-card-title">Saving Throws</p>
-                                <button className="delete" onClick={() => { setShowSavingThrowsModal(false) }}></button>
-                            </header>
-                            <section className="modal-card-body">
-                                <InlineInput value_1="savingThrows" value_2="strength"     character={character} changeListener={changeListener} save={save} />
-                                <InlineInput value_1="savingThrows" value_2="dexterity"    character={character} changeListener={changeListener} save={save} />
-                                <InlineInput value_1="savingThrows" value_2="constitution" character={character} changeListener={changeListener} save={save} />
-                                <InlineInput value_1="savingThrows" value_2="intelligence" character={character} changeListener={changeListener} save={save} />
-                                <InlineInput value_1="savingThrows" value_2="wisdom"       character={character} changeListener={changeListener} save={save} />
-                                <InlineInput value_1="savingThrows" value_2="charisma"     character={character} changeListener={changeListener} save={save} />
-                            </section>
-                            <footer className="modal-card-foot buttons is-right">
-                                <button className="button" type="button" onClick={() => { setShowSavingThrowsModal(false) }}>
-                                    <span>Close</span>
-                                </button>
-                            </footer>
-                        </div>
+                ? <div className="modal is-active">
+                    <div className="modal-background" onClick={() => { setShowSavingThrowsModal(false) }}></div>
+                    <div className="modal-card">
+                        <header className="modal-card-head">
+                            <p className="modal-card-title">Saving Throws</p>
+                            <button className="delete" onClick={() => { setShowSavingThrowsModal(false) }}></button>
+                        </header>
+                        <section className="modal-card-body">
+                            <InlineInput value_1="savingThrows" value_2="strength"     character={character} changeListener={changeListener} save={save} />
+                            <InlineInput value_1="savingThrows" value_2="dexterity"    character={character} changeListener={changeListener} save={save} />
+                            <InlineInput value_1="savingThrows" value_2="constitution" character={character} changeListener={changeListener} save={save} />
+                            <InlineInput value_1="savingThrows" value_2="intelligence" character={character} changeListener={changeListener} save={save} />
+                            <InlineInput value_1="savingThrows" value_2="wisdom"       character={character} changeListener={changeListener} save={save} />
+                            <InlineInput value_1="savingThrows" value_2="charisma"     character={character} changeListener={changeListener} save={save} />
+                        </section>
+                        <footer className="modal-card-foot buttons is-right">
+                            <button className="button" type="button" onClick={() => { setShowSavingThrowsModal(false) }}>
+                                <span>Close</span>
+                            </button>
+                        </footer>
                     </div>
-                    : <></>
+                </div>
+                : <></>
+            }
+            { showChooseAvatar
+                ? <ChooseAvatar current={character.image} onChoose={(image) => {
+                    if(image){
+                        save({ image }, true);
+                    }
+                    setShowChooseAvatar(false)
+                }}/>
+                : <></>
             }
         </>
     )
+}
+
+const ability_score_modifier_map = {
+    1: -5,
+    2: -4,
+    3: -4,
+    4: -3,
+    5: -3,
+    6: -2,
+    7: -2,
+    8: -1,
+    9: -1,
+    10: 0,
+    11: 0,
+    12: 1,
+    13: 1,
+    14: 2,
+    15: 2,
+    16: 3,
+    17: 3,
+    18: 4,
+    19: 4,
+    20: 5,
+    21: 5,
+    22: 6,
+    23: 6,
+    24: 7,
+    25: 7,
+    26: 8,
+    27: 8,
+    28: 9,
+    29: 9,
+    30: 10
 }
