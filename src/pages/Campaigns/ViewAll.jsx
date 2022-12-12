@@ -24,7 +24,10 @@ export default function ViewAll({ ...props }) {
     useEffect(() => {
         const reference = ref(getDatabase(), "accounts/" + user.uid)
         onValue(reference, (snapshot) => {
-            let { campaigns=[], joinedCampaigns=[] } = snapshot.val() || {}
+            let {
+                campaigns=[],
+                joinedCampaigns=[]
+            } = snapshot.val() || {}
             setState((s) => {
                 return {...s, loading: false, campaigns, joinedCampaigns }
             })
@@ -75,7 +78,12 @@ export default function ViewAll({ ...props }) {
                             <h2 className="is-size-3">Campaigns created:</h2>
                         </div>
                         <div className={"block " + Styles.CampaignList}>
-                            { Object.keys(state.campaigns).map((key) => <CampaignItem key={key} uid={key} campaign={state.campaigns[key]} owner="me"/>) }
+                            {
+                                Object.keys(state.campaigns).map((key) => {
+                                    let value = state.campaigns[key]
+                                    return <CampaignItem key={key} uid={value.campaign_uid} campaign={value} owner="me"/>
+                                })
+                            }
                         </div>
                     </>
                     : <></>

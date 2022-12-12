@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react"
-import { useParams, useLocation, useNavigate, Link } from "react-router-dom"
+import { useParams, useLocation, useNavigate, Link, useSearchParams } from "react-router-dom"
     
 import { onValue, set } from "firebase/database"
 import useReference from '../../hooks/useReference.jsx'
@@ -27,6 +27,7 @@ export default function ViewOne({ ...props }) {
      */
 
     const { id } = useParams()
+    const [ searchParams ] = useSearchParams()
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -98,12 +99,21 @@ export default function ViewOne({ ...props }) {
         <div className="container is-max-widescreen">
             <div className="block columns">
                 <div className="column">
-                    <Link className="button is-primary is-outlined" to={"/characters"}>
-                        <span className="icon">
-                            <FontAwesomeIcon icon={faArrowLeft}/>
-                        </span>
-                        <span>Back</span>
-                    </Link>
+                    {
+                        searchParams && searchParams.has && searchParams.has('rejoin_campaign')
+                        ? <Link className="button is-primary is-outlined" to={`/play/${searchParams.get('rejoin_campaign')}`}>
+                            <span className="icon">
+                                <FontAwesomeIcon icon={faArrowLeft}/>
+                            </span>
+                            <span>Back To Game</span>
+                        </Link>
+                        : <Link className="button is-primary is-outlined" to={"/characters"}>
+                            <span className="icon">
+                                <FontAwesomeIcon icon={faArrowLeft}/>
+                            </span>
+                            <span>Back</span>
+                        </Link>
+                    }
                 </div>
                 <div className="column">
                     <div className="block buttons is-right has-addons are-medium">

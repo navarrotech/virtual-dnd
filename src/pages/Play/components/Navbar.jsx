@@ -1,15 +1,18 @@
 import { useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck, faShareAlt } from "@fortawesome/free-solid-svg-icons";
 
 import NameTag from 'common/NameTag.jsx'
+import Dropdown from 'common/Dropdown';
 
 import Styles from '../_.module.sass'
 
-export default function Navbar({ campaign_name, ...props }) {
+export default function Navbar({ campaign_name, player, ...props }) {
     
     const [state, setState] = useState({ sharing: false })
+    const { id } = useParams()
 
     function shareLink() {
         let t = window.location.href;
@@ -24,7 +27,22 @@ export default function Navbar({ campaign_name, ...props }) {
     return (
         <nav className={"navbar columns is-vcentered is-gapless " + Styles.navbar}>
             <div className="column">
-                <NameTag/>
+                <Dropdown
+                    trigger={<NameTag/>}
+                >
+                    { player
+                        ? <Link to={`/characters/${player.character_uid}?rejoin_campaign=${id}`} className="dropdown-item">
+                            Edit Character
+                        </Link>
+                        : <></>
+                    }
+                    
+                    <hr className="dropdown-divider" />
+                    
+                    <Link to="/campaigns" className="dropdown-item is-danger">
+                        Dashboard
+                    </Link>
+                </Dropdown>
             </div>
             <div className="column">
                 <h1 className="title has-text-centered m-0">{campaign_name}</h1>

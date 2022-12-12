@@ -32,7 +32,7 @@ export default function CharacterPanel({ player }) {
 
     return (
         <div className={Styles.CharacterPanel}>
-            <div className="container is-max-desktop">
+            <div className="container is-max-widescreen">
                 {/* <p>{myCharacter.name}</p> */}
                 <div className="block">
                     <div className={"block columns is-gapless " + Styles.Stats}>

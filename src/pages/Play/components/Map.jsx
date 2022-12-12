@@ -1,11 +1,21 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useParams } from "react-router"
+
+import { getDatabase, ref, onValue } from "firebase/database"
 
 import Styles from '../_.module.sass'
 
-export default function Map({ map: { entities={} }, players, ...props }){
+const zoom_sensitivity = 0.001,
+    max_zoom = 3,
+    min_zoom = 0.35;
 
+export default function Map({ players, ...props }){
+
+    const [map, setMap] = useState(null)
+    const [ dragging, setDragging ] = useState(false)
+    const { id } = useParams()
+    const MapImage = useRef()
     const [state, setState] = useState({
-        moving: false,
         posX: 0,
         posY: 0,
         scale: 1,
@@ -13,47 +23,117 @@ export default function Map({ map: { entities={} }, players, ...props }){
         height: 1000
     })
 
+    // Load the map from Firebase
     useEffect(() => {
-        const listener = ({ ...event }) => {
-            console.log(event)
-            // setState(scale + 0.01)
-        };
-        document.addEventListener('scroll', listener)
-        return () => { document.removeEventListener('scroll', listener) }
-    })
+        console.log("Resubscribing to map!")
+        let reference = ref(getDatabase(), "campaigns/" + id + '/map');
+        const unsubscribe = onValue(reference, async (snapshot) => {
+            console.log("Map data syncing...")
+            setMap(snapshot.val())
+        })
+        return () => { unsubscribe(); }
+    }, [id])
 
-    function onMouseDown() {
-        setState({ ...state, moving:true })
-    }
-    function onMouseUp() {
-        setState({ ...state, moving:true })
-    }
+    // Drag and zoom listeners
+    useEffect(() => {
+        const scaleListener = ({ deltaY }) => {
+            let { current:image=null } = MapImage
+            setState(state => {
+                let scale = state.scale + (deltaY * zoom_sensitivity)
+
+                // Maximum and minimum!
+                if(scale >= max_zoom){ scale = max_zoom }
+                if(scale <= min_zoom){ scale = min_zoom }
+
+                let { posX, posY } = state
+
+                if(posX + ((image.offsetWidth  / 3)*2) <= 0){ posX = 0 - ((image.offsetWidth  / 3)*2) }
+                if(posY + ((image.offsetHeight / 3)*2) <= 0){ posY = 0 - ((image.offsetHeight / 3)*2) }
+
+                return { ...state, scale, posX, posY }
+            })
+        };
+        const dragListener = ({ movementX, movementY }) => {
+            let { current:image=null } = MapImage
+            // console.log({ movementX, movementY })
+            setState(state => {
+                // Minimum!
+                let posX = state.posX + movementX,
+                    posY = state.posY + movementY
+
+                if(posX + ((image.offsetWidth  / 3)*2) <= 0){ posX = 0 - ((image.offsetWidth  / 3)*2) }
+                if(posY + ((image.offsetHeight / 3)*2) <= 0){ posY = 0 - ((image.offsetHeight / 3)*2) }
+
+                return { ...state, posX, posY }
+            })
+        };
+        document.addEventListener('wheel', scaleListener)
+        if(dragging){
+            document.addEventListener('mousemove', dragListener)
+        }
+        return () => {
+            document.removeEventListener('wheel', scaleListener)
+            if(dragging){
+                document.removeEventListener('mousemove', dragListener)
+            }
+        }
+    }, [dragging])
+
+    if(!map){ return <></>; }
 
     return (
         <div className={Styles.Map}>
             <div
-                className={Styles.MapBox + (state.moving?Styles.isDragging:'')}
-                onMouseDown={onMouseDown}
-                onMouseUp={onMouseUp}
-                onMouseLeave={onMouseUp}
+                className={Styles.MapBox + (dragging?' '+Styles.isDragging:'')}
+                onMouseDown={() => setDragging(true)}
+                onMouseUp={() => setDragging(false)}
+                onMouseLeave={() => setDragging(false)}
                 style={{
-                    width:  (state.width  * state.scale) + 'px',
-                    height: (state.height * state.scale) + 'px',
-                    left:   (state.posX   * state.scale) + 'px',
-                    right:  (state.posY   * state.scale) + 'px'
+                    width:  `calc(100vw * ${state.scale})`,
+                    height: 'auto',
+                    left:   (state.posX) + 'px',
+                    top:  (state.posY) + 'px',
                 }}>
+                    <figure className={"image " + Styles.MapImage} draggable={false}>
+                        <img src={map.image} alt="" draggable={false} ref={MapImage}/>
+                    </figure>
                     {
-                        Object.keys(entities).map(entity_key => {
-                            let value = entities[entity_key]
-                            let classes = [Styles.Entity]
-                            if(players[entity_key]){ classes.push(Styles.isPlayer) }
-                            return <div className={classes.join(' ')} style={{ top: value.x + 'px', left: value.y + 'px' }}></div>
+                        map.entities
+                        ? Object.keys(map.entities).map(entity_uid => {
+                            
+                            let { x, y } = map.entities[entity_uid],
+                                player_link = players[entity_uid]
+
+                            let size =  (25 * state.scale)
+                            if(size <= 18){ size = 18 }
+                            
+                            return <div
+                                key={entity_uid}
+                                className={Styles.Entity + (player_link && player_link.character_uid?' '+Styles.isPlayer:'')}
+                                style={{
+                                    top:  y + '%',
+                                    left: x + '%'
+                                }}
+                            >
+                                { player_link 
+                                    ? <>
+                                        <img src={player_link.character.image} alt={player_link.character.name}/>
+                                        <label className={Styles.EntityLabel}>{player_link.character.name}</label>
+                                    </>
+                                    : <></>
+                                }
+                                <div
+                                    className={Styles.EntityPop}
+                                    style={{
+                                        width:  size + 'px',
+                                        height: size + 'px',
+                                        minHeight: size + 'px',
+                                    }}
+                                ></div>
+                            </div>
                         })
+                        : <></>
                     }
-                    <div className={Styles.Entity + ' ' + Styles.isPlayer} style={{ top:'10px', left: '10px' }}></div>
-                    <div className={Styles.Entity + ' ' + Styles.isPlayer} style={{ top:'30px', left: '80px' }}></div>
-                    <div className={Styles.Entity + ' ' + Styles.isPlayer} style={{ top:'80px', left: '400px' }}></div>
-                    <div className={Styles.Entity} style={{ top:'60px', left: '60px' }}></div>
             </div>
         </div>
     )

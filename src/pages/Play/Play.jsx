@@ -10,7 +10,7 @@ import LiveChat from "./components/LiveChat.jsx"
 import CharacterPanel from "./components/CharacterPanel.jsx"
 import PlayerList from "./components/PlayerList.jsx"
 import WelcomeAndJoin from "./components/WelcomeAndJoin.jsx"
-// import Map from './components/Map.jsx'
+import Map from './components/Map.jsx'
 
 import Loader from "../../common/Loader"
 
@@ -36,11 +36,13 @@ export default function Play() {
     useEffect(() => {
         if (!user || !user.uid) { return; }
         // let initialized = false;
+
         // This updates whenever the players update
         const unsubscribe = onValue(ref(database, "campaigns/" + id + '/players'), async (snapshot) => {
             console.log("Player data syncing...")
             setPlayers(snapshot.val())
         })
+
         onValue(ref(database, "campaigns/" + id), async (snapshot) => {
             const doc = snapshot.val()
             setState((s) => {
@@ -54,6 +56,16 @@ export default function Play() {
         }, { onlyOnce: true })
         return () => { unsubscribe(); }
     }, [id, user, database])
+
+    // Add a class to the body that prevents scroll animations on Chrome
+    useEffect(() => {
+        document.querySelector('body').classList.add('is-clipped')
+        document.querySelector('html').classList.add('is-clipped')
+        return () => {
+            document.querySelector('body').classList.remove('is-clipped')
+            document.querySelector('html').classList.remove('is-clipped')
+        }
+    })
 
     // Authentication Check
     if (!user || !user.uid) { console.log('User not found!'); return <Navigate to="/login" replace={false} /> }
@@ -72,11 +84,11 @@ export default function Play() {
 
     return (
         <div className={Styles.Game}>
-            <Navbar campaign_name={state.campaign_name} />
+            <Navbar player={myPlayerToken} campaign_name={state.campaign_name} />
             <PlayerList players={players} api={api}/>
             <LiveChat me={user.uid} api={api}/>
             <CharacterPanel player={myPlayerToken} api={api}/>
-            {/* <Map map={campaign.map} players={campaign.players} /> */}
+            <Map players={players} />
         </div>
     )
 }

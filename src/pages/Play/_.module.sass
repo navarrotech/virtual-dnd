@@ -24,7 +24,7 @@ $playerBorderRadius: 4px
     height: $livechatHeight
     width:  $livechatWidth
     border-radius: $livechatRadius
-    border: 1px solid rgba(255,255,255,0.3)
+    // border: 1px solid rgba(255,255,255,0.3)
 
     .history
         height: calc($livechatHeight - 100px)
@@ -42,9 +42,14 @@ $playerBorderRadius: 4px
 
             .message
                 // color: white
-                padding: 0.3em 0.65em
+                padding: 0.2em 0.65em
                 transition: opacity 300ms ease
-                // width: fit-content
+                background: white
+                border-radius: 6px
+                width: fit-content
+
+                &:not(:last-child)
+                    margin-bottom: 0.2em
 
                 // strong
                 //     color: white
@@ -62,7 +67,8 @@ $playerBorderRadius: 4px
 
     .actions
         // background: rgba(255,255,255,0.2)
-        border-radius: 0 0 $livechatRadius $livechatRadius
+        // border-radius: 0 0 $livechatRadius $livechatRadius
+        border-radius: $livechatRadius
         margin-top: auto
         height: 100px
         position: relative
@@ -85,7 +91,7 @@ $playerBorderRadius: 4px
             // color: white
 
             &::placeholder
-                color: rgba(255,255,255,0.5)
+                color: rgba(0,0,0,0.5)
 
         .sendButton
             position: absolute
@@ -93,7 +99,11 @@ $playerBorderRadius: 4px
             top: 0.5em
 
     &.showAll
-        // background: pink
+
+        .actions
+            // background: rgba(255,255,255,0.85)
+            @include shadow(5)
+            background: white
 
         .message
             opacity: 1 !important
@@ -104,6 +114,8 @@ $playerBorderRadius: 4px
             pointer-events: all
 
     &:not(.showAll)
+        pointer-events: none
+
         .history
             overflow-y: hidden
 
@@ -131,22 +143,50 @@ $playerBorderRadius: 4px
     .MapBox
         position: absolute
         display: block
-        background: purple
+
+        .MapImage
+            width: 100%
+            pointer-events: none
+            user-select: none
+            -webkit-user-drag: none
 
         &.isDragging
             cursor: grabbing
 
         .Entity
             // background: $success
-            background: $red
-            // border: 3px solid white
-            border-radius: 50%
             position: absolute
-            width: 20px
-            height: 20px
+            // transform: translate(-50%, -110px)
 
-        &.isPlayer
-            background: #2ccf47
+            display: flex
+            align-items: center
+            justify-content: center
+            flex-direction: column
+            gap: 0.5em
+
+            &.isPlayer
+                .EntityPop
+                    background: #2ccf47
+
+            .EntityPop
+                background: $red
+                border: 3px solid #fafafb
+                border-radius: 50%
+                display: block
+
+            img
+                height: 60px
+                width:  60px
+                border-radius: 6px
+                border: 1px solid white
+
+            .EntityLabel
+                background: white
+                border-radius: 6px
+                padding: 0.3em 0.7em
+                white-space: nowrap
+                font-size: 0.85rem
+                font-weight: bold
 
         .Building
             border: 1px solid blue
@@ -155,6 +195,7 @@ $playerBorderRadius: 4px
     position: absolute
     top: 100px
     right: 1em
+    z-index: 5
 
     .Player
         background: white
@@ -215,6 +256,7 @@ $playerBorderRadius: 4px
     height: 1.5em
     width: 100%
     overflow: hidden
+    z-index: 5
 
     .healthText
         position: absolute
@@ -246,6 +288,13 @@ $playerBorderRadius: 4px
     left: 0
     right: 0
     margin: auto
+    z-index: 5
+
+    :global(.container)
+        @include shadow(5)
+        background: #fafafb
+        border-radius: 6px
+        padding: 1em 1.5em
 
     .Stats
         .OddColumn

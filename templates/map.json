@@ -1,10 +1,14 @@
 {
+    "image":"https://i.pinimg.com/736x/04/67/2a/04672a2e75a991c9fb13316c55133fdb--maps.jpg",
     "entities":{
         "alex":{ "x": 10, "y": 15 },
-        "sam":{ "x": 10, "y": 15 },
-        "jake":{ "x": 10, "y": 15 },
-        "john":{ "x": 10, "y": 15 },
-        "peter":{ "x": 10, "y": 15 },
-        "paul":{ "x": 10, "y": 15 }
+        "sam":{ "x": 300, "y": 150 }
+    },
+    "landmarks":{
+        "1":{
+            "name":"Bath Houses",
+            "x": 10,
+            "y": 10
+        }
     }
 }
