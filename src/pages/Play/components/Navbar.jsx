@@ -28,7 +28,7 @@ export default function Navbar({ campaign_name, player, ...props }) {
         <nav className={"navbar columns is-vcentered is-gapless " + Styles.navbar}>
             <div className="column">
                 <Dropdown
-                    trigger={<NameTag/>}
+                    trigger={<NameTag subtitle={player && player.character && player.character.name ? "Playing as " + player.character.name : null}/>}
                 >
                     { player
                         ? <Link to={`/characters/${player.character_uid}?rejoin_campaign=${id}`} className="dropdown-item">

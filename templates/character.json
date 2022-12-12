@@ -10,9 +10,16 @@
         "initiative":0,
         "speed":30,
         "level":1,
-        "experience":0
+        "experience":0,
+        "gold": 0
     },
-    "inventory":[],
+    "inventory":{
+        "$uid":{
+            "name":"",
+            "image":"",
+            "quantity":0
+        }
+    },
     "stats":{
         "inspiration":0,
         "proficienyBonus":0,

@@ -3,7 +3,7 @@ import UserContext from 'context/User.jsx'
 
 import Styles from 'widget/Dashboard.module.sass'
 
-export default function NameTag({ size=64, ...props }){
+export default function NameTag({ size=64, title, subtitle, ...props }){
     const [ user ] = useContext(UserContext)
     const { photoURL, displayName } = user;
     
@@ -12,8 +12,8 @@ export default function NameTag({ size=64, ...props }){
             <img src={photoURL} alt={displayName} referrerPolicy="no-referrer" />
         </figure>
         <div className="titles">
-            <p className="has-text-black has-text-weight-bold">{displayName}</p>
-            <p className="has-text-black">Level 1 Apprentice</p>
+            <p className="has-text-black has-text-weight-bold">{title?title:displayName}</p>
+            <p className="has-text-black">{subtitle?subtitle:'Level 1 Apprentice'}</p>
         </div>
     </div>
 }

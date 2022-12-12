@@ -10,6 +10,8 @@ import LiveChat from "./components/LiveChat.jsx"
 import CharacterPanel from "./components/CharacterPanel.jsx"
 import PlayerList from "./components/PlayerList.jsx"
 import WelcomeAndJoin from "./components/WelcomeAndJoin.jsx"
+import UserActions from "./components/UserActions.jsx"
+import DMActions from "./components/DMActions.jsx"
 import Map from './components/Map.jsx'
 
 import Loader from "../../common/Loader"
@@ -85,10 +87,14 @@ export default function Play() {
     return (
         <div className={Styles.Game}>
             <Navbar player={myPlayerToken} campaign_name={state.campaign_name} />
+            <Map players={players} />
+            { myPlayerToken
+                ? <UserActions player={myPlayerToken} api={api} />
+                : <DMActions players={players} api={api} />
+            }
             <PlayerList players={players} api={api}/>
             <LiveChat me={user.uid} api={api}/>
             <CharacterPanel player={myPlayerToken} api={api}/>
-            <Map players={players} />
         </div>
     )
 }

@@ -117,7 +117,7 @@ export default function Map({ players, ...props }){
                             >
                                 { player_link 
                                     ? <>
-                                        <img src={player_link.character.image} alt={player_link.character.name}/>
+                                        <img src={player_link.character.image} alt={player_link.character.name} draggable={false}/>
                                         <label className={Styles.EntityLabel}>{player_link.character.name}</label>
                                     </>
                                     : <></>
