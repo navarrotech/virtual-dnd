@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBolt, faCoins, faDiceD6 } from '@fortawesome/free-solid-svg-icons'
+import { faBolt, faCoins } from '@fortawesome/free-solid-svg-icons'
+
+import { ReactComponent as TreasureIcon } from 'icons/treasure-chest.svg'
 
 import Styles from '../_.module.sass'
 
@@ -22,7 +24,7 @@ export default function UserActions({ player, api,...props }){
         <div className={Styles.UserActions}>
             <button className="button is-light is-fullwidth" type="button" onClick={() => setShowInventory(true)}>
                 <span className="icon">
-                    <FontAwesomeIcon icon={faDiceD6}/>
+                    <TreasureIcon />
                 </span>
                 <span>My Inventory</span>
             </button>

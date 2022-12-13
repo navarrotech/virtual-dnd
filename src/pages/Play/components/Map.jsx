@@ -89,7 +89,7 @@ export default function Map({ players, ...props }){
                 onMouseUp={() => setDragging(false)}
                 onMouseLeave={() => setDragging(false)}
                 style={{
-                    width:  `calc(100vw * ${state.scale})`,
+                    width:  `${100 * state.scale}vw`,
                     height: 'auto',
                     left:   (state.posX) + 'px',
                     top:  (state.posY) + 'px',

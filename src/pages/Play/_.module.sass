@@ -157,6 +157,7 @@ $playerBorderRadius: 4px
             // background: $success
             position: absolute
             // transform: translate(-50%, -110px)
+            transform: translate(-50%, -100%)
 
             display: flex
             align-items: center
@@ -352,8 +353,18 @@ $playerBorderRadius: 4px
         &.isEmpty
             background: #f0f0f1
 
+.ChoiceBox
+    transition: background 300ms ease, color 200ms ease
 
+    svg
+        transition: fill 200ms ease
 
+    &:hover
+        background: $primary
+        color: white
+
+        svg
+            fill: white
 
 
 
