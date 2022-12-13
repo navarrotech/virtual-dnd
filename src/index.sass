@@ -144,3 +144,17 @@ input
         
         .choice-body:not(:last-child)
             margin-bottom: 2em
+
+
+// I should add this to navarrotech/bulma
+.flexlist
+    display: flex
+    flex-flow: row wrap
+    align-items: flex-start
+    gap: 1em
+
+    &.has-3-per-row > .item
+        width: calc(33% - 1em)
+        
+    &.is-centered
+        justify-content: center

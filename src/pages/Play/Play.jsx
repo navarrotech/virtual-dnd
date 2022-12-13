@@ -7,7 +7,7 @@ import { getDatabase, ref, onValue } from "firebase/database"
 
 import Navbar from './components/Navbar.jsx'
 import LiveChat from "./components/LiveChat.jsx"
-import CharacterPanel from "./components/CharacterPanel.jsx"
+import CharacterPanel from "./components/actions/CharacterPanel.jsx"
 import PlayerList from "./components/PlayerList.jsx"
 import WelcomeAndJoin from "./components/WelcomeAndJoin.jsx"
 import UserActions from "./components/UserActions.jsx"
