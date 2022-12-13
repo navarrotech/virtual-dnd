@@ -7,18 +7,17 @@ import { getDatabase, ref, onValue } from "firebase/database"
 
 import Navbar from './components/Navbar.jsx'
 import LiveChat from "./components/LiveChat.jsx"
-import CharacterPanel from "./components/actions/CharacterPanel.jsx"
+import CharacterPanel from "./components/CharacterPanel.jsx"
 import PlayerList from "./components/PlayerList.jsx"
 import WelcomeAndJoin from "./components/WelcomeAndJoin.jsx"
 import UserActions from "./components/UserActions.jsx"
 import DMActions from "./components/DMActions.jsx"
+import GameState from './components/GameState.jsx'
 import Map from './components/Map.jsx'
 
 import Loader from "../../common/Loader"
 
 import Styles from './_.module.sass'
-
-import getAPI from './api/_all.js'
 
 export default function Play() {
     const [user] = useContext(UserContext)
@@ -31,7 +30,6 @@ export default function Play() {
         campaign_owner: ''
     })
     const [players, setPlayers] = useState(null)
-    const api = useMemo(() => { return getAPI(id, user); }, [id, user])
     const database = useMemo(() => getDatabase(), [])
 
     // Get the data
@@ -81,7 +79,7 @@ export default function Play() {
         : null
 
     if (state.campaign_owner !== user.uid && (!myPlayerToken || !myPlayerToken.character)) {
-        return <WelcomeAndJoin campaign_uid={id} campaign_name={state.campaign_name} api={api} />
+        return <WelcomeAndJoin campaign_name={state.campaign_name}  />
     }
 
     return (
@@ -89,12 +87,13 @@ export default function Play() {
             <Navbar player={myPlayerToken} campaign_name={state.campaign_name} />
             <Map players={players} />
             { myPlayerToken
-                ? <UserActions player={myPlayerToken} api={api} />
-                : <DMActions players={players} api={api} />
+                ? <UserActions player={myPlayerToken}  />
+                : <DMActions players={players}  />
             }
-            <PlayerList players={players} api={api}/>
-            <LiveChat me={user.uid} api={api}/>
-            <CharacterPanel player={myPlayerToken} api={api}/>
+            <PlayerList players={players} />
+            <LiveChat me={user.uid} />
+            <CharacterPanel player={myPlayerToken} />
+            <GameState players={players} dungeonMaster={state.campaign_owner}/>
         </div>
     )
 }

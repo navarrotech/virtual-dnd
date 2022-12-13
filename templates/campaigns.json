@@ -1,14 +1,33 @@
 {
-    "uid": "A1B2C3",
     "name": "My Campaign",
-    "owner": "navarro",
+    "owner": "$uid",
     "created": "2022-11-30T18:01:26.440Z",
-    "updated": "2022-11-30T18:01:26.440Z",
+    "state":{
+        "turn": 1,
+        "phase": "combat | passive | setup",
+        "action":{
+            "type"  : "rolling",
+            "who"   : "$uid",
+            "dice"  : 20,
+            "check": "strength"
+        }
+    },
     "chat":[
         { "what":"Hey!", "who":"user.uid", "when":"2022-11-30T18:01:26.440Z", "name":"user.displayName" }
     ],
     "map":{
-        
+        "image":"https://i.pinimg.com/736x/04/67/2a/04672a2e75a991c9fb13316c55133fdb--maps.jpg",
+        "entities":{
+            "alex":{ "x": 10, "y": 15 },
+            "sam":{ "x": 300, "y": 150 }
+        },
+        "landmarks":{
+            "1":{
+                "name":"Bath Houses",
+                "x": 10,
+                "y": 10
+            }
+        }
     },
     "players":{
         "uid_123":{

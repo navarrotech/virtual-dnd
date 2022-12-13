@@ -268,7 +268,7 @@ export default function EditorPageOne({ character, save }) {
                     </div> */}
                     <div className="block box">
                         <label className="label box-label">Character Avatar</label>
-                        <figure className="block image is-1by1 mt-3">
+                        <figure className="block image is-1by1 mt-3" onClick={() => { setShowChooseAvatar(true) }}>
                             <img src={character.image} alt="character.name"/>
                         </figure>
                         <div className="block buttons is-centered">

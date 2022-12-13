@@ -7,7 +7,7 @@ import { ReactComponent as TreasureIcon } from 'icons/treasure-chest.svg'
 
 import Styles from '../_.module.sass'
 
-export default function UserActions({ player, api,...props }){
+export default function UserActions({ player, ...props }){
 
     const { current:{ gold=0, experience=0 }, inventory={} } = player
 

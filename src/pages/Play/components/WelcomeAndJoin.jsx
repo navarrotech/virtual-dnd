@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 import { ref, getDatabase, onValue, set } from "firebase/database"
 
@@ -16,9 +16,10 @@ import { faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import NavarrotechLogo from 'images/logo.svg'
 
-export default function WelcomeAndJoin({ campaign_uid, campaign_name, api }) {
+export default function WelcomeAndJoin({ campaign_name, api }) {
 
     const [user] = useContext(UserContext)
+    const { id:campaign_uid } = useParams()
     const [state, setState] = useState({
         loading: false,
         characters: [],

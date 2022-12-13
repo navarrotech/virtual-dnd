@@ -1,29 +1,35 @@
 import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-
-import { ReactComponent as SwordsIcon } from 'icons/swords.svg'
-import { ReactComponent as HelmetIcon } from 'icons/helmet-battle.svg'
-
-import { ChooseRollDice } from './actions/RollDice'
-
-import Styles from '../_.module.sass'
 import { faDiceD20 } from "@fortawesome/free-solid-svg-icons"
 
-export default function DMActions({ players, api,...props }){
+// import { ReactComponent as SwordsIcon } from 'icons/swords.svg'
+import { ReactComponent as HelmetIcon } from 'icons/helmet-battle.svg'
+
+import { ref, set, push, getDatabase } from "firebase/database"
+
+import { ChooseRollDice } from './status/RollDice'
+import SpawnEntity from './status/SpawnEntity.jsx'
+
+import Styles from '../_.module.sass'
+
+export default function DMActions({ players, ...props }){
 
     const [ showRollChooser, setRollChooser ] = useState(false)
+    const [ showSpawnEntity, setSpawnEntity ] = useState(false)
+    const { id } = useParams()
 
     return (
         <>
             <div className={Styles.UserActions}>
-                <button className="button is-light is-fullwidth" type="button">
+                {/* <button className="button is-light is-fullwidth" type="button">
                     <span className="icon">
                         <SwordsIcon />
                     </span>
                     <span>Enter Combat</span>
-                </button>
-                <button className="button is-light is-fullwidth" type="button">
+                </button> */}
+                <button className="button is-light is-fullwidth" type="button" onClick={() => setSpawnEntity(true)}>
                     <span className="icon">
                         <HelmetIcon />
                     </span>
@@ -41,8 +47,42 @@ export default function DMActions({ players, api,...props }){
                 ? <ChooseRollDice players={players} onChosen={(value) => {
                     setRollChooser(false)
                     if(!value){ return; }
-                    let { player, dice, reason } = value
-                    // ...
+
+                    set(
+                        ref(getDatabase(), `campaigns/${id}/state/action`),
+                        { type: 'rolling', ...value }
+                    )
+                }}/>
+                : <></>
+            }
+            {
+                showSpawnEntity
+                ? <SpawnEntity onFinish={(value) => {
+                    setSpawnEntity(false)
+                    if(!value){ return; }
+
+                    let { name, color, image, health, armorClass } = value
+
+                    push(
+                        ref(getDatabase(), `campaigns/${id}/players`),
+                        {
+                            player_name: "NPC",
+                            character: {
+                                name,
+                                image
+                            },
+                            current: {
+                                health,
+                                armorClass
+                            }
+                        },
+                        function({ key }){
+                            set(
+                                ref(getDatabase(), `campaigns/${id}/map/entities/${key}`),
+                                { x: 50, y: 50, color }
+                            )
+                        }
+                    )
                 }}/>
                 : <></>
             }

@@ -1,9 +1,9 @@
 // import { faShield } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import Styles from '../../_.module.sass'
+import Styles from '../_.module.sass'
 
-import Healthbar from '../Healthbar'
+import Healthbar from './Healthbar'
 
 export default function CharacterPanel({ player }) {
 

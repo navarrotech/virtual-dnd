@@ -40,9 +40,10 @@ export default function ViewAll({ ...props }) {
             name: "New Campaign",
             owner: user.uid,
             created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-            chat: [],
-            players: {},
+            state:{
+                turn: 1,
+                phase: 'setup'
+            }
         }).then((doc) => {
             let { key } = doc
             push(ref(getDatabase(), "accounts/"+user.uid+'/campaigns'), {

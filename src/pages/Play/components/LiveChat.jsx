@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { getDatabase, ref, onValue } from "firebase/database"
+import { getDatabase, set, push, ref, onValue } from "firebase/database"
+
+import UserContext from 'context/User.jsx'
 
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 // import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -10,13 +12,16 @@ import Styles from '../_.module.sass'
 
 import moment from "moment"
 
-export default function LiveChat({ me, api }){
+const chat_limit = 100
+
+export default function LiveChat({ me }){
 
     const [ state, setState ] = useState({
         message: '',
         show: false
     })
     const { id } = useParams()
+    const [ user ] = useContext(UserContext)
     const [ time, setTime ] = useState(moment())
     const [ chat, setChat ] = useState([])
     const textarea = useRef()
@@ -29,7 +34,41 @@ export default function LiveChat({ me, api }){
 
     function send(){
         if(state.message === ''){ return }
-        api.livechat.SendMessage(state.message, chat.length)
+        let database = getDatabase()
+
+        let { message } = state
+
+        try{
+            // Push the chat!
+            push(ref(database, `campaigns/${id}/chat`), {
+                who: user.uid,
+                name: user.displayName,
+                when: new Date().toISOString(),
+                what: message
+            })
+
+            if(chat.length >= (chat_limit-1)){
+                onValue(ref(database, `campaigns/${id}/chat`), (snapshot) => {
+                    // Gather the values
+                    let value = snapshot.val()
+                    let messages = Object
+                        .keys(value)
+                        .map(a => {
+                            return { uid: a, ...value[a] }
+                        })
+                        .sort((a,b) => {
+                            return a.when - b.when
+                        })
+                        .reverse()
+                    // Process the keys "to keep"
+                    let keep = messages.splice(0, chat_limit)
+                    // Convert it back to a JSON object
+                    messages = {}
+                    keep.forEach(m => messages[m.uid] = { ...m, uid:null })
+                    set(ref(database, `campaigns/${id}/chat`), messages)
+                }, { onlyOnce: true })
+            }
+        } catch(e){ console.log(e) }
         setState({ ...state, message: '', show: false })
         scrollToBottom()
         if(textarea && textarea.current){ textarea.current.blur() }
