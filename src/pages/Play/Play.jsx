@@ -85,7 +85,7 @@ export default function Play() {
     return (
         <div className={Styles.Game}>
             <Navbar player={myPlayerToken} campaign_name={state.campaign_name} />
-            <Map players={players} />
+            <Map players={players} isDungeonMaster={state.campaign_owner === user.uid} />
             { myPlayerToken
                 ? <UserActions player={myPlayerToken}  />
                 : <DMActions players={players}  />
@@ -93,7 +93,7 @@ export default function Play() {
             <PlayerList players={players} />
             <LiveChat me={user.uid} />
             <CharacterPanel player={myPlayerToken} />
-            <GameState players={players} dungeonMaster={state.campaign_owner}/>
+            <GameState players={players} isDungeonMaster={state.campaign_owner === user.uid}/>
         </div>
     )
 }

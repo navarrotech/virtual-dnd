@@ -9,7 +9,7 @@ const zoom_sensitivity = 0.001,
     max_zoom = 3,
     min_zoom = 0.35;
 
-export default function Map({ players, ...props }){
+export default function Map({ players, isDungeonMaster=false, ...props }){
 
     const [map, setMap] = useState(null)
     const [ dragging, setDragging ] = useState(false)

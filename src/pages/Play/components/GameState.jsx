@@ -7,7 +7,7 @@ import { onValue, ref, set, getDatabase } from 'firebase/database'
 
 import { RollDice, WaitForRoll, ShowRolledResult } from './status/RollDice.jsx'
 
-export default function GameState({ players, dungeonMaster, ...props }){
+export default function GameState({ players, isDungeonMaster=false, ...props }){
 
     const [ syncedState, setSyncedState ] = useState(null)
     const [ user ] = useContext(UserContext)
@@ -49,7 +49,7 @@ export default function GameState({ players, dungeonMaster, ...props }){
         else {
             return <WaitForRoll
                 who={players[who]}
-                isDungeonMaster={who === dungeonMaster}
+                isDungeonMaster={isDungeonMaster}
                 onStop={() => {
                     set(
                         ref(getDatabase(), `campaigns/${id}/state/action`),
