@@ -75,14 +75,14 @@ export default function DMActions({ players, ...props }){
                                 health,
                                 armorClass
                             }
-                        },
-                        function({ key }){
-                            set(
-                                ref(getDatabase(), `campaigns/${id}/map/entities/${key}`),
-                                { x: 50, y: 50, color }
-                            )
                         }
                     )
+                    .then(function({ key }){
+                        set(
+                            ref(getDatabase(), `campaigns/${id}/map/entities/${key}`),
+                            { x: 50, y: 50, color }
+                        )
+                    })
                 }}/>
                 : <></>
             }

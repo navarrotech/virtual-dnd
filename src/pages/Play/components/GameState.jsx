@@ -14,25 +14,29 @@ export default function GameState({ players, isDungeonMaster=false, ...props }){
     const { id } = useParams()
 
     useEffect(() => {
-        onValue(ref(`/campaigns/${id}/state`), function(snapshot){
+        const unsubscribe = onValue(ref(getDatabase(), `/campaigns/${id}/state`), (snapshot) => {
             const value = snapshot.val()
+            console.log("New game state: ", value)
             setSyncedState(value)
-        })
+        });
+        return () => {
+            unsubscribe();
+        }
     }, [id])
 
     // Loading clause
-    if(!syncedState || !syncedState.phase){
+    if(!syncedState){
         return <></>
     }
 
-    const { actions:{ type='' }={ type:'' }, actions={ type:'' } } = syncedState;
+    const { action:{ type='' }={ type:'' }, action={ type:'' } } = syncedState;
 
     if(type === 'rolling'){
-        let { who, dice, check } = actions
+        let { who, dice, reason } = action
         if(who === user.uid){
             return <RollDice
                 roll={dice}
-                check={check}
+                check={reason}
                 onRolled={(roll) => {
                     set(
                         ref(getDatabase(), `campaigns/${id}/state/action`),
@@ -63,9 +67,9 @@ export default function GameState({ players, isDungeonMaster=false, ...props }){
     if(type === 'rolled'){
         // This has a built in timer of 10 seconds, and then it will stop showing! Even after refresh :)
         return <ShowRolledResult
-            who={players[actions.who]}
-            roll={actions.roll}
-            when={actions.when}
+            who={players[action.who]}
+            roll={action.roll}
+            when={action.when}
         />
     }
 

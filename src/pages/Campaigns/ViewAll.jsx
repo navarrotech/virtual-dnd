@@ -23,7 +23,7 @@ export default function ViewAll({ ...props }) {
 
     useEffect(() => {
         const reference = ref(getDatabase(), "accounts/" + user.uid)
-        onValue(reference, (snapshot) => {
+        const unsubscribe = onValue(reference, (snapshot) => {
             let {
                 campaigns=[],
                 joinedCampaigns=[]
@@ -32,6 +32,9 @@ export default function ViewAll({ ...props }) {
                 return {...s, loading: false, campaigns, joinedCampaigns }
             })
         })
+        return () => {
+            unsubscribe()
+        }
     }, [user])
 
     function create() {

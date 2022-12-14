@@ -15,6 +15,7 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
     const [ dragging, setDragging ] = useState(false)
     const { id } = useParams()
     const MapImage = useRef()
+    const ParentMap = useRef()
     const [state, setState] = useState({
         posX: 0,
         posY: 0,
@@ -67,12 +68,17 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
                 return { ...state, posX, posY }
             })
         };
-        document.addEventListener('wheel', scaleListener)
+        let { current:element } = ParentMap
+        if(element){
+            element.addEventListener('wheel', scaleListener)
+        }
         if(dragging){
             document.addEventListener('mousemove', dragListener)
         }
         return () => {
-            document.removeEventListener('wheel', scaleListener)
+            if(element){
+                element.removeEventListener('wheel', scaleListener)
+            }
             if(dragging){
                 document.removeEventListener('mousemove', dragListener)
             }
@@ -82,7 +88,7 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
     if(!map){ return <></>; }
 
     return (
-        <div className={Styles.Map}>
+        <div ref={ParentMap} className={Styles.Map}>
             <div
                 className={Styles.MapBox + (dragging?' '+Styles.isDragging:'')}
                 onMouseDown={() => setDragging(true)}

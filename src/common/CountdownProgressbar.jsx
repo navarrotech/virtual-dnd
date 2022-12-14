@@ -5,14 +5,16 @@ export default function CountdownProgressbar({ time=7000, size='normal', color='
     const [ started, setStarted ] = useState(false)
 
     useEffect(() => {
-        setStarted(true)
+        setTimeout(() => {
+            setStarted(true)
+        }, 100)
     }, [])
 
     return (
         <div className={`progressbar is-${size} is-${color}`}>
             <div className="bar" style={{
                 width: started ? '0%' : '100%',
-                transition: `width ${time}ms ease`
+                transition: `width ${time-100}ms ease`
             }}></div>
         </div>
     )

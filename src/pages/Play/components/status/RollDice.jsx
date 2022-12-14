@@ -14,7 +14,7 @@ import { ReactComponent as BoltAuto } from 'icons/bolt-auto.svg'
 
 import CountdownProgressbar from 'common/CountdownProgressbar'
 
-// import moment from 'moment'
+import moment from 'moment'
 
 import Styles from '../../_.module.sass'
 
@@ -24,7 +24,7 @@ export function ChooseRollDice({ players, onChosen }){
     const [ player, setPlayer ] = useState(null)
 
     function finish(reason){
-            onChosen({ reason, player, dice })
+        onChosen({ reason, who:player, dice })
     }
     if(!player){
         return (
@@ -39,6 +39,7 @@ export function ChooseRollDice({ players, onChosen }){
                             {
                                 Object.keys(players).map(key => {
                                     let player = players[key]
+                                    if(player.player_name === 'NPC'){ return null }
                                     return <div key={key} className={"item box is-clickable has-text-centered " + Styles.ChoiceBox} onClick={() => setPlayer(key)}>
                                         <h1 className="title">{player.character.name}</h1>
                                         <h2 className="subtitle">{player.name}</h2>
@@ -48,7 +49,7 @@ export function ChooseRollDice({ players, onChosen }){
                         </div>
                     </section>
                     <footer className="choice-footer buttons is-centered">
-                        <button className="button is-light is-medium" type="button" onClick={() => { onChosen(null) }}>
+                        <button className="button is-light" type="button" onClick={() => { onChosen(null) }}>
                             <span>Cancel</span>
                         </button>
                     </footer>
@@ -134,95 +135,98 @@ export function ChooseRollDice({ players, onChosen }){
                     <div className="block columns">
                         
                         <div className="column">
-                            <h1 className="title has-text-centered">Strength</h1>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('strength')}>
+                            <h1 className="title has-text-centered has-text-white">Strength</h1>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('strength')}>
                                 <span>Strength Check</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('athletics')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('athletics')}>
                                 <span>Athletics</span>
                             </div>
                         </div>
                         <div className="column">
-                            <h1 className="title has-text-centered">Dexterity</h1>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('dexterity')}>
+                            <h1 className="title has-text-centered has-text-white">Dexterity</h1>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('dexterity')}>
                                 <span>Dexterity Check</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('acrobatics')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('acrobatics')}>
                                 <span>Acrobatics</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('sleight of hand')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('sleight of hand')}>
                                 <span>Sleight of hand</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('stealth')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('stealth')}>
                                 <span>Stealth</span>
                             </div>
                         </div>
                         <div className="column">
-                            <h1 className="title has-text-centered">Intelligence</h1>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('intelligence')}>
+                            <h1 className="title has-text-centered has-text-white">Charisma</h1>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('charisma')}>
+                                <span>Charisma Check</span>
+                            </div>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('deception')}>
+                                <span>Deception</span>
+                            </div>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('intimidation')}>
+                                <span>Intimidation</span>
+                            </div>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('performance')}>
+                                <span>Performance</span>
+                            </div>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('persuasion')}>
+                                <span>Persuasion</span>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <h1 className="title has-text-centered has-text-white">Intelligence</h1>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('intelligence')}>
                                 <span>Intelligence Check</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('arcana')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('arcana')}>
                                 <span>Arcana</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('history')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('history')}>
                                 <span>History</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('investigation')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('investigation')}>
                                 <span>Investigation</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('nature')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('nature')}>
                                 <span>Nature</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('religion')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('religion')}>
                                 <span>Religion</span>
                             </div>
                         </div>
                         <div className="column">
-                            <h1 className="title has-text-centered">Wisdom</h1>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('wisdom')}>
+                            <h1 className="title has-text-centered has-text-white">Wisdom</h1>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('wisdom')}>
                                 <span>Wisdom Check</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('animal handling')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('animal handling')}>
                                 <span>Animal Handling</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('insight')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('insight')}>
                                 <span>Insight</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('medicine')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('medicine')}>
                                 <span>Medicine</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('perception')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('perception')}>
                                 <span>Perception</span>
                             </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('survival')}>
+                            <div className="field button is-white is-primary-hover is-fullwidth" onClick={() => finish('survival')}>
                                 <span>Survival</span>
-                            </div>
-                        </div>
-                        <div className="column">
-                            <h1 className="title has-text-centered">Charisma</h1>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('charisma')}>
-                                <span>Charisma Check</span>
-                            </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('deception')}>
-                                <span>Deception</span>
-                            </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('intimidation')}>
-                                <span>Intimidation</span>
-                            </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('performance')}>
-                                <span>Performance</span>
-                            </div>
-                            <div className="button is-white is-primary-hover" onClick={() => finish('persuasion')}>
-                                <span>Persuasion</span>
                             </div>
                         </div>
 
                     </div>
                 </section>
-                <footer className="choice-footer buttons is-centered">
-                    <button className="button is-light is-medium" type="button" onClick={() => { setDice(null) }}>
+                <footer className="choice-footer buttons is-centered are-medium">
+                    <button className="button is-light" type="button" onClick={() => { setDice(null) }}>
                         <span>Back</span>
+                    </button>
+                    <button className="button is-primary" type="button" onClick={() => { finish('NA') }}>
+                        <span>Skip</span>
                     </button>
                 </footer>
             </div>
@@ -244,51 +248,58 @@ export function RollDice({ roll=20, check='NA', onRolled }){
     if(showInput){
         let possibilies = []
         for (let i = 0; i < roll; i++) {
-            possibilies.push(<div key={i} className={"item box is-clickable has-text-centered " + Styles.ChoiceBox} onClick={() => onRolled(i+1)}>
-            <h1 className="title">{i+1}</h1>
-        </div>)
+                possibilies.push(<div key={i} className={"item box is-clickable has-text-centered mb-0 " + Styles.ChoiceBox} onClick={() => onRolled(i+1)}>
+                <h1 className="title">{i+1}</h1>
+            </div>)
         }
-        <div className="choice">
-            <div className="choice-background"></div>
-            <div className="choice-content">
-                <header className="choice-title">
-                    <h1 className="title">What did you roll?</h1>
-                    <h2 className="subtitle">(Don't include modifiers, we'll do that for you!)</h2>
-                </header>
-                <section className="choice-body container is-max-desktop">
-                    <div className={"block flexlist is-centered"}>
-                        { possibilies }
-                    </div>
-                </section>
-                <footer className="choice-footer buttons is-centered">
-                    <button className="button is-light is-medium" type="button" onClick={() => { setShowInput(false) }}>
-                        <span>Back</span>
-                    </button>
-                </footer>
+
+        let row_limit = 5
+        if(roll===4 || roll===8){ row_limit = 4 }
+        else if(roll===6 || roll===12){ row_limit = 6 }
+
+        return (
+            <div className="choice">
+                <div className="choice-background"></div>
+                <div className="choice-content">
+                    <header className="choice-title">
+                        <h1 className="title">What did you roll?</h1>
+                        <h2 className="subtitle">(Don't include modifiers, we'll do that for you!)</h2>
+                    </header>
+                    <section className="choice-body container is-max-desktop">
+                        <div className={`block flexlist is-centered has-${row_limit}-per-row`}>
+                            { possibilies }
+                        </div>
+                    </section>
+                    <footer className="choice-footer buttons is-centered">
+                        <button className="button is-light" type="button" onClick={() => { setShowInput(false) }}>
+                            <span>Back</span>
+                        </button>
+                    </footer>
+                </div>
             </div>
-        </div>
+        )
     }
 
     let icon = <></>
     switch(roll){
         case 4:
-            icon = <DiceD4Icon className=""/>
+            icon = <DiceD4Icon className="svg-white"/>
             break;
         case 6: 
-            icon = <DiceD6Icon className=""/>
+            icon = <DiceD6Icon className="svg-white"/>
             break;
         case 8: 
-            icon = <DiceD8Icon className=""/>
+            icon = <DiceD8Icon className="svg-white"/>
             break;
         case 10: 
-            icon = <DiceD10Icon className=""/>
+            icon = <DiceD10Icon className="svg-white"/>
             break;
         case 12: 
-            icon = <DiceD12Icon className=""/>
+            icon = <DiceD12Icon className="svg-white"/>
             break;
         case 20: 
         default:
-            icon = <DiceD20Icon className=""/>
+            icon = <DiceD20Icon className="svg-white"/>
             break;
     }
 
@@ -301,20 +312,19 @@ export function RollDice({ roll=20, check='NA', onRolled }){
                         check === 'NA'
                         ? <>
                             <h1 className="title">It's your turn to roll!</h1>
-                            <h2 className="subtitle">How do you want to roll?</h2>
+                            <h2 className="subtitle">Roll A D{roll}</h2>
                         </>
                         : <>
-                            <h1 className="title">{check} check!</h1>
-                            <h2 className="subtitle">It's your turn to roll!</h2>
+                            <h1 className="title is-capitalized">{check} check!</h1>
+                            <h2 className="subtitle">Roll A D{roll}</h2>
                         </>
                     }
                 </header>
                 <section className="choice-body container is-max-desktop">
-                    <div className="block is-flex is-justify-content-center is-flex-direction-column">
-                        <div className="block" style={{ maxWidth: '250px' }}>
+                    <div className="block is-flex is-flex-direction-column is-align-items-center">
+                        <div className="block" style={{ width: '100px' }}>
                             { icon }
                         </div>
-                        <h1 className="title">Roll A D{roll}</h1>
                     </div>
                     <div className="block columns">
                         
@@ -329,7 +339,7 @@ export function RollDice({ roll=20, check='NA', onRolled }){
                         <div className="column">
                             <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setShowInput(true)}>
                                 <div className="field icon is-large mx-auto is-block">
-                                    <FontAwesomeIcon icon={faDice} />
+                                    <FontAwesomeIcon icon={faDice} size='3x' />
                                 </div>
                                 <p className="is-size-4 has-text-centered">Roll Myself</p>
                             </div>
@@ -354,7 +364,7 @@ export function WaitForRoll({ who, onStop, isDungeonMaster=false }){
                         <span>Cancel</span>
                     </button>
                 </div>
-                : <div className="notification is-black">
+                : <div className="notification is-black has-text-centered">
                     { who.player_name } is rolling...
                 </div>
             }
@@ -362,23 +372,43 @@ export function WaitForRoll({ who, onStop, isDungeonMaster=false }){
     )
 }
 
-export function ShowRolledResult({ when, roll, who }){
+export function ShowRolledResult({ when:then, roll, who }){
 
     const [ skip, setSkip ] = useState(false)
 
     useEffect(() => {
         const listener = function({ key }){
-            if(['esc'].includes(key)){ setSkip(true) }
+            if(['Escape'].includes(key)){ setSkip(true) }
         }
         document.addEventListener('keydown', listener)
         return () => {
             document.removeEventListener('keydown', listener)
         }
-    });
+    }, []);
 
-    if(skip){ // moment(when).add(10, 'seconds').isAfter(moment())
+    useEffect(() => {
+        let interval = setInterval(() => {
+            if(moment(then).add(10, 'seconds').isBefore()){
+                setSkip(true)
+                clearInterval(interval)
+            }
+        }, 250)
+
+        return () => {
+            try{
+                clearInterval(interval)
+            } catch(e){}
+        }
+    }, [then])
+
+    if(skip || moment(then).add(10, 'seconds').isBefore()){
         return <></>
     }
+
+    let player_name = who.player_name
+    try{
+        player_name = player_name.split(' ')[0]
+    } catch(e){  }
 
     return (
         <div className="choice">
@@ -386,13 +416,23 @@ export function ShowRolledResult({ when, roll, who }){
             <div className="choice-content">
                 <header className="choice-title">
                     <div className="block">
-                        <h1 className="title is-size-1 has-text-white">{who.player_name} rolled a {roll}</h1>
+                        <h1 className="title is-size-1 has-text-white">
+                            {player_name} rolled a {roll}{
+                            roll < 7
+                                ? '...'
+                            : roll < 18
+                                ? '.'
+                            : '!'
+                        }
+                        </h1>
                     </div>
+                </header>
+                <section className="choice-body container is-max-desktop">
                     <CountdownProgressbar
                         time={10 * 1000}
                         size="large"
                     />
-                </header>
+                </section>
                 <footer className="choice-footer buttons is-centered">
                     <button className="button is-primary is-medium" type="button" onClick={() => { setSkip(true) }}>
                         {

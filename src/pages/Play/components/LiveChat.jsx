@@ -78,7 +78,6 @@ export default function LiveChat({ me }){
     useEffect(() => {
         // let initialized = false;
         // This updates whenever the players update
-        console.log("Resubscribing to chat!")
         const unsubscribe = onValue(ref(getDatabase(), "campaigns/" + id + '/chat'), async (snapshot) => {
             console.log("Chat data syncing...")
 
@@ -104,14 +103,14 @@ export default function LiveChat({ me }){
     useEffect(() => {
         const listener = function(event){
 
-            let { key='' } = event;
+            let { key='', target } = event;
             let { current:element=null } = textarea
 
             if(key === 'Escape'){
                 if(element){ element.blur() }
                 return setState({ ...state, show:false, message:'' });
             }
-            if(key === 'Enter' && !state.show){
+            if(key === 'Enter' && !state.show && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA'){
                 setState({ ...state, show: true })
                 if(element){ element.focus() }
                 event.preventDefault()

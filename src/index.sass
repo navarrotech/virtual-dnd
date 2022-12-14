@@ -14,11 +14,22 @@ $family-sans-serif: 'Nunito', 'Noto Sans', 'Cabin', Arial, Helvetica, sans-serif
 html
     background: #fbfbfa
 
-.button.is-primary:not(.is-outlined)
-    @include primaryGradient
+.button
+    
+    &.is-primary:not(.is-outlined)
+        @include primaryGradient
 
-    &:hover
-        @include primaryGradientLight
+        &:hover
+            @include primaryGradientLight
+    &.is-primary-hover.is-white
+        color: black
+        background-color: white
+        border-color: white
+
+        &:hover
+            background-color: $primary
+            border-color: $primary
+            color: white !important
 
 input
     font-family: 'Noto Sans', 'Cabin', Arial, Helvetica, sans-serif !important
@@ -160,29 +171,51 @@ input
     align-items: flex-start
     gap: 1em
 
-    &.has-3-per-row > .item
+    &.has-3-per-row:not(.is-compact) > .item
         width: calc(33% - 1em)
+    &.has-4-per-row:not(.is-compact) > .item
+        width: calc(25% - 1em)
+    &.has-5-per-row:not(.is-compact)> .item
+        width: calc(20% - 1em)
+    &.has-6-per-row:not(.is-compact) > .item
+        width: calc(16.66% - 1em)
         
     &.is-centered
         justify-content: center
 
-    &.has-min-widths > .item
-        min-width:  3em
-        min-height: 3em
+    // &.has-min-widths > .item
+    //     min-width:  2em
+    //     min-height: 2em
+
+    &.is-compact
+        gap: 0.5em
+
+        &.has-3-per-row > .item
+            width: calc(33% - 0.5em)
+        &.has-4-per-row > .item
+            width: calc(25% - 0.5em)
+        &.has-5-per-row > .item
+            width: calc(20% - 0.5em)
+        &.has-6-per-row > .item
+            width: calc(16.66% - 0.5em)
 
     .item
+        min-height: 2.5em
         &.is-rounded
             border-radius: 6px
 
 // I should add this to navarrotech/bulma
 .toast
     position: fixed
-    width: 320px
+    width: 450px
     height: fit-content
     z-index: 38
     left: 0
     right: 0
     margin: auto
+
+    > .notification
+        padding: 0.75rem 1.5rem
 
     &.is-top
         top: 120px
@@ -201,14 +234,24 @@ input
 .progressbar
     display: block
     width: 100%
-    height: 30px
-    border-radius: 50%
+    height: 1.75em
+    border-radius: 30px
+    background: black
     overflow: hidden
 
+    &.is-primary
+        .bar
+            background: $primary
+
     .bar
-        height: 30px
+        height: 1.75em
         display: block
         transition: width 300ms ease
 
     &:not(:last-child)
         margin-bottom: 1.5em
+
+.svg-white,
+.svg-white *
+    fill: white
+

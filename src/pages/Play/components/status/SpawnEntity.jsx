@@ -5,8 +5,9 @@ import { faDragon, faSync } from '@fortawesome/free-solid-svg-icons'
 
 import ChooseAvatar from "pages/Characters/Components/ChooseAvatar.jsx"
 
-// Uses localstorage if possible to remember your last saved choice
+import Styles from '../../_.module.sass'
 
+// Uses localstorage if possible to remember your last saved choice
 const LS_Keys = {
     color: 'spawn_entity_saved_color',
     image: 'spawn_entity_saved_image',
@@ -16,11 +17,11 @@ const LS_Keys = {
 
 const colors = [
     '#FF3554',
-    '#FF3554',
-    '#FF3554',
-    '#FF3554',
-    '#FF3554',
-    '#FF3554',
+    '#ffce35',
+    '#1dcc1e',
+    '#35e9ff',
+    '#358fff',
+    '#8235ff',
 ]
 
 export default function SpawnEntity({ onFinish, ...props }){
@@ -86,43 +87,68 @@ export default function SpawnEntity({ onFinish, ...props }){
                 <section className="choice-body container is-max-desktop">
                     <div className="block columns">
                         
-                        <div className="column">
-                            <div className="flexlist has-min-widths">
-                                {
-                                    colors.map(color => {
-                                        return <div
-                                            key={color}
-                                            className="item is-rounded is-clickable"
-                                            style={{
-                                                background: color,
-                                                border: `2px solid ${color===state.color?'#ffffff':'transparent'}`,
-                                                transform: `scale(${color===state.color?'1.08':'1'})`
-                                            }}
-                                            onClick={() => setState({ ...state, color })}
-                                        />
-                                    })
-                                }
+                        <div className="column is-one-third mx-auto">
+                            <div className={'block ' + Styles.SpawnEntityPreview}>
+                                <figure className="image is-1by1">
+                                    <img src='https://firebasestorage.googleapis.com/v0/b/dnd-virtual.appspot.com/o/game%2Fcity.jpg?alt=media&token=2b64d09e-d82b-4451-b056-db92e6e68f11' alt='city'/>
+                                </figure>
+                                <div
+                                    className={Styles.Entity}
+                                    style={{
+                                        top:  '50%',
+                                        left: '50%'
+                                    }}
+                                >
+                                    <img src={state.image} alt={state.name} draggable={false}/>
+                                    <label className={Styles.EntityLabel}>{state.name}</label>
+                                    <div
+                                        className={Styles.EntityPop}
+                                        style={{
+                                            background: state.color,
+                                            width:      '25px',
+                                            height:     '25px',
+                                            minHeight:  '25px',
+                                        }}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="column is-one-third">
-                            <div className="block is-clickable">
-                                <div className="block">
+                                {/* <div className="block">
                                     <figure className="image is-1by1" onClick={() => { setState({ ...state, showChooseAvatar: true }) }}>
                                         <img src={state.image} alt={state.name} />
                                     </figure>
+                                </div> */}
+                                <div className="block flexlist has-min-widths has-6-per-row is-compact">
+                                    {
+                                        colors.map(color => {
+                                            return <div
+                                                key={color}
+                                                className="item is-rounded is-clickable"
+                                                style={{
+                                                    background: color,
+                                                    border: `2px solid ${color===state.color?'#ffffff':color}`,
+                                                    transform: `scale(${color===state.color?'1.15':'1'})`
+                                                }}
+                                                onClick={() => {
+                                                    if(localStorage && localStorage.setItem){ localStorage.setItem(LS_Keys.color, color) }
+                                                    setState({ ...state, color })}
+                                                }
+                                            />
+                                        })
+                                    }
                                 </div>
-                                <button className="button is-primary" type="button" onClick={() => { setState({ ...state, showChooseAvatar: true }) }}>
+                                <button className="button is-light is-fullwidth" type="button" onClick={() => { setState({ ...state, showChooseAvatar: true }) }}>
                                     <span className="icon">
                                         <FontAwesomeIcon icon={faSync}/>
                                     </span>
                                     <span>Change Image</span>
                                 </button>
                             </div>
-                        </div>
-                        
                     </div>
                 </section>
                 <footer className="choice-footer buttons is-centered">
+                    <button className="button is-light is-medium" type="button" onClick={() => { onFinish(null) }}>
+                        <span>Cancel</span>
+                    </button>
                     <button className="button is-light is-medium" type="button" onClick={() => { setState({ ...state, hasName: false }) }}>
                         <span>Edit name</span>
                     </button>
@@ -137,6 +163,7 @@ export default function SpawnEntity({ onFinish, ...props }){
                 current={state.image}
                 onChoose={(image) => {
                     if(image){
+                        if(localStorage && localStorage.setItem){ localStorage.setItem(LS_Keys.image, image) }
                         return setState({ ...state, showChooseAvatar: false, image })
                     }
                     setState({ ...state, showChooseAvatar: false })

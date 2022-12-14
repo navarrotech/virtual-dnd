@@ -40,7 +40,26 @@ export default function Play() {
         // This updates whenever the players update
         const unsubscribe = onValue(ref(database, "campaigns/" + id + '/players'), async (snapshot) => {
             console.log("Player data syncing...")
-            setPlayers(snapshot.val())
+            let value = snapshot.val()
+
+            // I want to sort it, so humans are first and NPC's are last.
+            try {
+                // Deconstruct the object to an array
+                let a = Object.keys(value).map(key => {
+                    let v = value[key]
+                    return { key, isHuman: (v && v.player_name === 'NPC'?1:0) }
+                })
+                // Sort the array
+                a = a.sort((a,b) => {
+                    return a.isHuman - b.isHuman
+                })
+                // Push the sorted indexes into the new object in order
+                let b = {}
+                a.forEach(k => b[k.key] = { ...value[k.key] })
+                // Set the value back
+                value = b
+            } catch(e){ console.log(e); value = snapshot.val() }
+            setPlayers(value)
         })
 
         onValue(ref(database, "campaigns/" + id), async (snapshot) => {

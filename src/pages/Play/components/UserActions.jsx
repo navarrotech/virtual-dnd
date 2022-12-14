@@ -36,13 +36,13 @@ export default function UserActions({ player, ...props }){
             </button> */}
             <div className={Styles.InventoryQuip}>
                 <div className="tags">
-                    <span className="tag is-black icon-text" data-tooltip="Money">
+                    <span className="tag is-black icon-text has-tooltip-bottom" data-tooltip="Money">
                         <span className="icon">
                             <FontAwesomeIcon icon={faCoins}/>
                         </span>
                         <span>{gold}</span>
                     </span>
-                    <span className="tag is-black icon-text" data-tooltip="Experience">
+                    <span className="tag is-black icon-text has-tooltip-bottom" data-tooltip="Experience">
                         <span className="icon">
                             <FontAwesomeIcon icon={faBolt}/>
                         </span>
