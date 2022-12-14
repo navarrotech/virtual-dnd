@@ -101,18 +101,20 @@ export default function Play() {
         return <WelcomeAndJoin campaign_name={state.campaign_name}  />
     }
 
+    const isDungeonMaster = state.campaign_owner === user.uid
+
     return (
         <div className={Styles.Game}>
             <Navbar player={myPlayerToken} campaign_name={state.campaign_name} />
-            <Map players={players} isDungeonMaster={state.campaign_owner === user.uid} />
+            <Map players={players} isDungeonMaster={isDungeonMaster} />
             { myPlayerToken
                 ? <UserActions player={myPlayerToken}  />
                 : <DMActions players={players}  />
             }
-            <PlayerList players={players} />
+            <PlayerList players={players} isDungeonMaster={isDungeonMaster} />
             <LiveChat me={user.uid} />
             <CharacterPanel player={myPlayerToken} />
-            <GameState players={players} isDungeonMaster={state.campaign_owner === user.uid}/>
+            <GameState players={players} isDungeonMaster={isDungeonMaster}/>
         </div>
     )
 }

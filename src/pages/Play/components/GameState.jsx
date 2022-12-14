@@ -5,7 +5,7 @@ import UserContext from 'context/User.jsx'
 
 import { onValue, ref, set, getDatabase } from 'firebase/database'
 
-import { RollDice, WaitForRoll, ShowRolledResult } from './status/RollDice.jsx'
+import { RollDice, WaitForRoll, ShowRolledResult } from './menu/RollDice.jsx'
 
 export default function GameState({ players, isDungeonMaster=false, ...props }){
 

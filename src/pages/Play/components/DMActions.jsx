@@ -9,8 +9,8 @@ import { ReactComponent as HelmetIcon } from 'icons/helmet-battle.svg'
 
 import { ref, set, push, getDatabase } from "firebase/database"
 
-import { ChooseRollDice } from './status/RollDice'
-import SpawnEntity from './status/SpawnEntity.jsx'
+import { ChooseRollDice } from './menu/RollDice'
+import SpawnEntity from './menu/SpawnEntity.jsx'
 
 import Styles from '../_.module.sass'
 

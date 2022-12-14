@@ -156,6 +156,17 @@ $playerBorderRadius: 4px
         .Building
             border: 1px solid blue
 
+.Entities
+
+    &:not(.alwaysShowLabel)
+        .EntityLabel, img
+            transition: opacity 150ms ease
+            opacity: 0
+
+    &.alwaysShowLabel:hover
+        .EntityLabel, img
+            opacity: 1 !important
+
 .Entity
     // background: $success
     position: absolute
@@ -373,7 +384,7 @@ $playerBorderRadius: 4px
         svg
             fill: white
 
-.SpawnEntityPreview
+// .SpawnEntityPreview
 
 
 

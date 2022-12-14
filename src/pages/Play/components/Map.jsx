@@ -3,6 +3,8 @@ import { useParams } from "react-router"
 
 import { getDatabase, ref, onValue } from "firebase/database"
 
+import ModifyPlayerModal from "./menu/ModifyPlayerModal"
+
 import Styles from '../_.module.sass'
 
 const zoom_sensitivity = 0.001,
@@ -17,12 +19,14 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
     const MapImage = useRef()
     const ParentMap = useRef()
     const [state, setState] = useState({
+        alwaysShowLabels: false,
         posX: 0,
         posY: 0,
         scale: 1,
         width: 1000,
         height: 1000
     })
+    const [ showUserModal, setShowUserModal ] = useState(null)
 
     // Load the map from Firebase
     useEffect(() => {
@@ -35,7 +39,7 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
         return () => { unsubscribe(); }
     }, [id])
 
-    // Drag and zoom listeners
+    // Drag, hotkey, and zoom listeners
     useEffect(() => {
         const scaleListener = ({ deltaY }) => {
             let { current:image=null } = MapImage
@@ -68,6 +72,16 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
                 return { ...state, posX, posY }
             })
         };
+        const keydownListener = ({ key, target }) => {
+            if((key === ' ' && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA')){
+                setState((state) => {
+                    return {
+                        ...state,
+                        alwaysShowLabels: !state.alwaysShowLabels
+                    }
+                })
+            }
+        }
         let { current:element } = ParentMap
         if(element){
             element.addEventListener('wheel', scaleListener)
@@ -75,6 +89,7 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
         if(dragging){
             document.addEventListener('mousemove', dragListener)
         }
+        document.addEventListener('keydown', keydownListener)
         return () => {
             if(element){
                 element.removeEventListener('wheel', scaleListener)
@@ -82,12 +97,13 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
             if(dragging){
                 document.removeEventListener('mousemove', dragListener)
             }
+            document.removeEventListener('keydown', keydownListener)
         }
     }, [dragging])
 
     if(!map){ return <></>; }
 
-    return (
+    return (<>
         <div ref={ParentMap} className={Styles.Map}>
             <div
                 className={Styles.MapBox + (dragging?' '+Styles.isDragging:'')}
@@ -103,45 +119,53 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
                     <figure className={"image " + Styles.MapImage} draggable={false}>
                         <img src={map.image} alt="" draggable={false} ref={MapImage}/>
                     </figure>
-                    {
-                        map.entities
-                        ? Object.keys(map.entities).map(entity_uid => {
-                            
-                            let { x, y } = map.entities[entity_uid],
-                                player_link = players[entity_uid]
+                    <div className={Styles.Entities + (state.alwaysShowLabels?' '+Styles.alwaysShowLabel:'')}>
+                        {
+                            map.entities
+                            ? Object.keys(map.entities).map(entity_uid => {
+                                
+                                let { x, y } = map.entities[entity_uid],
+                                    player_link = players[entity_uid]
 
-                            let size =  (25 * state.scale)
-                            if(size <= 18){ size = 18 }
-                            
-                            return <div
-                                key={entity_uid}
-                                className={Styles.Entity + (player_link && player_link.character_uid?' '+Styles.isPlayer:'')}
-                                style={{
-                                    top:  y + '%',
-                                    left: x + '%'
-                                }}
-                            >
-                                { player_link 
-                                    ? <>
-                                        <img src={player_link.character.image} alt={player_link.character.name} draggable={false}/>
-                                        <label className={Styles.EntityLabel}>{player_link.character.name}</label>
-                                    </>
-                                    : <></>
-                                }
-                                <div
-                                    className={Styles.EntityPop}
+                                let size =  (25 * state.scale)
+                                if(size <= 18){ size = 18 }
+                                
+                                return <div
+                                    key={entity_uid}
+                                    onClick={() => setShowUserModal({ uid:entity_uid, ...player_link })}
+                                    className={Styles.Entity + (player_link && player_link.character_uid?' '+Styles.isPlayer:'')}
                                     style={{
-                                        width:  size + 'px',
-                                        height: size + 'px',
-                                        minHeight: size + 'px',
+                                        top:  y + '%',
+                                        left: x + '%'
                                     }}
-                                ></div>
-                            </div>
-                        })
-                        : <></>
-                    }
+                                >
+                                    { player_link 
+                                        ? <>
+                                            <img src={player_link.character.image} alt={player_link.character.name} draggable={false}/>
+                                            <label className={Styles.EntityLabel}>{player_link.character.name}</label>
+                                        </>
+                                        : <></>
+                                    }
+                                    <div
+                                        className={Styles.EntityPop + ' is-clickable'}
+                                        style={{
+                                            width:  size + 'px',
+                                            height: size + 'px',
+                                            minHeight: size + 'px',
+                                        }}
+                                    ></div>
+                                </div>
+                            })
+                            : <></>
+                        }
+                    </div>
             </div>
         </div>
+        { showUserModal
+            ? <ModifyPlayerModal isDungeonMaster={isDungeonMaster} player={showUserModal} onClose={() => { setShowUserModal(null) }}/>
+            : <></>
+        }
+    </>
     )
 
 }
