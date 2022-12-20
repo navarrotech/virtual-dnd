@@ -31,16 +31,20 @@ export default function Navbar({ campaign_name, player, ...props }) {
                     trigger={<NameTag subtitle={player && player.character && player.character.name ? "Playing as " + player.character.name : null}/>}
                 >
                     { player
-                        ? <Link to={`/characters/${player.character_uid}?rejoin_campaign=${id}`} className="dropdown-item">
-                            Edit Character
-                        </Link>
+                        ? <>
+                            <Link to={`/characters/${player.character_uid}?rejoin_campaign=${id}`} className="dropdown-item">
+                                Edit Character
+                            </Link>
+                            <hr className="dropdown-divider" />
+                        </>
                         : <></>
                     }
                     
-                    <hr className="dropdown-divider" />
-                    
-                    <Link to="/campaigns" className="dropdown-item is-danger">
+                    <Link to="/campaigns" className="dropdown-item">
                         Dashboard
+                    </Link>
+                    <Link to="/logout" className="dropdown-item is-danger">
+                        Logout
                     </Link>
                 </Dropdown>
             </div>

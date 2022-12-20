@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react"
 import { Navigate, Route, Link, useNavigate } from "react-router-dom"
 
-import { getAuth, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
+import { getAuth, signOut, updateProfile, sendEmailVerification, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
 
 // Icons + Images
 import { FontAwesomeIcon as FontAwesome6 } from "@fortawesome/react-fontawesome"
@@ -97,20 +97,21 @@ export function AuthPanel({ ...props }) {
                     console.log({ errorCode: error.code, message: error.message, NativeButtonLoading: false })
                 })
         } else if (state.mode === "signup") {
+            let catcher = (error) => {
+                setState({ ...state, message: error.message, NativeButtonLoading: false, })
+                console.log({ errorCode: error.code, message: error.message })
+            }
             createUserWithEmailAndPassword(auth, email, password)
+                .catch(catcher)
                 .then(async (userCredential) => {
-                    // const user = userCredential.user
-                    await updateProfile(userCredential.user, {
-                        displayName: state.name,
-                        // photoURL: "/images/user.svg",
-                    })
-                    // await validateUserDoc(userCredential.user.uid)
+                    await sendEmailVerification(userCredential.user)
+                    await updateProfile(userCredential.user, { displayName: state.name })
+                })
+                .catch(catcher)
+                .then(() => {
                     navigate('/campaigns', { replace: false })
                 })
-                .catch((error) => {
-                    setState({ ...state, message: error.message, NativeButtonLoading: false, })
-                    console.log({ errorCode: error.code, message: error.message })
-                })
+                .catch(catcher)
         }
     }
 

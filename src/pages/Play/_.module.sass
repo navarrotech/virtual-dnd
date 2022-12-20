@@ -345,9 +345,11 @@ $playerBorderRadius: 4px
             width: fit-content
 
 .UserActions
-    position: absolute
-    left: 1em
-    top: calc(72px + 1em)
+    // position: absolute
+    // left: 1em
+    // top: calc(72px + 1em)
+
+    margin-left: 1em
 
     display: flex
     flex-direction: column
@@ -364,9 +366,40 @@ $playerBorderRadius: 4px
         position: relative
         width: calc(20% - 0.75em)
         height: 80px
+        cursor: pointer
 
-        &.isEmpty
-            background: #f0f0f1
+        display: flex
+        align-items: center
+        flex-flow: column nowrap
+        justify-content: center
+
+        background: #f0f0f1
+
+        .inventoryLabel
+            text-align: center
+            white-space: nowrap
+            margin: 0
+            pointer-events: none
+
+        .quantityLabel
+            pointer-events: none
+            position: absolute
+            top: -9px
+            right: -9px
+            background: $primary
+            color: white
+            border-radius: 50%
+            width: 24px
+            height: 24px
+            text-align: center
+            font-size: 0.8rem
+            padding-top: 0.2rem
+
+        // &.isEmpty
+        //     background: #f0f0f1
+
+        &:hover
+            background: #e6e6ea
 
 .ChoiceBox
     transition: background 300ms ease, color 200ms ease

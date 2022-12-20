@@ -94,7 +94,7 @@ export default function Play() {
 
     // let myPlayerToken = campaign.owner !== user.uid && campaign.players ? campaign.players.find(a => a.player_uid === user.uid) || null : null
     let myPlayerToken = state.campaign_owner !== user.uid && players
-        ? players[user.uid] || null
+        ? { uid: user.uid, ...players[user.uid] } || null
         : null
 
     if (state.campaign_owner !== user.uid && (!myPlayerToken || !myPlayerToken.character)) {

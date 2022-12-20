@@ -42,6 +42,9 @@
                 "speed":30,
                 "level":1,
                 "experience":0
+            },
+            "inventory":{
+                
             }
         }
     }
