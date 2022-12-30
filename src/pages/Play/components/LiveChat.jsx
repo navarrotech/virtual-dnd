@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { getDatabase, set, push, ref, onValue } from "firebase/database"
+import { getDatabase, set, push, ref, onValue, get } from "firebase/database"
 
 import UserContext from 'context/User.jsx'
 
@@ -14,7 +14,7 @@ import moment from "moment"
 
 const chat_limit = 100
 
-export default function LiveChat({ me }){
+export default function LiveChat(){
 
     const [ state, setState ] = useState({
         message: '',
@@ -26,6 +26,8 @@ export default function LiveChat({ me }){
     const [ chat, setChat ] = useState([])
     const textarea = useRef()
     const historyPanel = useRef()
+
+    const me = user.uid
 
     function scrollToBottom(){
         try{ historyPanel.current.scroll(0, 100000)
@@ -40,7 +42,7 @@ export default function LiveChat({ me }){
 
         try{
             // Push the chat!
-            push(ref(database, `campaigns/${id}/chat`), {
+            push(ref(database, `chats/${id}`), {
                 who: user.uid,
                 name: user.displayName,
                 when: new Date().toISOString(),
@@ -48,8 +50,7 @@ export default function LiveChat({ me }){
             })
 
             if(chat.length >= (chat_limit-1)){
-                onValue(ref(database, `campaigns/${id}/chat`), (snapshot) => {
-                    // Gather the values
+                get(ref(database, `chats/${id}`)).then((snapshot) => {
                     let value = snapshot.val()
                     let messages = Object
                         .keys(value)
@@ -65,9 +66,9 @@ export default function LiveChat({ me }){
                     // Convert it back to a JSON object
                     messages = {}
                     keep.forEach(m => messages[m.uid] = { ...m, uid:null })
-                    set(ref(database, `campaigns/${id}/chat`), messages)
-                }, { onlyOnce: true })
-            }
+                    set(ref(database, `chats/${id}`), messages)
+                })
+            };
         } catch(e){ console.log(e) }
         setState({ ...state, message: '', show: false })
         scrollToBottom()
@@ -78,7 +79,7 @@ export default function LiveChat({ me }){
     useEffect(() => {
         // let initialized = false;
         // This updates whenever the players update
-        const unsubscribe = onValue(ref(getDatabase(), "campaigns/" + id + '/chat'), async (snapshot) => {
+        const unsubscribe = onValue(ref(getDatabase(), "chats/" + id), async (snapshot) => {
             console.log("Chat data syncing...")
 
             let rawChat = snapshot.val()

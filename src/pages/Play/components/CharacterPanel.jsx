@@ -1,11 +1,17 @@
+import { useContext } from 'react'
 // import { faShield } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import CampaignContext from '../CampaignContext.jsx'
 
 import Styles from '../_.module.sass'
 
 import Healthbar from './Healthbar'
 
-export default function CharacterPanel({ player }) {
+export default function CharacterPanel() {
+
+    const campaign = useContext(CampaignContext)
+    const { myCharacter:player } = campaign;
 
     // console.log({ player })
     if(!player || !player.character || !player.character.name){ return <></> }

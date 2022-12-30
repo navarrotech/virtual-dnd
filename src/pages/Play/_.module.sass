@@ -179,15 +179,24 @@ $playerBorderRadius: 4px
     flex-direction: column
     gap: 0.5em
 
+    // TODO: Put custom color attributes in here!
     &.isPlayer
         .EntityPop
             background: #2ccf47
+
+    &.isMoving
+        .EntityPop
+            transform: scale(1.2)
 
     .EntityPop
         background: $red
         border: 3px solid #fafafb
         border-radius: 50%
         display: block
+        width: 18px
+        height: 18px
+        min-height: 18px
+        transition: transform 200ms ease
 
     img
         height: 60px

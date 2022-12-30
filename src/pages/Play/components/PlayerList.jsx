@@ -1,22 +1,35 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import ModifyPlayerModal from './menu/ModifyPlayerModal';
 import Healthbar from './Healthbar';
 
+import CampaignContext from '../CampaignContext.jsx'
+
 import Styles from '../_.module.sass'
 
-export default function PlayerList({ isDungeonMaster=false, players={} }) {
+export default function PlayerList() {
 
+    const campaign = useContext(CampaignContext)
+    const { players={}, isDungeonMaster=false } = campaign;
     const [ showUserModal, setShowUserModal ] = useState(null)
 
     return (<>
         <div className={Styles.Players}>
             {
-                Object.keys(players).map(player_uid => <PlayerItem
-                    key={player_uid}
-                    player={players[player_uid]}
-                    onClick={() => { setShowUserModal({ uid: player_uid, ...players[player_uid] }) }}
-                />
+                Object
+                    .keys(players)
+                    .map(uid => {
+                        let data = players[uid]
+                        return { uid, data, isHuman: (data && data.player_name === 'NPC'?0:1) }
+                    })
+                    .sort((a,b) => {
+                        return b.isHuman - a.isHuman
+                    })
+                    .map(player => <PlayerItem
+                        key={player.uid}
+                        player={player.data}
+                        onClick={() => { setShowUserModal({ uid: player.uid, ...player.data }) }}
+                    />
                 )
             }
         </div>

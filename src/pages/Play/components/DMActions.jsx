@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -7,6 +7,7 @@ import { faDiceD20 } from "@fortawesome/free-solid-svg-icons"
 // import { ReactComponent as SwordsIcon } from 'icons/swords.svg'
 import { ReactComponent as HelmetIcon } from 'icons/helmet-battle.svg'
 
+import CampaignContext from '../CampaignContext.jsx'
 import { ref, set, push, getDatabase } from "firebase/database"
 
 import { ChooseRollDice } from './menu/RollDice'
@@ -14,8 +15,11 @@ import SpawnEntity from './menu/SpawnEntity.jsx'
 
 import Styles from '../_.module.sass'
 
-export default function DMActions({ players, ...props }){
+export default function DMActions(){
 
+    const campaign = useContext(CampaignContext)
+    const { players={} } = campaign;
+    
     const [ showRollChooser, setRollChooser ] = useState(false)
     const [ showSpawnEntity, setSpawnEntity ] = useState(false)
     const { id } = useParams()

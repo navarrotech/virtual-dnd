@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBolt, faCoins } from '@fortawesome/free-solid-svg-icons'
-
 import { ReactComponent as TreasureIcon } from 'icons/treasure-chest.svg'
+
+import CampaignContext from '../CampaignContext.jsx'
 
 import Inventory from './menu/Inventory'
 
@@ -11,7 +12,8 @@ import Styles from '../_.module.sass'
 
 export default function UserActions({ player, ...props }){
 
-    const { current:{ gold=0, experience=0 }, inventory={} } = player
+    const campaign = useContext(CampaignContext)
+    const { current:{ gold=0, experience=0 }, inventory={}, uid } = campaign.myCharacter
 
     const [showInventory, setShowInventory] = useState(false)
 
@@ -46,7 +48,7 @@ export default function UserActions({ player, ...props }){
                 </div>
             </div>
             { showInventory
-                ? <Inventory close={() => setShowInventory(false)} inventory={inventory} player_uid={player.uid}/>
+                ? <Inventory close={() => setShowInventory(false)} inventory={inventory} player_uid={uid}/>
                 : <></>
             }
         </div>

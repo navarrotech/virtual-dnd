@@ -1,43 +1,50 @@
-import { useState, useEffect, useRef } from "react"
-import { useParams } from "react-router"
+import { useState, useEffect, useRef, useContext, useMemo } from "react"
+import { createPortal } from "react-dom"
 
-import { getDatabase, ref, onValue } from "firebase/database"
+import { useLongPress } from "use-long-press"
 
 import ModifyPlayerModal from "./menu/ModifyPlayerModal"
 
+import CampaignContext from '../CampaignContext.jsx'
+
 import Styles from '../_.module.sass'
+
+const longpressConfig = {
+    threshold: 500,
+    cancelOnMovement: true,
+    detect: "both",
+    filterEvents: (e) => {
+        if (e.button === 2) {
+            return false
+        }
+        return true
+    },
+}
 
 const zoom_sensitivity = 0.001,
     max_zoom = 3,
     min_zoom = 0.35;
 
-export default function Map({ players, isDungeonMaster=false, ...props }){
+export default function Map(){
 
-    const [map, setMap] = useState(null)
+    const campaign = useContext(CampaignContext)
+    const { players, map } = campaign;
+
     const [ dragging, setDragging ] = useState(false)
-    const { id } = useParams()
+
     const MapImage = useRef()
     const ParentMap = useRef()
     const [state, setState] = useState({
-        alwaysShowLabels: false,
+        alwaysShowLabels: true,
         posX: 0,
         posY: 0,
         scale: 1,
         width: 1000,
         height: 1000
     })
-    const [ showUserModal, setShowUserModal ] = useState(null)
-
-    // Load the map from Firebase
-    useEffect(() => {
-        console.log("Resubscribing to map!")
-        let reference = ref(getDatabase(), "campaigns/" + id + '/map');
-        const unsubscribe = onValue(reference, async (snapshot) => {
-            console.log("Map data syncing...")
-            setMap(snapshot.val())
-        })
-        return () => { unsubscribe(); }
-    }, [id])
+    const Entities = useMemo(() => {
+        return Object.keys(map.entities||{}).map(uid => <MapEntity key={uid} entity={map.entities[uid]} player={players[uid]}/>)
+    }, [map.entities, players])
 
     // Drag, hotkey, and zoom listeners
     useEffect(() => {
@@ -87,7 +94,7 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
             element.addEventListener('wheel', scaleListener)
         }
         if(dragging){
-            document.addEventListener('mousemove', dragListener)
+            element.addEventListener('mousemove', dragListener)
         }
         document.addEventListener('keydown', keydownListener)
         return () => {
@@ -95,77 +102,93 @@ export default function Map({ players, isDungeonMaster=false, ...props }){
                 element.removeEventListener('wheel', scaleListener)
             }
             if(dragging){
-                document.removeEventListener('mousemove', dragListener)
+                element.removeEventListener('mousemove', dragListener)
             }
             document.removeEventListener('keydown', keydownListener)
         }
     }, [dragging])
 
+    // Add a class to the body that prevents scroll animations on Chrome that interfere with the map!
+    useEffect(() => {
+        document.querySelector('body').classList.add('is-clipped')
+        document.querySelector('html').classList.add('is-clipped')
+        return () => {
+            document.querySelector('body').classList.remove('is-clipped')
+            document.querySelector('html').classList.remove('is-clipped')
+        }
+    }, [])
+    
     if(!map){ return <></>; }
 
-    return (<>
-        <div ref={ParentMap} className={Styles.Map}>
-            <div
-                className={Styles.MapBox + (dragging?' '+Styles.isDragging:'')}
-                onMouseDown={() => setDragging(true)}
-                onMouseUp={() => setDragging(false)}
-                onMouseLeave={() => setDragging(false)}
-                style={{
-                    width:  `${100 * state.scale}vw`,
-                    height: 'auto',
-                    left:   (state.posX) + 'px',
-                    top:  (state.posY) + 'px',
-                }}>
-                    <figure className={"image " + Styles.MapImage} draggable={false}>
-                        <img src={map.image} alt="" draggable={false} ref={MapImage}/>
-                    </figure>
-                    <div className={Styles.Entities + (state.alwaysShowLabels?' '+Styles.alwaysShowLabel:'')}>
-                        {
-                            map.entities
-                            ? Object.keys(map.entities).map(entity_uid => {
-                                
-                                let { x, y } = map.entities[entity_uid],
-                                    player_link = players[entity_uid]
-
-                                let size =  (25 * state.scale)
-                                if(size <= 18){ size = 18 }
-                                
-                                return <div
-                                    key={entity_uid}
-                                    onClick={() => setShowUserModal({ uid:entity_uid, ...player_link })}
-                                    className={Styles.Entity + (player_link && player_link.character_uid?' '+Styles.isPlayer:'')}
-                                    style={{
-                                        top:  y + '%',
-                                        left: x + '%'
-                                    }}
-                                >
-                                    { player_link 
-                                        ? <>
-                                            <img src={player_link.character.image} alt={player_link.character.name} draggable={false}/>
-                                            <label className={Styles.EntityLabel}>{player_link.character.name}</label>
-                                        </>
-                                        : <></>
-                                    }
-                                    <div
-                                        className={Styles.EntityPop + ' is-clickable'}
-                                        style={{
-                                            width:  size + 'px',
-                                            height: size + 'px',
-                                            minHeight: size + 'px',
-                                        }}
-                                    ></div>
-                                </div>
-                            })
-                            : <></>
-                        }
-                    </div>
+    return <div ref={ParentMap} className={Styles.Map}>
+        <div
+            className={Styles.MapBox + (dragging?' '+Styles.isDragging:'')}
+            onMouseDown={() => setDragging(true)}
+            onMouseUp={() => setDragging(false)}
+            onMouseLeave={() => setDragging(false)}
+            style={{
+                width:  `${100 * state.scale}vw`,
+                height: 'auto',
+                left:   (state.posX) + 'px',
+                top:  (state.posY) + 'px',
+            }}>
+            <figure className={"image " + Styles.MapImage} draggable={false}>
+                <img src={map.image} alt="" draggable={false} ref={MapImage}/>
+            </figure>
+            <div className={Styles.Entities + (state.alwaysShowLabels?' '+Styles.alwaysShowLabel:'')}>
+                { Entities }
             </div>
         </div>
-        { showUserModal
-            ? <ModifyPlayerModal isDungeonMaster={isDungeonMaster} player={showUserModal} onClose={() => { setShowUserModal(null) }}/>
+    </div>
+
+}
+
+function MapEntity({ entity, player }){
+    const [ showModal, setShowModal ] = useState(false)
+    const [ isMoving,  setMoving    ] = useState(false)
+
+    let { x, y } = entity
+
+    const bindLongPress = useLongPress(function(){
+        console.log("is moving!")
+        setMoving(true)
+    }, longpressConfig)
+
+    let classes = [Styles.Entity]
+    if(isMoving){ classes.push(Styles.isMoving) }
+    if(player && player.character_uid){ classes.push(Styles.isPlayer) }
+    
+    return <>
+        <div
+            className={classes.join(' ')}
+            style={{
+                top:  y + '%',
+                left: x + '%'
+            }}
+        >
+            { player 
+                ? <>
+                    <img src={player.character.image} alt={player.character.name} draggable={false}/>
+                    <label className={Styles.EntityLabel}>{player.character.name}</label>
+                </>
+                : <></>
+            }
+            <div
+                className={Styles.EntityPop + ' is-clickable'}
+                {...bindLongPress()}
+                onMouseUp={() => {
+                    // TODO: Test this!
+                    if(isMoving){
+                        console.log('Not moving!');
+                        setMoving(false)
+                    } else {
+                        setShowModal(true)
+                    }
+                }}></div>
+        </div>
+        { showModal 
+            ? createPortal(<ModifyPlayerModal player={player} onClose={() => { setShowModal(null) }}/>, document.querySelector('body'))
             : <></>
         }
     </>
-    )
-
 }

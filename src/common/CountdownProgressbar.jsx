@@ -14,7 +14,7 @@ export default function CountdownProgressbar({ time=7000, size='normal', color='
         <div className={`progressbar is-${size} is-${color}`}>
             <div className="bar" style={{
                 width: started ? '0%' : '100%',
-                transition: `width ${time-100}ms ease`
+                transition: `width ${time-100}ms linear`
             }}></div>
         </div>
     )

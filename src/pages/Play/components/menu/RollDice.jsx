@@ -42,7 +42,7 @@ export function ChooseRollDice({ players, onChosen }){
                                     if(player.player_name === 'NPC'){ return null }
                                     return <div key={key} className={"item box is-clickable has-text-centered " + Styles.ChoiceBox} onClick={() => setPlayer(key)}>
                                         <h1 className="title">{player.character.name}</h1>
-                                        <h2 className="subtitle">{player.name}</h2>
+                                        <h2 className="subtitle">({player.player_name})</h2>
                                     </div>
                                 })
                             }
@@ -76,11 +76,11 @@ export function ChooseRollDice({ players, onChosen }){
                                     </div>
                                     <p className="is-size-4 has-text-centered">D4</p>
                                 </div>
-                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(10)}>
+                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(12)}>
                                     <div className="field icon is-large mx-auto is-block">
-                                        <DiceD10Icon className="" />
+                                        <DiceD12Icon className="" />
                                     </div>
-                                    <p className="is-size-4 has-text-centered">D10</p>
+                                    <p className="is-size-4 has-text-centered">D12</p>
                                 </div>
                             </div>
                             <div className="column">
@@ -90,11 +90,11 @@ export function ChooseRollDice({ players, onChosen }){
                                     </div>
                                     <p className="is-size-4 has-text-centered">D6</p>
                                 </div>
-                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(12)}>
+                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(20)}>
                                     <div className="field icon is-large mx-auto is-block">
-                                        <DiceD12Icon className="" />
+                                        <DiceD20Icon className="" />
                                     </div>
-                                    <p className="is-size-4 has-text-centered">D12</p>
+                                    <p className="is-size-4 has-text-centered">D20</p>
                                 </div>
                             </div>
                             <div className="column">
@@ -104,11 +104,25 @@ export function ChooseRollDice({ players, onChosen }){
                                     </div>
                                     <p className="is-size-4 has-text-centered">D8</p>
                                 </div>
-                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(20)}>
+                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(50)}>
                                     <div className="field icon is-large mx-auto is-block">
                                         <DiceD20Icon className="" />
                                     </div>
-                                    <p className="is-size-4 has-text-centered">D20</p>
+                                    <p className="is-size-4 has-text-centered">D50</p>
+                                </div>
+                            </div>
+                            <div className="column">
+                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(10)}>
+                                    <div className="field icon is-large mx-auto is-block">
+                                        <DiceD10Icon className="" />
+                                    </div>
+                                    <p className="is-size-4 has-text-centered">D10</p>
+                                </div>
+                                <div className={"box is-clickable " + Styles.ChoiceBox} onClick={() => setDice(100)}>
+                                    <div className="field icon is-large mx-auto is-block">
+                                        <DiceD20Icon className="" />
+                                    </div>
+                                    <p className="is-size-4 has-text-centered">D100</p>
                                 </div>
                             </div>
                             

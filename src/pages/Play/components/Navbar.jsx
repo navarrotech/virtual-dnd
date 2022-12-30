@@ -1,17 +1,21 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck, faShareAlt } from "@fortawesome/free-solid-svg-icons";
+
+import CampaignContext from '../CampaignContext.jsx'
 
 import NameTag from 'common/NameTag.jsx'
 import Dropdown from 'common/Dropdown';
 
 import Styles from '../_.module.sass'
 
-export default function Navbar({ campaign_name, player, ...props }) {
+export default function Navbar() {
     
+    const campaign = useContext(CampaignContext)
     const [state, setState] = useState({ sharing: false })
+
     const { id } = useParams()
 
     function shareLink() {
@@ -23,6 +27,8 @@ export default function Navbar({ campaign_name, player, ...props }) {
             setState({ ...state, sharing:false })
         }, 2500)
     }
+
+    const { name:campaign_name, myCharacter:player } = campaign;
 
     return (
         <nav className={"navbar columns is-vcentered is-gapless " + Styles.navbar}>

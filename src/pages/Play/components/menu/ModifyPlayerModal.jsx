@@ -1,11 +1,16 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, useContext } from "react"
 import { useParams } from "react-router-dom";
 
 import { getDatabase, ref, remove, set } from "firebase/database"
 
+import CampaignContext from '../../CampaignContext.jsx'
+
 import Loader from "common/Loader";
 
-export default function ModifyPlayerModal({ isDungeonMaster, player, onClose, ...props }){
+export default function ModifyPlayerModal({ player, onClose, ...props }){
+
+    const campaign = useContext(CampaignContext)
+    const { isDungeonMaster=false } = campaign
 
     const {
         uid: player_uid,
@@ -35,13 +40,13 @@ export default function ModifyPlayerModal({ isDungeonMaster, player, onClose, ..
     }
 
     function close(){
-        if(initialHealth !== state.health){
+        if(initialHealth !== state.health && player_uid){
             set(
                 ref(getDatabase(), `/campaigns/${id}/players/${player_uid}/current/health`),
                 state.health
             )
         }
-        if(initialMaxHealth !== state.maxHealth){
+        if(initialMaxHealth !== state.maxHealth && player_uid){
             set(
                 ref(getDatabase(), `/campaigns/${id}/players/${player_uid}/current/maxHealth`),
                 state.maxHealth
@@ -53,6 +58,8 @@ export default function ModifyPlayerModal({ isDungeonMaster, player, onClose, ..
 
     function removePlayer(ban=false){
         setState({ ...state, loading:true })
+
+        if(!player_uid){ return; }
 
         let promises = [
             remove(ref(database, `campaigns/${id}/players/${player_uid}`)),

@@ -1,30 +1,20 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
-import UserContext from 'context/User.jsx'
+import CampaignContext from '../CampaignContext.jsx'
 
-import { onValue, ref, set, getDatabase } from 'firebase/database'
+import { ref, set, getDatabase } from 'firebase/database'
 
 import { RollDice, WaitForRoll, ShowRolledResult } from './menu/RollDice.jsx'
 
-export default function GameState({ players, isDungeonMaster=false, ...props }){
+export default function GameState(){
 
-    const [ syncedState, setSyncedState ] = useState(null)
-    const [ user ] = useContext(UserContext)
+    const campaign = useContext(CampaignContext)
+    const { players, isDungeonMaster=false, state:syncedState, myUID } = campaign;
+
     const { id } = useParams()
 
-    useEffect(() => {
-        const unsubscribe = onValue(ref(getDatabase(), `/campaigns/${id}/state`), (snapshot) => {
-            const value = snapshot.val()
-            console.log("New game state: ", value)
-            setSyncedState(value)
-        });
-        return () => {
-            unsubscribe();
-        }
-    }, [id])
-
-    // Loading clause
+    // Catch clause
     if(!syncedState){
         return <></>
     }
@@ -33,7 +23,7 @@ export default function GameState({ players, isDungeonMaster=false, ...props }){
 
     if(type === 'rolling'){
         let { who, dice, reason } = action
-        if(who === user.uid){
+        if(who === myUID){
             return <RollDice
                 roll={dice}
                 check={reason}
