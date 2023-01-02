@@ -11,6 +11,12 @@ $modal-card-foot-background-color: #ffffff
 $modal-card-head-border-bottom: none
 $modal-card-foot-border-top: none
 
+$dropdown-item-hover-background-color: hsl(0, 0%, 96%)
+$dropdown-item-active-background-color: hsl(229, 53%,  53%)
+$dropdown-item-active-color: #fff
+$dropdown-item-hover-color: hsl(0, 0%, 4%)
+
+
 @import 'bulma-navarrotech/brands'
 @import 'bulma-navarrotech/bulma'
 @import 'bulma-divider/src/sass/index.sass'
@@ -169,6 +175,31 @@ input
         .choice-body:not(:last-child)
             margin-bottom: 2em
 
+.w100
+    width: 100%
+
+.dropdown-item
+
+    &.icon-text
+        align-items: center
+    
+    &.is-danger
+        color: $danger
+
+        &:hover
+            background-color: $danger !important
+            color: white !important
+
+    &.is-clickable
+        text-align: inherit
+        white-space: nowrap
+        width: 100%
+        &:hover
+            background-color: $dropdown-item-hover-background-color
+            color: $dropdown-item-hover-color
+        &.is-active
+            background-color: $dropdown-item-active-background-color
+            color: $dropdown-item-active-color
 
 // I should add this to navarrotech/bulma
 .flexlist

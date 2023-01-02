@@ -1,6 +1,6 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
-import SelectPlayer from './SelectPlayer';
 import Healthbar from './Healthbar';
 
 import CampaignContext from '../CampaignContext.jsx'
@@ -11,7 +11,6 @@ export default function PlayerList() {
 
     const campaign = useContext(CampaignContext)
     const { players={}, isDungeonMaster=false } = campaign;
-    const [ showUserModal, setShowUserModal ] = useState(null)
 
     return (<>
         <div className={Styles.Players}>
@@ -27,39 +26,41 @@ export default function PlayerList() {
                     })
                     .map(player => <PlayerItem
                         key={player.uid}
-                        player={player.data}
+                        player={player}
                         isDungeonMaster={isDungeonMaster}
-                        onClick={() => { setShowUserModal({ uid: player.uid, ...player.data }) }}
                     />
                 )
             }
         </div>
-        { showUserModal
-            ? <SelectPlayer player={showUserModal} onClose={() => { setShowUserModal(null) }}/>
-            : <></>
-        }
     </>)
 
 }
 
-function PlayerItem({ player, onClick, isDungeonMaster }){
+function PlayerItem({ player, isDungeonMaster }){
+
+    const { id } = useParams()
 
     let {
-        character: {
-            name,
-            image,
-            features: {
-                class:character_class="",
-                race=""
-            }={}
-        },
-        current: {
-            hidden=false,
-            health,
-            maxHealth
-        },
-        player_name=""
+        uid,
+        data:{
+            character: {
+                name,
+                image,
+                features: {
+                    class:character_class="",
+                    race=""
+                }={}
+            },
+            current: {
+                hidden=false,
+                health,
+                maxHealth
+            },
+            player_name=""
+        }
     } = player;
+
+    const isNPC = player_name === 'NPC'
 
     try{
         player_name = player_name.split(' ')[0]
@@ -70,13 +71,18 @@ function PlayerItem({ player, onClick, isDungeonMaster }){
     }
 
     let classes = [Styles.Player]
-    if(player_name === 'NPC'){ classes.push(Styles.isNPC) }
+    if(isNPC){ classes.push(Styles.isNPC) }
     if(hidden){ classes.push(Styles.isHiddenDMOnly) }
     
     return <div className={classes.join(' ')}>
-        <figure className={"image is1by1 is-clickable " + Styles.image} onClick={onClick}>
+        { isNPC
+        ? <figure className={"image is1by1 is-clickable " + Styles.image}>
             <img src={image} alt="" draggable={false}/>
         </figure>
+        : <Link className={"image is1by1 is-clickable " + Styles.image} to={`/play/${id}/player/${uid}`}>
+            <img src={image} alt="" draggable={false}/>
+        </Link>
+        }
         <div className={Styles.body}>
             <div className={Styles.titles}>
                 <p>{name}</p>
@@ -86,7 +92,7 @@ function PlayerItem({ player, onClick, isDungeonMaster }){
                 {
                     character_class || race
                     ? `${character_class} ${race?'|':''} ${race}`
-                    : player_name === 'NPC'
+                    : isNPC
                         ? 'Not A Robot'
                         : 'Player'
                 }

@@ -15,8 +15,8 @@ import Styles from "./_.module.sass"
 export default function ViewAll({ ...props }) {
     const [user] = useContext(UserContext)
     const [state, setState] = useState({
-        campaigns: [],
-        joinedCampaigns: [],
+        campaigns: {},
+        joinedCampaigns: {},
         loading: true
     })
     const navigate = useNavigate()
@@ -25,8 +25,8 @@ export default function ViewAll({ ...props }) {
         const reference = ref(getDatabase(), "accounts/" + user.uid)
         const unsubscribe = onValue(reference, (snapshot) => {
             let {
-                campaigns=[],
-                joinedCampaigns=[]
+                campaigns={},
+                joinedCampaigns={}
             } = snapshot.val() || {}
             setState((s) => {
                 return {...s, loading: false, campaigns, joinedCampaigns }
@@ -76,7 +76,7 @@ export default function ViewAll({ ...props }) {
                 </div>
             </div>
             {
-                Object.keys(state.campaigns||[]).length
+                Object.keys(state.campaigns||{}).length
                     ? <>
                         <div className="block">
                             <h2 className="is-size-3">Campaigns created:</h2>
@@ -93,7 +93,7 @@ export default function ViewAll({ ...props }) {
                     : <></>
             }
             {
-                Object.keys(state.joinedCampaigns||[]).length
+                Object.keys(state.joinedCampaigns||{}).length
                     ? <>
                         <div className="block">
                             <h2 className="is-size-3">Campaigns joined:</h2>
@@ -105,7 +105,7 @@ export default function ViewAll({ ...props }) {
                     : <></>
             }
             {
-                Object.keys(state.campaigns||[]).length || Object.keys(state.joinedCampaigns||[]).length
+                Object.keys(state.campaigns||{}).length || Object.keys(state.joinedCampaigns||{}).length
                     ? <></>
                     : <div className=""><p>You haven't created or joined any campaigns yet!</p></div>
             }

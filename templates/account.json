@@ -1,0 +1,18 @@
+{
+    "joinedCampaigns":{
+        "campaign_uid":{ "name":"" }
+    },
+    "campaigns":{
+        "campaign_uid":{ 
+           "campaign_uid":"",
+            "name":"",
+            "owner":""
+        }
+    },
+    "friends":{
+        "user_uid":{
+            "status": "pending|active",
+            "when": "TIMESTAMP"
+        }
+    }
+}
