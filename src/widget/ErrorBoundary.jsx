@@ -7,6 +7,7 @@ export default class ErrorBoundary extends Component {
     }
   
     componentDidCatch(error, info) {
+      console.log({ error, info })
       // Display fallback UI
       this.setState({ hasError: true });
       // You can also log the error to an error reporting service

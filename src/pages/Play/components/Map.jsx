@@ -1,16 +1,19 @@
 import { useState, useEffect, useRef, useContext, useMemo } from "react"
+import { useParams } from "react-router-dom"
 import { createPortal } from "react-dom"
+
+import { getDatabase, ref, update } from "firebase/database"
 
 import { useLongPress } from "use-long-press"
 
-import ModifyPlayerModal from "./menu/ModifyPlayerModal"
+import SelectPlayer from "./SelectPlayer.jsx"
 
 import CampaignContext from '../CampaignContext.jsx'
 
 import Styles from '../_.module.sass'
 
 const longpressConfig = {
-    threshold: 500,
+    threshold: 350,
     cancelOnMovement: true,
     detect: "both",
     filterEvents: (e) => {
@@ -25,10 +28,11 @@ const zoom_sensitivity = 0.001,
     max_zoom = 3,
     min_zoom = 0.35;
 
+let movable = true;
 export default function Map(){
 
     const campaign = useContext(CampaignContext)
-    const { players, map } = campaign;
+    const { players, map, map:{ entities={} }={} } = campaign;
 
     const [ dragging, setDragging ] = useState(false)
 
@@ -38,17 +42,23 @@ export default function Map(){
         alwaysShowLabels: true,
         posX: 0,
         posY: 0,
-        scale: 1,
-        width: 1000,
-        height: 1000
+        scale: 1
     })
-    const Entities = useMemo(() => {
-        return Object.keys(map.entities||{}).map(uid => <MapEntity key={uid} entity={map.entities[uid]} player={players[uid]}/>)
-    }, [map.entities, players])
+
+    const Entities = useMemo(() => Object
+        .keys(entities)
+        .map(uid => <MapEntity
+            key={uid}
+            scale={state.scale}
+            entity={{ uid, ...entities[uid] }}
+            player={players[uid]}
+        />)
+    , [entities, players, state.scale])
 
     // Drag, hotkey, and zoom listeners
     useEffect(() => {
         const scaleListener = ({ deltaY }) => {
+            if(!movable){ return; }
             let { current:image=null } = MapImage
             setState(state => {
                 let scale = state.scale + (deltaY * zoom_sensitivity)
@@ -66,6 +76,7 @@ export default function Map(){
             })
         };
         const dragListener = ({ movementX, movementY }) => {
+            if(!movable){ return; }
             let { current:image=null } = MapImage
             // console.log({ movementX, movementY })
             setState(state => {
@@ -80,6 +91,7 @@ export default function Map(){
             })
         };
         const keydownListener = ({ key, target }) => {
+            if(!movable){ return; }
             if((key === ' ' && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA')){
                 setState((state) => {
                     return {
@@ -122,6 +134,7 @@ export default function Map(){
 
     return <div ref={ParentMap} className={Styles.Map}>
         <div
+            id="map"
             className={Styles.MapBox + (dragging?' '+Styles.isDragging:'')}
             onMouseDown={() => setDragging(true)}
             onMouseUp={() => setDragging(false)}
@@ -143,28 +156,120 @@ export default function Map(){
 
 }
 
-function MapEntity({ entity, player }){
+function MapEntity({ entity, player, scale }){
+    // console.log('re rendering');
+    const { isDungeonMaster=false, myUID=null } = useContext(CampaignContext)
+    let { x: initialX = 0, y: initialY = 0 } = entity
+
     const [ showModal, setShowModal ] = useState(false)
     const [ isMoving,  setMoving    ] = useState(false)
 
-    let { x, y } = entity
+    const { id:campaign_id } = useParams()
+
+    const [ position, setPosition ] = useState({ x: initialX, y: initialY })
+    const { x, y } = position
+
+    const isMyToken = (player.uid === myUID || isDungeonMaster)
 
     const bindLongPress = useLongPress(function(){
-        console.log("is moving!")
+        if(!isMyToken){ return }
         setMoving(true)
+        movable = false; // This is to disable dragging the global map!
     }, longpressConfig)
+    
+    useEffect(() => {
+        setPosition({ x:initialX, y: initialY })
+    }, [initialX, initialY])
+
+    let speed = 30
+    if(player && player.character && player.character.current){
+        speed = player.character.current.speed || 30
+    }
+    const ringSize = scale * (speed * 5);
+    
+    useEffect(() => {
+
+        let newX=0, newY=0;
+        const dragListener = (event) => {
+            let { offsetX, offsetY, srcElement, srcElement:{ offsetHeight, offsetWidth } } = event;
+
+            if(srcElement.id !== 'map'){ return; }
+
+            let posX = (offsetX / offsetWidth ) * 100,
+                posY = (offsetY / offsetHeight) * 100
+
+            // Player is confined to a circular movement!
+            if(!isDungeonMaster){
+                let radius = 3.4;
+
+                let dist = Math.sqrt(Math.pow(posX - initialX, 2) + Math.pow(posY - initialY, 2));
+                if(dist > radius){
+                    let radians = Math.atan2((posY - initialY), (posX - initialX))
+                    posX = Math.cos(radians) * radius + initialX;
+                    posY = Math.sin(radians) * radius + initialY;
+                }
+            }
+            // The dungeon master can move them anywhere they want
+            else {
+                if(posX < 0){ posX = 0 }
+                if(posY < 0){ posY = 0 }
+                if(posX > 100){ posX = 100 }
+                if(posY > 100){ posY = 100 }
+            }
+
+            newX = posX; newY = posY;
+            setPosition({ x:posX, y:posY })
+        };
+
+        function onMouseUp(event){
+            movable = true;
+            if(isMoving){
+                setMoving(false)
+                if(newX || newY){
+                    update( ref(getDatabase(), `/campaigns/${campaign_id}/map/entities/${entity.uid}`), { x: newX, y: newY } )
+                }
+            }
+            else if(isMyToken && event.target.id === entity.uid){
+                setShowModal(true)
+            }
+        }
+
+        // Don't allow user to move anything that isn't theirs
+        document.addEventListener('mouseup', onMouseUp)
+        if(isMoving && (isDungeonMaster || isMyToken)){
+            document.addEventListener('mousemove', dragListener)
+        }
+        return () => {
+            document.removeEventListener('mouseup', onMouseUp)
+            if(isMoving && (isDungeonMaster || isMyToken)){
+                document.removeEventListener('mousemove', dragListener)
+            }
+        }
+    }, [isMoving, isDungeonMaster, isMyToken, campaign_id, entity.uid, initialX, initialY])
 
     let classes = [Styles.Entity]
     if(isMoving){ classes.push(Styles.isMoving) }
     if(player && player.character_uid){ classes.push(Styles.isPlayer) }
-    
+    if(isDungeonMaster){ classes.push(Styles.isDungeonMaster) }
+    if(player && player.current && player.current.hidden){ classes.push(Styles.isHiddenToOthers) }
+
     return <>
+        { isMoving && !isDungeonMaster
+            ? <div className={Styles.entityMovementLimitCircle} style={{
+                top:   initialY + '%',
+                left:  initialX + '%',
+                width: ringSize + 'px',
+                height:ringSize + 'px'
+            }}>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="48" strokeWidth="2"/>
+                </svg>
+            </div>
+            : <></>
+        }
         <div
             className={classes.join(' ')}
-            style={{
-                top:  y + '%',
-                left: x + '%'
-            }}
+            style={{ top:  y + '%', left: x + '%' }}
         >
             { player 
                 ? <>
@@ -174,20 +279,13 @@ function MapEntity({ entity, player }){
                 : <></>
             }
             <div
+                id={entity.uid}
+                style={{ background:entity.color }}
                 className={Styles.EntityPop + ' is-clickable'}
-                {...bindLongPress()}
-                onMouseUp={() => {
-                    // TODO: Test this!
-                    if(isMoving){
-                        console.log('Not moving!');
-                        setMoving(false)
-                    } else {
-                        setShowModal(true)
-                    }
-                }}></div>
+                {...bindLongPress()}></div>
         </div>
         { showModal 
-            ? createPortal(<ModifyPlayerModal player={player} onClose={() => { setShowModal(null) }}/>, document.querySelector('body'))
+            ? createPortal(<SelectPlayer player={player} onClose={() => { setShowModal(null) }}/>, document.querySelector('body'))
             : <></>
         }
     </>

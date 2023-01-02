@@ -33,15 +33,18 @@ export default function WelcomeAndJoin({ campaign_name, api }) {
             player_name: user.displayName,
             character_uid: character.uid,
             character,
-            current:{
+            current: {
                 health: 30,
-                maxHealth: 0,
-                armorClass: 0,
+                maxHealth: 30,
+                armorClass: 10,
                 initiative: 0,
                 speed: 30,
                 level: 1,
                 experience: 0
             }
+        })
+        set(ref(getDatabase(), `campaigns/${campaign_uid}/map/entities/${user.uid}`), {
+            x: 50, y: 50
         })
         set(ref(getDatabase(), `accounts/${user.uid}/joinedCampaigns/${campaign_uid}`), {
             name: campaign_name

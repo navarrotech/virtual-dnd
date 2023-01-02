@@ -2,13 +2,15 @@ import { useState, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDiceD20 } from "@fortawesome/free-solid-svg-icons"
+import { faBook, faDiceD20 } from "@fortawesome/free-solid-svg-icons"
 
 // import { ReactComponent as SwordsIcon } from 'icons/swords.svg'
 import { ReactComponent as HelmetIcon } from 'icons/helmet-battle.svg'
 
 import CampaignContext from '../CampaignContext.jsx'
 import { ref, set, push, getDatabase } from "firebase/database"
+
+import Notes from './Notes.jsx'
 
 import { ChooseRollDice } from './menu/RollDice'
 import SpawnEntity from './menu/SpawnEntity.jsx'
@@ -22,6 +24,7 @@ export default function DMActions(){
     
     const [ showRollChooser, setRollChooser ] = useState(false)
     const [ showSpawnEntity, setSpawnEntity ] = useState(false)
+    const [ showNotes,       setShowNotes   ] = useState(false)
     const { id } = useParams()
 
     return (
@@ -31,8 +34,14 @@ export default function DMActions(){
                     <span className="icon">
                         <SwordsIcon />
                     </span>
-                    <span>Enter Combat</span>
+                    <span>Roll Initiative</span>
                 </button> */}
+                <button className="button is-light is-fullwidth" type="button" onClick={() => setShowNotes(true)}>
+                    <span className="icon">
+                        <FontAwesomeIcon icon={faBook}/>
+                    </span>
+                    <span>My Notes</span>
+                </button>
                 <button className="button is-light is-fullwidth" type="button" onClick={() => setSpawnEntity(true)}>
                     <span className="icon">
                         <HelmetIcon />
@@ -46,6 +55,10 @@ export default function DMActions(){
                     <span>Make Player Roll</span>
                 </button>
             </div>
+            { showNotes
+                ? <Notes onClose={() => { setShowNotes(false) }} />
+                : <></>
+            }
             {
                 showRollChooser
                 ? <ChooseRollDice players={players} onChosen={(value) => {
@@ -65,7 +78,7 @@ export default function DMActions(){
                     setSpawnEntity(false)
                     if(!value){ return; }
 
-                    let { name, color, image, health, armorClass } = value
+                    let { name, class:_class='', race='', color, image, health, armorClass } = value
 
                     push(
                         ref(getDatabase(), `campaigns/${id}/players`),
@@ -73,10 +86,16 @@ export default function DMActions(){
                             player_name: "NPC",
                             character: {
                                 name,
+                                features:{
+                                    class:_class,
+                                    race
+                                },
                                 image
                             },
                             current: {
+                                hidden: true,
                                 health,
+                                maxHealth: 30,
                                 armorClass
                             }
                         }

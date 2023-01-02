@@ -11,7 +11,7 @@ import Loader from "common/Loader.jsx"
 const Context = createContext()
 export default Context
 
-export function CampaignProvider({ children }) {
+export function CampaignProvider({ onlyOnce=false, children }) {
 
     // Router
     const { id } = useParams()
@@ -43,10 +43,10 @@ export function CampaignProvider({ children }) {
 
             setCampaign({ ...value, myCharacter, isDungeonMaster, myUID: uid })
             setLoading(false)
-        })
+        }, { onlyOnce })
 
         return () => { unsubscribe(); }
-    }, [id, user])
+    }, [id, user, onlyOnce])
 
     // Authentication Check
     if (!user || !user.uid) { console.log('User not found!'); return <Navigate to="/login" replace={false} /> }

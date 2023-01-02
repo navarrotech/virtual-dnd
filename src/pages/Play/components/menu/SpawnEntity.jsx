@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDragon, faSync } from '@fortawesome/free-solid-svg-icons'
+import { ReactComponent as PawClaws } from 'icons/paw-claws-regular.svg'
+import { ReactComponent as HammerWar } from 'icons/hammer-war.svg'
 
 import ChooseAvatar from "pages/Characters/Components/ChooseAvatar.jsx"
 
@@ -24,12 +26,14 @@ const colors = [
     '#8235ff',
 ]
 
-export default function SpawnEntity({ onFinish, ...props }){
+export default function SpawnEntity({ saved, onFinish, ...props }){
 
     const [ state, setState ] = useState({
         hasName: false,
         showChooseAvatar:false,
         name: '',
+        race: '',
+        class: '',
         color: localStorage && localStorage.getItem(LS_Keys.color) ? localStorage.getItem(LS_Keys.color) : '#FF3554',
         image: localStorage && localStorage.getItem(LS_Keys.image) ? localStorage.getItem(LS_Keys.image) : 'https://firebasestorage.googleapis.com/v0/b/dnd-virtual.appspot.com/o/avatars%2Fa20.png?alt=media&token=570a1233-68ca-4196-92ed-ed1c7f8a8e02',
         health: localStorage && localStorage.getItem(LS_Keys.health) ? localStorage.getItem(LS_Keys.health) : 30,
@@ -54,7 +58,7 @@ export default function SpawnEntity({ onFinish, ...props }){
                                     autoFocus={true}
                                     className="input is-large"
                                     type="text"
-                                    placeholder="Entity Name"
+                                    placeholder="Name your creation..."
                                     value={state.name}
                                     onChange={({ target:{ value } }) => setState({ ...state, name:value })}
                                     onKeyDown={({key}) => { if(key==='Enter' && !is_disabled){ setState({ ...state, hasName: true }) } }}
@@ -64,8 +68,48 @@ export default function SpawnEntity({ onFinish, ...props }){
                                 </span>
                             </div>
                         </div>
+                        <div className="filed columns">
+                            
+                            <div className="column">
+                        <div className="field">
+                            <div className="control has-icons-left">
+                                <input
+                                    className="input is-large"
+                                    type="text"
+                                    placeholder="Race (optional)"
+                                    value={state.race}
+                                    onChange={({ target:{ value } }) => setState({ ...state, race:value })}
+                                />
+                                <span className="icon is-left">
+                                    <PawClaws />
+                                </span>
+                            </div>
+                        </div>
+                            </div>
+                            <div className="column">
+                                
+                        <div className="field">
+                            <div className="control has-icons-left">
+                                <input
+                                    className="input is-large"
+                                    type="text"
+                                    placeholder="Class (optional)"
+                                    value={state.class}
+                                    onChange={({ target:{ value } }) => setState({ ...state, class:value })}
+                                />
+                                <span className="icon is-left">
+                                    <HammerWar />
+                                </span>
+                            </div>
+                        </div>
+                            </div>
+                            
+                        </div>
                     </section>
                     <footer className="choice-footer buttons is-centered">
+                        <button className="button is-dark is-medium" type="button" onClick={() => onFinish(null)}>
+                            <span>Cancel</span>
+                        </button>
                         <button className="button is-primary is-medium" type="button" onClick={() => { setState({ ...state, hasName: true }) }} disabled={is_disabled}>
                             <span>Save &amp; Continue</span>
                         </button>

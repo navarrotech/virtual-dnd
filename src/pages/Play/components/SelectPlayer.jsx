@@ -1,13 +1,44 @@
-import { useMemo, useState, useContext } from "react"
+import { useMemo, useState, useContext, useEffect } from "react"
+
 import { useParams } from "react-router-dom";
 
 import { getDatabase, ref, remove, set } from "firebase/database"
 
-import CampaignContext from '../../CampaignContext.jsx'
+import CampaignContext from '../CampaignContext.jsx'
+
+import ChooseAvatar from "pages/Characters/Components/ChooseAvatar.jsx"
 
 import Loader from "common/Loader";
 
-export default function ModifyPlayerModal({ player, onClose, ...props }){
+export default function SelectPlayer({ start="modify", player: initialPlayer, onClose }){
+
+    const [ player, setPlayer ] = useState(initialPlayer)
+    const [ page, setPage ] = useState(start)
+    const { id } = useParams()
+
+    useEffect(() => {
+        if(page === ''){ onClose() }
+    }, [page, onClose])
+
+    if(page === 'modify'){
+        return <ModifyPlayerModal player={player} onClose={(new_page='') => { setPage(new_page) }}/>
+    }
+    if(page === 'choose_avatar'){
+        return <ChooseAvatar 
+        current={player.character.image}
+        onChoose={(image) => {
+            if(image){
+                set(ref(getDatabase(), `/campaigns/${id}/players/${player.uid}/character/image`), image)
+                setPlayer({ ...player, character:{ ...player.character, image } })
+            }
+            setPage('modify')
+        }}/>
+    }
+
+    return <></>;
+}
+
+function ModifyPlayerModal({ player, onClose }){
 
     const campaign = useContext(CampaignContext)
     const { isDungeonMaster=false } = campaign
@@ -16,10 +47,11 @@ export default function ModifyPlayerModal({ player, onClose, ...props }){
         uid: player_uid,
         player_name,
         character: {
-            name,
-            features
+            name='',
+            features={}
         },
         current: {
+            hidden=false,
             health: initialHealth,
             maxHealth: initialMaxHealth=30
         }
@@ -35,12 +67,17 @@ export default function ModifyPlayerModal({ player, onClose, ...props }){
         maxHealth: initialMaxHealth
     })
 
+    if(isNPC && !isDungeonMaster){
+        setTimeout(() => onClose(''), 0)
+        return <></>
+    }
+
     if(state.loading){
         return <Loader />
     }
 
-    function close(){
-        if(initialHealth !== state.health && player_uid){
+    function close(pagename){
+    if(initialHealth !== state.health && player_uid){
             set(
                 ref(getDatabase(), `/campaigns/${id}/players/${player_uid}/current/health`),
                 state.health
@@ -53,7 +90,7 @@ export default function ModifyPlayerModal({ player, onClose, ...props }){
             )
         }
 
-        onClose()
+        onClose(typeof pagename === 'string' ? pagename : '')
     }
 
     function removePlayer(ban=false){
@@ -83,10 +120,10 @@ export default function ModifyPlayerModal({ player, onClose, ...props }){
                 <div className="modal-background" onClick={close}></div>
                 <div className="modal-card">
                     <header className="modal-card-head">
-                        <p className="modal-card-title">
+                        <div className="modal-card-title">
                             <h1 className="title is-size-4">Viewing { name }</h1>
                             <h2 className="subtitle is-size-6">Played by {player_name}</h2>
-                        </p>
+                        </div>
                         <button className="delete is-medium" onClick={close}></button>
                     </header>
                     <section className="modal-card-body">
@@ -142,8 +179,16 @@ export default function ModifyPlayerModal({ player, onClose, ...props }){
             <div className="modal-background" onClick={close}></div>
             <div className="modal-card">
                 <header className="modal-card-head">
-                    <p className="modal-card-title">Editing { name }</p>
-                    <button className="delete is-medium" onClick={close}></button>
+                    <div className="modal-card-title level-left">
+                        <figure className="image is-64x64 mr-3 is-clickable" onClick={() => onClose('choose_avatar')}>
+                            <img src={player.character.image} alt={player.player_name}/>
+                        </figure>
+                        <div className="">
+                            <h1 className="title is-size-4">{ name }</h1>
+                            <h2 className="subtitle is-size-6">{isNPC?'Is an NPC': "Played by " + player.player_name} {hidden&&isDungeonMaster?<span data-tooltip="Other players cannot see this character!">(Hidden)</span>:''}</h2>
+                        </div>
+                    </div>
+                    <button className="delete is-large" onClick={close}></button>
                 </header>
                 <section className="modal-card-body">
                     <div className="block columns">

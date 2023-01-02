@@ -1,12 +1,13 @@
 import { useState, useContext } from 'react'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBolt, faCoins } from '@fortawesome/free-solid-svg-icons'
+import { faBolt, faBook, faCoins } from '@fortawesome/free-solid-svg-icons'
 import { ReactComponent as TreasureIcon } from 'icons/treasure-chest.svg'
 
 import CampaignContext from '../CampaignContext.jsx'
 
 import Inventory from './menu/Inventory'
+import Notes from './Notes.jsx'
 
 import Styles from '../_.module.sass'
 
@@ -16,9 +17,16 @@ export default function UserActions({ player, ...props }){
     const { current:{ gold=0, experience=0 }, inventory={}, uid } = campaign.myCharacter
 
     const [showInventory, setShowInventory] = useState(false)
+    const [showNotes,     setShowNotes    ] = useState(false)
 
     return (
         <div className={Styles.UserActions}>
+            <button className="button is-light is-fullwidth" type="button" onClick={() => setShowNotes(true)}>
+                <span className="icon">
+                    <FontAwesomeIcon icon={faBook} />
+                </span>
+                <span>My Notes</span>
+            </button>
             <button className="button is-light is-fullwidth" type="button" onClick={() => setShowInventory(true)}>
                 <span className="icon">
                     <TreasureIcon />
@@ -47,6 +55,10 @@ export default function UserActions({ player, ...props }){
                     </span>
                 </div>
             </div>
+            { showNotes
+                ? <Notes onClose={() => { setShowNotes(false) }} />
+                : <></>
+            }
             { showInventory
                 ? <Inventory close={() => setShowInventory(false)} inventory={inventory} player_uid={uid}/>
                 : <></>

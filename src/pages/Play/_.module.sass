@@ -1,10 +1,13 @@
 @use './src/theme' as *
+@use 'sass:color'
 
 $livechatWidth:  600px
 $livechatHeight: 400px
 $livechatRadius: 7px
 $playerImage: 80px
 $playerBorderRadius: 4px
+
+$success: #2ccf47
 
 .Game
     background: #fafafb
@@ -167,6 +170,16 @@ $playerBorderRadius: 4px
         .EntityLabel, img
             opacity: 1 !important
 
+.entityMovementLimitCircle
+    pointer-events: none !important
+    position: absolute
+    transform: translate(-50%, -52%)
+
+    svg
+        circle
+            fill: color.adjust($success, $alpha: -0.85, $lightness: 10%)
+            stroke: $success !important
+
 .Entity
     // background: $success
     position: absolute
@@ -179,17 +192,36 @@ $playerBorderRadius: 4px
     flex-direction: column
     gap: 0.5em
 
-    // TODO: Put custom color attributes in here!
-    &.isPlayer
-        .EntityPop
-            background: #2ccf47
+    *
+        user-select: none
 
     &.isMoving
+        pointer-events: none
+        cursor: grab
+        
+        img
+            border-color: $success
+
+        .EntityLabel
+            background: $success
+            color: white
+
         .EntityPop
-            transform: scale(1.2)
+            transform: scale(1.5)
+            // visibility: hidden
+
+    &.isHiddenToOthers
+        &.isDungeonMaster
+            opacity: 0.7
+
+            &:hover
+                opacity: 1
+
+        &:not(.isDungeonMaster)
+            display: none !important
 
     .EntityPop
-        background: $red
+        background: $success
         border: 3px solid #fafafb
         border-radius: 50%
         display: block
@@ -265,9 +297,15 @@ $playerBorderRadius: 4px
                 padding: 0 0.75em
                 font-size: 0.9rem
 
-        &.isNPC
-            .body
-                margin-top: 0.65em
+        // &.isNPC
+        //     .body
+        //         margin-top: 0.65em
+
+        &.isHiddenDMOnly
+            transition: opacity 150ms ease
+
+            &:not(:hover)
+                opacity: 0.6
 
         .Healthbar
             font-size: 0.9rem
@@ -426,7 +464,79 @@ $playerBorderRadius: 4px
         svg
             fill: white
 
-// .SpawnEntityPreview
+.NewNote
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    border-color: $primary
+    cursor: pointer
+    height: 250px
+    border-radius: 6px
+    background: $light
+    transition: background 100ms ease
+    text-align: center
+
+    > :last-child
+        margin-bottom: 0.5em
+
+    :global(.icon)
+        width:  7rem !important
+        height: 7rem !important
+
+    &:hover
+        background: $primary
+        color: white
+
+        :global(.title),
+        :global(.subtitle)
+            color: white
+
+
+.NoteModal
+    max-width: 1100px
+
+    .Notes
+        display: flex
+        flex-flow: row wrap
+        gap: 1em
+
+        .NotePreview
+            position: relative
+            display: block
+            width: 200px
+            height: 150px
+            background: $light
+            border-radius: 6px
+            cursor: pointer
+            padding: 0.75em
+            transition: background 100ms ease, transform 300ms ease
+
+            :global(.tags)
+                position: absolute
+                right: -0.5em
+                top: -0.5em
+
+            &:hover
+                background: $primary
+                color: white
+                transform: scale(1.1)
+
+                :global(.tag)
+                    background: white 
+                    color: black
+                    @include shadow(10)
+
+    .ForTextArea
+        padding: 0 !important
+
+        textarea
+            outline: none !important
+            border: none !important
+
+@media screen and (min-width: 1100px)
+    .NoteModal
+        width: 1100px !important
 
 
 

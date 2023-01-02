@@ -1,0 +1,42 @@
+{
+    "CURRENT":{
+        "notes/":{
+            "campaign_uid":{
+                "note_uid":{
+                    "type": "private",
+                    "owner": "$uid",
+                    "title": "text",
+                    "text": "text",
+                    "created": "timestamp",
+                    "updated": "timestamp"
+                }
+            }
+        }
+    },
+    "OLD":{
+        "notes/":{
+            "user_uid":{
+                "campaign_uid":{
+                    "note_uid":{
+                        "title": "text",
+                        "text": "text",
+                        "created": "timestamp",
+                        "updated": "timestamp"
+                    }
+                }
+            }
+        },
+        "campaigns/":{
+            "campaign_uid":{
+                "notes":{
+                    "note_uid":{
+                        "title": "text",
+                        "text": "text",
+                        "created": "timestamp",
+                        "updated": "timestamp"
+                    }
+                }
+            }
+        }
+    }
+}

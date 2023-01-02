@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 
-import ModifyPlayerModal from './menu/ModifyPlayerModal';
+import SelectPlayer from './SelectPlayer';
 import Healthbar from './Healthbar';
 
 import CampaignContext from '../CampaignContext.jsx'
@@ -28,20 +28,22 @@ export default function PlayerList() {
                     .map(player => <PlayerItem
                         key={player.uid}
                         player={player.data}
+                        isDungeonMaster={isDungeonMaster}
                         onClick={() => { setShowUserModal({ uid: player.uid, ...player.data }) }}
                     />
                 )
             }
         </div>
         { showUserModal
-            ? <ModifyPlayerModal isDungeonMaster={isDungeonMaster} player={showUserModal} onClose={() => { setShowUserModal(null) }}/>
+            ? <SelectPlayer player={showUserModal} onClose={() => { setShowUserModal(null) }}/>
             : <></>
         }
     </>)
 
 }
 
-function PlayerItem({ player, onClick }){
+function PlayerItem({ player, onClick, isDungeonMaster }){
+
     let {
         character: {
             name,
@@ -52,6 +54,7 @@ function PlayerItem({ player, onClick }){
             }={}
         },
         current: {
+            hidden=false,
             health,
             maxHealth
         },
@@ -62,7 +65,15 @@ function PlayerItem({ player, onClick }){
         player_name = player_name.split(' ')[0]
     } catch(e){}
 
-    return <div className={Styles.Player + " " + (player_name === 'NPC'?Styles.isNPC:'')}>
+    if(hidden && !isDungeonMaster){
+        return <></>
+    }
+
+    let classes = [Styles.Player]
+    if(player_name === 'NPC'){ classes.push(Styles.isNPC) }
+    if(hidden){ classes.push(Styles.isHiddenDMOnly) }
+    
+    return <div className={classes.join(' ')}>
         <figure className={"image is1by1 is-clickable " + Styles.image} onClick={onClick}>
             <img src={image} alt="" draggable={false}/>
         </figure>
@@ -80,10 +91,7 @@ function PlayerItem({ player, onClick }){
                         : 'Player'
                 }
             </p>
-            { player_name !== 'NPC'
-                ? <Healthbar current={health} max={maxHealth}/>
-                : <></>
-            }
+            <Healthbar current={health} max={maxHealth} />
         </div>
     </div>
 }
