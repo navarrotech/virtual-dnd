@@ -4,6 +4,7 @@ import { Navigate, Route, useNavigate } from "react-router-dom"
 // Icons + Images
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowRight, faEnvelope, faLock, faPlus, faUser } from "@fortawesome/free-solid-svg-icons"
+// import LoginBackground from 'images/login-background.jpg'
 
 // UI
 import Logo from "../images/logo.svg"
@@ -236,7 +237,8 @@ export function AuthPanel({ mode }:{ mode: Mode }) {
 }
 
 export function AuthPage({ mode }: { mode: Mode }) {
-    return (
+    return (<>
+        {/* <div className="login-background-art" style={{ backgroundImage: `url(${LoginBackground})` }} /> */}
         <div className="hero is-halfheight">
             <div className="hero-body">
                 <div className="container is-max-fullhd">
@@ -251,7 +253,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
                 </div>
             </div>
         </div>
-    )
+    </>)
 }
 
 // export function Forgot() {

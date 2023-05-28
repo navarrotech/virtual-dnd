@@ -38,7 +38,7 @@ export default function Navbar() {
                 >
                     { player
                         ? <>
-                            <Link to={`/characters/${player.character_uid}?rejoin_campaign=${id}`} className="dropdown-item">
+                            <Link to={`/characters/${player.character_uid}/stats?rejoin_campaign=${id}`} className="dropdown-item">
                                 Edit Character
                             </Link>
                             <hr className="dropdown-divider" />

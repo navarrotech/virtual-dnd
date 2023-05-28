@@ -64,7 +64,9 @@ function PlayerItem({ player, isDungeonMaster }){
 
     try{
         player_name = player_name.split(' ')[0]
-    } catch(e){}
+    } catch(e){
+        // console.log(e)
+    }
 
     if(hidden && !isDungeonMaster){
         return <></>

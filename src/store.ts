@@ -5,12 +5,20 @@ import { configureStore } from '@reduxjs/toolkit'
 // Reducers
 import userReducer from './redux/user/reducer'
 import appReducer from './redux/app/reducer'
+import campaignReducer from './redux/campaigns/reducer'
+import charactersReducer from './redux/characters/reducer'
 
 const store = configureStore({
   reducer: {
+    campaigns: campaignReducer.reducer,
+    characters: charactersReducer.reducer,
     user: userReducer.reducer,
     app: appReducer.reducer
   },
+  middleware: getDefaultMiddleware =>
+  getDefaultMiddleware({
+    thunk: true
+  }),
   devTools: process.env.NODE_ENV !== 'production'
 })
 

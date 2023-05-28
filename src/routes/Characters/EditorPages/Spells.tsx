@@ -1,4 +1,4 @@
-export default function EditorPageThr({ character, save, ...props }){
+export default function EditorPageThr(){
 
     return (
         <div className="">

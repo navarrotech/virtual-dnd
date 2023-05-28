@@ -1,4 +1,4 @@
-@use './src/theme' as *
+@use '../../sass/theme' as *
 
 .CharacterList
     display: flex
@@ -7,7 +7,7 @@
     gap: 1em
         
     .Character
-        width: 500px
+        width: calc(33% - 1em)
         height: 150px
         @include shadow(10)
         border-radius: 4px

@@ -1,9 +1,15 @@
 import { useState, useRef } from 'react'
+import type { ReactNode } from 'react'
 
-export default function Dropdown({ trigger, children, ...props }){
+type Props = {
+    trigger: JSX.Element,
+    className?: string,
+    children?: ReactNode
+}
+export default function Dropdown({ trigger, className, children }: Props){
 
     const [open, setOpen] = useState(false)
-    const dropdown = useRef()
+    const dropdown: any = useRef()
 
     // useEffect(() => {
     //     if(!open){ return }
@@ -25,7 +31,7 @@ export default function Dropdown({ trigger, children, ...props }){
     // }, [open])
 
     return (
-        <div className={"dropdown" + (open?' is-active':'')} ref={dropdown}>
+        <div className={(className ? className + ' ' : '') + "dropdown" + (open?' is-active':'')} ref={dropdown}>
             <div className="dropdown-trigger is-clickable" onClick={() => { setOpen(!open) }}>
                 { trigger }    
             </div>

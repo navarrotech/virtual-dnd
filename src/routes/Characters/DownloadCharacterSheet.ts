@@ -1,7 +1,8 @@
-import { PDFDocument } from 'pdf-lib'
+
+import { PDFDocument, PDFForm } from 'pdf-lib'
 import template_path from './CharacterSheet.pdf'
 
-// const reader = new FileReader()
+import type { Character } from 'redux/characters/types'
 
 const checkbox_map = {
     // For "saving throws"
@@ -40,11 +41,11 @@ const checkbox_map = {
     "Charisma":      "Check Box 22",
 }
 
-export async function downloadPDF(player_name='', character={}){
+export async function downloadPDF(player_name='', character: Character & any){
     let template = null
 
     try {
-        let { 
+        const { 
             name='',
             // image='',
             // created='',
@@ -53,7 +54,7 @@ export async function downloadPDF(player_name='', character={}){
                 maxHealth=0,
                 armorClass=0,
                 initiative=0,
-                speed=30,
+                speed=0,
                 experience=1,
                 // gold= 0
             }={},
@@ -123,9 +124,13 @@ export async function downloadPDF(player_name='', character={}){
             }={},
         } = character
 
-        let response = await fetch(template_path)
+        const response = await fetch(template_path)
         if(response.ok){ template = await response.arrayBuffer() }
     
+        if(!template){ 
+            return console.error('Could not load PDF template')
+        }
+
         const PDF = await PDFDocument.load(template)
         const form = PDF.getForm()
     
@@ -284,9 +289,8 @@ export async function downloadPDF(player_name='', character={}){
     } catch(e){ console.log(e) }
 }
 
-export async function importPDF(FileAsArrayBuffer){
+export async function importPDF(file: Uint8Array){
     let name='',
-        image='',
         health=0,
         maxHealth=0,
         armorClass=0,
@@ -352,20 +356,29 @@ export async function importPDF(FileAsArrayBuffer){
         flaws="",
         languagesKnown=''
 
+    let PDF, form: PDFForm;
     try {
-        const PDF = await PDFDocument.load(FileAsArrayBuffer)
-        const form = PDF.getForm()
-
-        function importField(field, def=''){
-            try{
-                let s = (form.getTextField('').getText())||def
-                if(typeof def === 'number'){ return parseNumber(s) }
-                return s
-            } catch(e){
-                console.log(`Unable to import '${field}':`, e)
-                return def
+        PDF = await PDFDocument.load(file)
+        form = PDF.getForm()
+    } catch(error){
+        console.error(error)
+        return;
+    }
+    
+    function importField(field: string, def: string | number = ''): any{
+        try{
+            const text = (form.getTextField('').getText()) || def
+            if(typeof def === 'number'){
+                return parseNumber(text)
             }
+            return text
+        } catch(e){
+            console.log(`Unable to import '${field}':`, e)
+            return def
         }
+    }
+
+    try {
 
         // Page 0 Header Fields
         name = importField('CharacterName', '')
@@ -452,7 +465,6 @@ export async function importPDF(FileAsArrayBuffer){
 
         return { 
             name,
-            image,
             created: new Date().toISOString(),
             current:{
                 health,
@@ -531,30 +543,32 @@ export async function importPDF(FileAsArrayBuffer){
     } catch(e){ console.log(e) }
 }
 
-function parseNumber(text){
-    let n = parseInt(text)
-    if(isNaN(n)){ return 0 }
-    return text;
+function parseNumber(value: string | number): number{
+    if(typeof value === 'number'){ 
+        return value
+    }
+    const n = parseInt(value)
+    if(isNaN(n)){
+        return 0
+    }
+    return n;
 }
 
-function downloadBlob(data, fileName, mimeType) {
-    var blob, url;
-    blob = new Blob([data], {
+function downloadBlob(data: Uint8Array, fileName: string, mimeType: string) {
+    const blob = new Blob([data], {
       type: mimeType
     });
-    url = window.URL.createObjectURL(blob);
-    function downloadURL(data, fileName) {
-        var a;
-        a = document.createElement('a');
-        a.href = data;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.style = 'display: none';
-        a.click();
-        a.remove();
-    };
-    downloadURL(url, fileName);
+    const url = window.URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.className = 'is-hidden'
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
     setTimeout(function() {
       return window.URL.revokeObjectURL(url);
-    }, 1000);
-};
+    }, 60 * 1000);
+}

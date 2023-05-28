@@ -1,46 +1,49 @@
-// import Styles from "../_.module.sass"
 
-function listenForKeydown({ key, target }) {
-    if (key === "Enter" || key === 'Esc') {
-        target.blur()
+// Redux
+import { useAppSelector } from "core/redux";
+
+import type { Character } from "redux/characters/types";
+
+// Hooks
+import { changeListener, onKeyDown } from 'routes/Characters/forms'
+
+type Features = keyof Character['features']
+
+export default function EditorPageOne() {
+
+    const character = useAppSelector(state => state.characters.current)
+
+    if(!character){
+        return <></>
     }
-}
 
-export default function EditorPageOne({ character, save }) {
-
-    function Textarea({ value, rows = 3, label }) {
+    function Textarea({ value, rows = 3, label }: { value: Features, rows?: number, label?: string }) {
         return (<div className="field">
             <label className="label is-capitalized">{label}</label>
             <textarea
                 rows={rows}
                 className="textarea"
-                onChange={({ target: { v } }) => {
-                    let k = {}
-                    k["features." + value] = v
-                }}
-                onBlur={() => save({}, true)}
-                onKeyDown={listenForKeydown}
-                value={character[value]}
+                onChange={changeListener('features.' + value, false)}
+                onKeyDown={onKeyDown}
+                value={character?.features[value]}
             >
             </textarea>
             </div>
         )
     }
 
-    function Field({ value }) {
+    function Field({ value, autoFocus=false }:{ value: Features, autoFocus?: boolean }) {
         return (
             <div className="field">
-                <label className="label input-label is-capitalized">{value}</label>
+                <label className="label input-label is-capitalized">{ value }</label>
                 <div className="control">
                     <input
+                        autoFocus={autoFocus}
                         type="text"
                         className="input"
-                        onChange={({ target: { v } }) => {
-                            let k = {}
-                            k["features." + value] = v
-                        }}
-                        onBlur={() => save({}, true)}
-                        onKeyDown={listenForKeydown}
+                        onChange={changeListener('features.' + value, false)}
+                        onKeyDown={onKeyDown}
+                        value={character?.features[value]}
                     />
                 </div>
             </div>
@@ -52,7 +55,7 @@ export default function EditorPageOne({ character, save }) {
             <div className="block columns">
                 
                 <div className="column">
-                    <Field value="age" />
+                    <Field value="age" autoFocus />
                     <Field value="height" />
                 </div>
                 <div className="column">

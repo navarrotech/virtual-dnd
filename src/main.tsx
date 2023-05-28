@@ -11,7 +11,7 @@ import store from './store'
 // Styling
 import './sass/index.sass'
 
-axios.defaults.baseURL = 'http://localhost:3000/dnd/'
+axios.defaults.baseURL = import.meta.env.VITE_API_DOMAIN + '/dnd/'
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
