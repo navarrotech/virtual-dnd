@@ -1,27 +1,26 @@
 
-import type { User } from "../user/types"
 import type { Character } from "../characters/types";
 
 export type State = {
-  current?: {
-    name: string,
-    game: GameState,
-    activeMap: ActiveMap,
-    campaign: Campaign,
-    players: User[],
-    characters: CampaignCharacter[],
-    chat: ChatMessage[],
-    notes: Notes
+  // current?: {
+  //   name: string,
+  //   game: GameState,
+  //   activeMap: ActiveMap,
+  //   campaign: Campaign,
+  //   players: User[],
+  //   characters: CampaignCharacter[],
+  //   chat: ChatMessage[],
+  //   notes: Notes
+  // },
+  myCampaigns: {
+    [key: string]: CampaignDoc
   },
-  list: MinimalInfoCampaign[]
-}
-
-export type MinimalInfoCampaign = {
-  id: string,
-  name: string,
-  owner: string,
-  created: Date,
-  photoURL: string
+  playingIn: {
+    [key: string]: CampaignDoc
+  },
+  all: {
+    [key: string]: CampaignDoc
+  }
 }
 
 // TODO: Should rethink CampaignCharacter, and think about how it's saved?
@@ -46,14 +45,6 @@ export type InventoryItem = {
   quantity: number
 }
 
-export type Notes = any;
-export type ChatMessage = {
-  what: string,
-  who: string,
-  when: Date,
-  name: string
-};
-
 export type CampaignDoc = {
   id: string,
   name: string,
@@ -62,7 +53,6 @@ export type CampaignDoc = {
   player_ids: string[],
   character_ids: string[],
   chat_id: string,
-  notes: Notes,
   data: Campaign,
   created: Date,
   updated: Date

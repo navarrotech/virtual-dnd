@@ -10,7 +10,7 @@ import type { User, RawUserSession } from 'redux/user/types';
 import { useAppSelector } from './redux';
 import { dispatch } from '../store';
 import { setUser, setFriends, setFriendRequests } from 'redux/user/reducer'
-import { setCampaigns } from 'redux/campaigns/reducer';
+import { setCampaigns, setPlayingIn } from 'redux/campaigns/reducer';
 import { setCharacters } from 'redux/characters/reducer';
 import { onChange } from 'redux/app/reducer';
 
@@ -25,7 +25,8 @@ type AllData = {
   characters: CharacterDoc[],
   campaigns: CampaignDoc[],
   friends: User[],
-  friend_requests: User[]
+  friend_requests: User[],
+  playing_in: CampaignDoc[]
 }
 
 type Props = {
@@ -129,12 +130,13 @@ export default function Initialization({ children }: Props){
       if(!result){
         return;
       }
-      const { campaigns, characters, friends, friend_requests } = result;
+      const { campaigns, characters, friends, friend_requests, playing_in } = result;
 
       dispatch(setFriends(friends))
       dispatch(setFriendRequests(friend_requests))
       dispatch(setCampaigns(campaigns))
       dispatch(setCharacters(characters))
+      dispatch(setPlayingIn(playing_in))
 
       setDataReady(true)
     })

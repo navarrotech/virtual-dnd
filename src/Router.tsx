@@ -13,8 +13,9 @@ import CharacterStats from './routes/Characters/EditorPages/Stats'
 import CharacterAppearance from './routes/Characters/EditorPages/Appearance'
 import CharacterSpells from './routes/Characters/EditorPages/Spells'
 
-// import Campaigns from "./routes/Campaigns/_all.jsx"
-// import Characters from "./routes/Characters/_all.jsx"
+import AllCampaigns from './routes/Campaigns/list'
+import EditCampaign from './routes/Campaigns/edit'
+
 // import Play from './routes/Play/_all.jsx'
 
 export default function AppRoutes(){
@@ -24,19 +25,20 @@ export default function AppRoutes(){
                 { Authentication }
                 <Route path="/" element={<Dashboard />}>
 
-                {/* Campaigns */}
-                <Route path="/campaigns" element={<h1>Welcome to campaigns!</h1>} />
+                    {/* Campaigns */}
+                    <Route path="/campaigns" element={<AllCampaigns />} />
+                    <Route path="/campaigns/:id" element={<EditCampaign />}/>
 
-                {/* Characters */}
-                <Route path="/characters" element={<AllCharacters />} />
-                <Route path="/characters/:id" element={<EditCharacter />}>
-                    <Route path="/characters/:id/stats"      element={<CharacterStats      />} />
-                    <Route path="/characters/:id/appearance" element={<CharacterAppearance />} />
-                    <Route path="/characters/:id/spells"     element={<CharacterSpells     />} />
-                </Route>
+                    {/* Characters */}
+                    <Route path="/characters" element={<AllCharacters />} />
+                    <Route path="/characters/:id" element={<EditCharacter />}>
+                        <Route path="/characters/:id/stats"      element={<CharacterStats      />} />
+                        <Route path="/characters/:id/appearance" element={<CharacterAppearance />} />
+                        <Route path="/characters/:id/spells"     element={<CharacterSpells     />} />
+                    </Route>
 
                 </Route>
-                <Route path="*" element={ <Navigate to="/"/> }/>
+                <Route path="*" element={ <Navigate to="/campaigns"/> }/>
             </Routes>
         </BrowserRouter>
     )

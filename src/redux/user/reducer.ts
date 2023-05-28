@@ -35,7 +35,7 @@ const slice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    [constants.SET_USER](state, action) {
+    [constants.SET_USER]: (state, action) => {
       if(action.payload.authorized){
         const { authorized, user } = action.payload;
         state.authorized = authorized;
@@ -66,7 +66,7 @@ const slice = createSlice({
       })
       return state;
     },
-    [constants.LOGOUT](state) {
+    [constants.LOGOUT]: (state) => {
       state.authorized = false;
       state.user = initialState.user;
       return state;

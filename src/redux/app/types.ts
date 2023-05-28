@@ -14,5 +14,8 @@ export type onWsChange <T = CharacterDoc | User | CampaignDoc | any> = {
   table : Tables,
   type : string,
   update_type : UpdateType,
-  data: T
+  data: T,
+  meta: {
+    isOwner: boolean
+  }
 }

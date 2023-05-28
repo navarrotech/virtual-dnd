@@ -1,12 +1,15 @@
 import { useState, useRef } from 'react'
 import type { ReactNode } from 'react'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
+
 type Props = {
-    trigger: JSX.Element,
+    trigger?: JSX.Element,
     className?: string,
     children?: ReactNode
 }
-export default function Dropdown({ trigger, className, children }: Props){
+export default function Dropdown({ trigger=DefaultDropdownTrigger, className, children }: Props){
 
     const [open, setOpen] = useState(false)
     const dropdown: any = useRef()
@@ -44,3 +47,11 @@ export default function Dropdown({ trigger, className, children }: Props){
     )
 
 }
+
+const DefaultDropdownTrigger = (
+    <button className="button is-light is-rounded is-small" type="button">
+        <span className="icon">
+            <FontAwesomeIcon icon={faEllipsis}/>
+        </span>
+    </button>
+)
