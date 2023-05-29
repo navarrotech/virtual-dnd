@@ -9,16 +9,22 @@ import { set } from "lodash-es"
 import type { State, ChatMessage } from "./types"
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { User } from "redux/user/types"
+import type { Modals } from "routes/Play/Modals"
 
 const initialState: State = {
   id: '',
   name: '',
   role: 'player',
   owner: '',
+  activeModal: null,
   myCharacter: undefined,
   myCharacterId: undefined,
   map: {
-    image: '',
+    imageLayer: {
+      url: '',
+      sizeX: 0,
+      sizeY: 0
+    },
     entities: {},
     landmarks: {}
   },
@@ -32,7 +38,9 @@ const initialState: State = {
     newMessage: '',
     messages: [],
   },
-  notes: {},
+  notes: {
+    'shared': '',
+  },
   characters: {},
   characterIds: [],
   players: {}
@@ -49,6 +57,7 @@ export const constants = {
   SET_SHOW_CHAT: 'PLAY/SET_SHOW_CHAT',
   SET_NEW_MESSAGE: 'PLAY/SET_NEW_MESSAGE',
   SET_STATE: 'PLAY/SET_STATE',
+  SET_MODAL_OPEN: 'PLAY/SET_MODAL_OPEN',
 } as const
 
 // type ActionType = typeof constants[keyof typeof constants];
@@ -77,7 +86,10 @@ const slice = createSlice({
       return state;
     },
     [constants.SET_NOTES]: (state, action: PayloadAction<any>) => {
-      state.notes = action.payload;
+      const notes = action.payload
+      notes.forEach((note: any) => {
+        state.notes[note.owner] = note.content
+      })
       return state;
     },
     [constants.RESET]: () => {
@@ -89,6 +101,10 @@ const slice = createSlice({
     },
     [constants.SET_SHOW_CHAT]: (state, action: PayloadAction<boolean>) => {
       state.chat.show = action.payload;
+      return state;
+    },
+    [constants.SET_MODAL_OPEN]: (state, action: PayloadAction<Modals>) => {
+      state.activeModal = action.payload;
       return state;
     },
     [constants.ON_SOCKET]: (state, action: PayloadAction<any>) => {
@@ -106,6 +122,10 @@ const slice = createSlice({
           break;
         case 'campaign':
           // state.current = data
+          break;
+        case 'entity':
+          set(state.map.entities, [data.entityId, 'x'], data.x)
+          set(state.map.entities, [data.entityId, 'y'], data.y)
           break;
         case 'player-joined':
           set(state.players, data.user.id, data.user)
@@ -135,3 +155,4 @@ export const setNewMessage = slice.actions[constants.SET_NEW_MESSAGE]
 export const onWs = slice.actions[constants.ON_SOCKET]
 export const showChat = slice.actions[constants.SET_SHOW_CHAT]
 export const setReducerState = slice.actions[constants.SET_STATE]
+export const toggleModal = slice.actions[constants.SET_MODAL_OPEN]

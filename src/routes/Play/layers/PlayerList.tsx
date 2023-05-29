@@ -58,8 +58,6 @@ function Character({ id }: { id: string }){
     const { class: character_class, race } = character.features
     const player_name = character.player?.first_name
 
-    console.log(character)
-    
     return <div className={Styles.Player}>
         {/* <Link className={"image is1by1 is-clickable " + Styles.image} to={`/play/${campaign_id}/player/${id}`}> */}
         <div className={"image is1by1 is-clickable " + Styles.image}>

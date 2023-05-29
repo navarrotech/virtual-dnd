@@ -1,64 +1,21 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBook, faDiceD20 } from "@fortawesome/free-solid-svg-icons"
-
-// import { ReactComponent as SwordsIcon } from 'icons/swords.svg'
-import { ReactComponent as HelmetIcon } from 'icons/helmet-battle.svg'
-
-import CampaignContext from '../CampaignContext.jsx'
-import { ref, set, push, getDatabase } from "firebase/database"
-
-import Notes from './Notes.jsx'
-
-import { ChooseRollDice } from './menu/RollDice.jsx'
-import SpawnEntity from './menu/SpawnEntity.jsx'
+import { ChooseRollDice } from '../components/menu/RollDice.jsx'
+import SpawnEntity from '../components/menu/SpawnEntity.jsx'
 
 import Styles from '../_.module.sass'
 
 export default function DMActions(){
 
-    const campaign = useContext(CampaignContext)
-    const { players={} } = campaign;
-    
     const [ showRollChooser, setRollChooser ] = useState(false)
     const [ showSpawnEntity, setSpawnEntity ] = useState(false)
-    const [ showNotes,       setShowNotes   ] = useState(false)
     const { id } = useParams()
 
     return (
         <>
             <div className={Styles.UserActions}>
-                {/* <button className="button is-light is-fullwidth" type="button">
-                    <span className="icon">
-                        <SwordsIcon />
-                    </span>
-                    <span>Roll Initiative</span>
-                </button> */}
-                <button className="button is-light is-fullwidth" type="button" onClick={() => setShowNotes(true)}>
-                    <span className="icon">
-                        <FontAwesomeIcon icon={faBook}/>
-                    </span>
-                    <span>My Notes</span>
-                </button>
-                <button className="button is-light is-fullwidth" type="button" onClick={() => setSpawnEntity(true)}>
-                    <span className="icon">
-                        <HelmetIcon />
-                    </span>
-                    <span>Spawn Entity</span>
-                </button>
-                <button className="button is-light is-fullwidth" type="button" onClick={() => setRollChooser(true)}>
-                    <span className="icon">
-                        <FontAwesomeIcon icon={faDiceD20}/>
-                    </span>
-                    <span>Make Player Roll</span>
-                </button>
             </div>
-            { showNotes
-                ? <Notes onClose={() => { setShowNotes(false) }} />
-                : <></>
-            }
             {
                 showRollChooser
                 ? <ChooseRollDice players={players} onChosen={(value) => {

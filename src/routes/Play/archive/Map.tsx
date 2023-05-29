@@ -6,7 +6,7 @@ import { getDatabase, ref, update } from "firebase/database"
 
 import { useLongPress } from "use-long-press"
 
-import SelectPlayer from "./SelectPlayer.jsx"
+import SelectPlayer from "../components/SelectPlayer.jsx"
 
 import CampaignContext from '../CampaignContext.jsx'
 

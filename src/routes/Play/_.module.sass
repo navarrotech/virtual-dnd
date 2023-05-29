@@ -133,29 +133,19 @@ $playerBorderRadius: 4px
 
 .Map
     position: fixed
-    // z-index: 1
-    top: 0
+    top: 72px
     left: 0
     right: 0
     bottom: 0
     width: 100vw
-    height: 100vh
+    height: calc(100vh - 72px)
+    // z-index: 1
 
     .MapBox
-        position: absolute
-        display: block
-
-        .MapImage
-            width: 100%
-            pointer-events: none
-            user-select: none
-            -webkit-user-drag: none
-
-        &.isDragging
-            cursor: grabbing
-
-        .Building
-            border: 1px solid blue
+        width: 100vw
+        height: calc(100vh - 72px)
+    //     position: absolute
+    //     display: block
 
 .Entities
 

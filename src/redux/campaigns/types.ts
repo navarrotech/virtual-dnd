@@ -24,6 +24,7 @@ export type CampaignCharacter = {
     armorClass: number,
     experience: number,
     initiative: number,
+    gold: number
   },
   inventory: {
     [key: string]: InventoryItem
@@ -59,7 +60,11 @@ export type CampaignDoc = {
 }
 
 export type ActiveMap = {
-  image: string,
+  imageLayer: {
+    url: string,
+    sizeX: number,
+    sizeY: number
+  },
   entities: {
     [key: string]: {
       x: number,
@@ -98,6 +103,7 @@ export type CurrentCharacter = {
     armorClass: number,
     experience: number,
     initiative: number,
+    gold: number
   },
   inventory: any
 } & Character

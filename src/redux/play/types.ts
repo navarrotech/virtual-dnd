@@ -2,11 +2,14 @@
 import type { User } from "redux/user/types";
 import type { ActiveMap, CurrentCharacter, GameState } from "redux/campaigns/types";
 
+import type { Modals } from "routes/Play/Modals";
+
 export type State = {
   id: string,
   name: string,
   role: 'dm' | 'player',
   owner: string,
+  activeModal: Modals,
   myCharacter?: CurrentCharacter,
   myCharacterId?: string,
   map: ActiveMap,
@@ -32,7 +35,10 @@ export type State = {
   },
 }
 
-export type Notes = any;
+export type Notes = {
+  'shared': string,
+  [key: string]: string
+};
 export type ChatMessage = {
   id: string,
   what: string,
@@ -40,7 +46,7 @@ export type ChatMessage = {
   when: Date
 };
 
-export type SocketMessageType = 'chat' | 'note' | 'campaign' | 'player' | 'unauthorized' | 'ready' | 'init'
+export type SocketMessageType = 'chat' | 'note' | 'campaign' | 'player' | 'unauthorized' | 'ready' | 'init' | 'entity'
 export type IncomingSocketMessage<T> = {
     type: SocketMessageType,
     data: T

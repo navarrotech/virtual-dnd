@@ -1,16 +1,12 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { getDatabase, push, ref, remove, set } from 'firebase/database'
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faLayerGroup } from '@fortawesome/free-solid-svg-icons'
-
 import { ReactComponent as Potion } from 'icons/flask-round-potion.svg'
+import Icons from 'common/Icons'
 
 import ChooseIcon from "common/ChooseIcon.jsx"
-
-import Icons from 'common/Icons'
 
 import Styles from '../../_.module.sass'
 
