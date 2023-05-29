@@ -7,13 +7,15 @@ import userReducer from './redux/user/reducer'
 import appReducer from './redux/app/reducer'
 import campaignReducer from './redux/campaigns/reducer'
 import charactersReducer from './redux/characters/reducer'
+import playReducer from './redux/play/reducer'
 
 const store = configureStore({
   reducer: {
     campaigns: campaignReducer.reducer,
     characters: charactersReducer.reducer,
     user: userReducer.reducer,
-    app: appReducer.reducer
+    app: appReducer.reducer,
+    play: playReducer.reducer,
   },
   middleware: getDefaultMiddleware =>
   getDefaultMiddleware({

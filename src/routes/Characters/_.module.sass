@@ -8,6 +8,7 @@
         
     .Character
         width: calc(33% - 1em)
+        min-width: calc(33% - 1em)
         height: 150px
         @include shadow(10)
         border-radius: 4px
@@ -42,7 +43,7 @@
                 transition: color 200ms ease
 
     &.onDark .Character
-        background: $gray
+        background: none
 
         .titles *
             color: white

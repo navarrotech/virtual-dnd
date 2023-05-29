@@ -10,52 +10,11 @@ import { changeListener, onKeyDown } from 'routes/Characters/forms'
 type Features = keyof Character['features']
 
 export default function EditorPageOne() {
-
-    const character = useAppSelector(state => state.characters.current)
-
-    if(!character){
-        return <></>
-    }
-
-    function Textarea({ value, rows = 3, label }: { value: Features, rows?: number, label?: string }) {
-        return (<div className="field">
-            <label className="label is-capitalized">{label}</label>
-            <textarea
-                rows={rows}
-                className="textarea"
-                onChange={changeListener('features.' + value, false)}
-                onKeyDown={onKeyDown}
-                value={character?.features[value]}
-            >
-            </textarea>
-            </div>
-        )
-    }
-
-    function Field({ value, autoFocus=false }:{ value: Features, autoFocus?: boolean }) {
-        return (
-            <div className="field">
-                <label className="label input-label is-capitalized">{ value }</label>
-                <div className="control">
-                    <input
-                        autoFocus={autoFocus}
-                        type="text"
-                        className="input"
-                        onChange={changeListener('features.' + value, false)}
-                        onKeyDown={onKeyDown}
-                        value={character?.features[value]}
-                    />
-                </div>
-            </div>
-        )
-    }
-
     return (
         <>
             <div className="block columns">
-                
                 <div className="column">
-                    <Field value="age" autoFocus />
+                    <Field value="age" />
                     <Field value="height" />
                 </div>
                 <div className="column">
@@ -80,5 +39,41 @@ export default function EditorPageOne() {
                 </div>
             </div>
         </>
+    )
+}
+
+function Textarea({ value, rows = 3, label }: { value: Features, rows?: number, label?: string }) {
+    const characterValue = useAppSelector(state => state.characters?.current?.features[value])
+
+    return (<div className="field">
+        <label className="label is-capitalized">{label}</label>
+            <textarea
+                rows={rows}
+                className="textarea"
+                onChange={changeListener('features.' + value, false)}
+                onKeyDown={onKeyDown}
+                value={characterValue}
+            />
+        </div>
+    )
+}
+
+function Field({ value, autoFocus=false }:{ value: Features, autoFocus?: boolean }) {
+    const characterValue = useAppSelector(state => state.characters?.current?.features[value])
+
+    return (
+        <div className="field">
+            <label className="label input-label is-capitalized">{ value }</label>
+            <div className="control">
+                <input
+                    autoFocus={autoFocus}
+                    type="text"
+                    className="input"
+                    onChange={changeListener('features.' + value, false)}
+                    onKeyDown={onKeyDown}
+                    value={characterValue}
+                />
+            </div>
+        </div>
     )
 }

@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route, useSearchParams } from "react-router-dom";
 
 // Outlets
 import Dashboard from "./core/Dashboard";
@@ -16,7 +16,9 @@ import CharacterSpells from './routes/Characters/EditorPages/Spells'
 import AllCampaigns from './routes/Campaigns/list'
 import EditCampaign from './routes/Campaigns/edit'
 
-// import Play from './routes/Play/_all.jsx'
+import Play from './routes/Play/Play'
+import GameSync from './routes/Play/GameSync'
+import WelcomeAndJoin from './routes/Play/WelcomeAndJoin'
 
 export default function AppRoutes(){
     return (
@@ -38,8 +40,28 @@ export default function AppRoutes(){
                     </Route>
 
                 </Route>
+                <Route path="/play/" element={<GameSync />} >
+                    <Route path="/play/:id" element={<Play />} />
+                    <Route path="/play/:id/join" element={<WelcomeAndJoin />} />
+                </Route>
+                <Route path="/bounce" element={<Bounce/> }/>
                 <Route path="*" element={ <Navigate to="/campaigns"/> }/>
             </Routes>
         </BrowserRouter>
     )
+}
+
+function Bounce(){
+    const [ urlSearchParams ] = useSearchParams()
+
+    let to = '/campaigns'
+    if(urlSearchParams.has('to')){
+        // eslint-disable-next-line
+        // @ts-ignore
+        to = urlSearchParams.get('to')
+    }
+
+    console.log({ to, urlSearchParams })
+
+    return <Navigate to={to} />
 }

@@ -41,13 +41,13 @@ const slice = createSlice({
         state.authorized = authorized;
         state.user = {
           ...user,
-          name: user.first_name + user.last_name
+          name: user.first_name + ' ' + user.last_name
         };
       } else { 
         const user = action.payload;
         state.user = {
           ...user,
-          name: user.first_name + user.last_name
+          name: user.first_name + ' ' + user.last_name
         };
       }
       return state;

@@ -1,44 +1,52 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
+// Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck, faShareAlt } from "@fortawesome/free-solid-svg-icons";
 
-import CampaignContext from '../CampaignContext.jsx'
+import { useAppSelector } from 'core/redux';
+import { useStore } from 'react-redux';
 
-import NameTag from 'common/NameTag.jsx'
+import NameTag from 'common/NameTag'
 import Dropdown from 'common/Dropdown';
 
 import Styles from '../_.module.sass'
 
 export default function Navbar() {
     
-    const campaign = useContext(CampaignContext)
-    const [state, setState] = useState({ sharing: false })
+    const gameName = useAppSelector(state => state.play.name)
+    const myCharacter = useAppSelector(state => state.play.myCharacter)
+
+    const [ sharing, setSharing] = useState(false)
+
+    const store = useStore()
 
     const { id } = useParams()
 
-    function shareLink() {
-        let t = window.location.href;
-        navigator.clipboard.writeText(t);
+    function shareLink(){
+        const url = window.location.href;
+        navigator.clipboard.writeText(url);
         
-        setState({ ...state, sharing: true })
+        setSharing(true)
         setTimeout(() => {
-            setState({ ...state, sharing:false })
+            setSharing(false)
         }, 2500)
     }
 
-    const { name:campaign_name, myCharacter:player } = campaign;
+    const subtitle = myCharacter?.name
+        ? "Playing as " + myCharacter.name
+        : ''
 
     return (
         <nav className={"navbar columns is-vcentered is-gapless " + Styles.navbar}>
             <div className="column">
                 <Dropdown
-                    trigger={<NameTag subtitle={player && player.character && player.character.name ? "Playing as " + player.character.name : null}/>}
+                    trigger={<NameTag subtitle={subtitle}/>}
                 >
-                    { player
+                    { myCharacter
                         ? <>
-                            <Link to={`/characters/${player.character_uid}/stats?rejoin_campaign=${id}`} className="dropdown-item">
+                            <Link to={`/characters/${myCharacter.id}/stats?rejoin_campaign=${id}`} className="dropdown-item">
                                 Edit Character
                             </Link>
                             <hr className="dropdown-divider" />
@@ -55,13 +63,15 @@ export default function Navbar() {
                 </Dropdown>
             </div>
             <div className="column">
-                <h1 className="title has-text-centered m-0">{campaign_name}</h1>
+                {/* eslint-disable-next-line */}
+                {/* @ts-ignore */}
+                <h1 className="title has-text-centered m-0" onClick={() => console.log(store.getState()?.play)}>{ gameName }</h1>
             </div>
             <div className="column">
                 <div className="block buttons is-right">
-                    <button className={"button is-" + (state.sharing ? 'success' : 'primary')} type="button" onClick={shareLink}>
+                    <button className={"button is-" + (sharing ? 'success' : 'primary')} type="button" onClick={shareLink}>
                     {
-                        state.sharing
+                        sharing
                         ? <>
                             <span>Link Copied!</span>
                             <span className="icon">

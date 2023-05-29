@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, type NavigateFunction, useNavigate } from "react-router-dom"
 
 // Typescript
 import type { CharacterDoc } from "redux/characters/types"
@@ -18,6 +18,13 @@ const API_DOMAIN = import.meta.env.VITE_API_DOMAIN
 export default function List() {
 
     const list = useAppSelector(state => state.characters.list)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if(!list || !Object.keys(list).length){
+            create(navigate)
+        }
+    }, [ list, navigate ])
 
     return (
         <div className="container is-max-widescreen">
@@ -41,26 +48,26 @@ export default function List() {
     )
 }
 
+async function create(navigate: NavigateFunction, onStart?: () => void) {
+    onStart?.()
+    const response: AxiosResponse<CharacterDoc, any> = await axios.post(`/data/dnd_characters/create`)
+
+    if(response.status !== 200){
+        console.error(response)
+        return;
+    }
+
+    navigate(`/characters/${response.data.id}/stats`)
+}
+
 function CreateButton(){
     const [ loading, setLoading ] = useState(false)
     const navigate = useNavigate()
 
-    async function create() {
-        setLoading(true)
-        const response: AxiosResponse<CharacterDoc, any> = await axios.post(`/data/dnd_characters/create`)
-
-        if(response.status !== 200){
-            console.error(response)
-            return;
-        }
-
-        navigate(`/characters/${response.data.id}/stats`)
-    }
-
     return <button
         className={"button is-primary is-medium" + (loading ? ' is-loading' : '')}
         type="button"
-        onClick={create}
+        onClick={() => create(navigate, () => setLoading(true))}
     >
         <span>Create +</span>
     </button>

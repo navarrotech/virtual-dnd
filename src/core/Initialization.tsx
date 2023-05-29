@@ -144,7 +144,7 @@ export default function Initialization({ children }: Props){
   }, [ isAuthorized ])
 
   if(!ready || !dataReady){
-    return <Loader fullpage={true} />
+    return <Loader key='global-loader' fullpage={true} />
   }
 
   return children

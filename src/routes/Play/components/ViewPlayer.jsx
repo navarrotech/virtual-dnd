@@ -10,7 +10,7 @@ import { ReactComponent as TreasureChest } from 'icons/treasure-chest.svg'
 
 // Sub components
 import Navbar from './components/Navbar'
-import Inventory from './components/menu/Inventory'
+import Inventory from './menu/Inventory'
 import ChooseAvatar from "pages/Characters/Components/ChooseAvatar.jsx"
 
 // Context

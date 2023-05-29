@@ -1,7 +1,7 @@
-import { Component } from 'react'
+import { Component, type ReactNode } from 'react'
 
 type Props = {
-  children: JSX.Element
+  children: ReactNode
 }
 
 export default class ErrorBoundary extends Component {

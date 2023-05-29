@@ -1,7 +1,11 @@
 import Styles from '../_.module.sass'
 
-export default function Healthbar({ current, max, color="is-success", ...props }){
-    
+type Props = {
+    current: number,
+    max: number,
+    color?: string
+}
+export default function Healthbar({ current, max, color="is-success" }: Props){
     const width = Math.round((current / max) * 100)
     
     return (<div className={Styles.Healthbar + ' ' + color}>

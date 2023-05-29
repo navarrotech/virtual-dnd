@@ -218,7 +218,21 @@ export function DeleteConfirm({ close, id }:{ close: () => any, id?: string }){
 
 function Save(){
     const hasUnsavedChanges = useAppSelector(state => state.characters.hasUnsavedChanges)
-    return <button className="button is-primary" type="button" onClick={() => dispatch(saveCurrentCharacter())} disabled={!hasUnsavedChanges}>
+    const [ isLoading, setIsLoading ] = useState(false)
+
+    useEffect(() => {
+        setIsLoading(false)
+    }, [ hasUnsavedChanges ])
+
+    return <button
+        className={"button is-primary " + (isLoading ? ' is-loading' : '')}
+        type="button"
+        onClick={() => {
+            setIsLoading(true)
+            dispatch(saveCurrentCharacter())
+        }}
+        disabled={!hasUnsavedChanges}
+    >
         <span>Save</span>
         <span className="icon">
             <FontAwesomeIcon icon={faSave}/>
