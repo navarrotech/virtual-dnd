@@ -33,7 +33,7 @@ export type CampaignDoc = {
   join_requests: string[],
   banned: string[],
 
-  state: GameState,
+  state: GameState<any>,
   map: ActiveMap,
   character_data: {
     [key: string]: CurrentCharacter
@@ -64,16 +64,34 @@ export type ActiveMap = {
   }
 }
 
-export type GameState = {
-  turn?: 1,
-  phase?: 'combat' | 'passive' | 'setup',
-  action?: {
-    who?: string,
-    dice?: 20,
-    type?: string,
-    check?: string
-  }
+export type GameState<T> = {
+  mode: 'rolling' | 'combat' | 'passive' | 'setup',
+  data: T
 }
+
+export type AskToRoll = {
+  dice: DiceRoll,
+  who: {
+    [key: PlayerId]: {
+      playerId: PlayerId,
+      characterId: CharacterId,
+      result: DiceRoll | null
+      when: string,
+    }
+  },
+  reason: 'damage' | 'initiative' | 'ability' | 'skill' | 'save' | 'other' | '',
+}
+
+export type Combat = {
+  round: number,
+  playerId: PlayerId,
+  initiative: Record<number, PlayerId>,
+}
+
+export type PlayerId = string;
+export type CharacterId = string;
+
+export type DiceRoll = "d4" | "d6" | "d8" | "d10" | "d12" | "d20" | "d50" | "d100"
 
 export type CurrentCharacter = {
   id: string,

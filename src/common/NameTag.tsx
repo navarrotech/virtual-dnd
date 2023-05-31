@@ -8,15 +8,16 @@ const API_DOMAIN = import.meta.env.VITE_API_DOMAIN as string
 type Props = {
     size?: number,
     title?: string,
-    subtitle?: string
+    subtitle?: string,
+    onClick?: () => void
 }
-export default function NameTag({ size=64, title, subtitle }: Props){
+export default function NameTag({ size=64, title, subtitle, onClick }: Props){
 
     const user = useAppSelector(state => state.user.user)
     const { photoURL, name } = user;
     
-    return <div className={"nametag " + Styles.nametag}>
-        <figure className={`image is-${size}x${size} is-rounded`}>
+    return <div className={`nametag ${Styles.nametag}`}>
+        <figure className={`image is-${size}x${size} is-rounded ${(onClick ? ' is-clickable' : '')}`} onClick={onClick}>
             <img src={API_DOMAIN + '/' + photoURL} alt={name} referrerPolicy="no-referrer" crossOrigin='anonymous' />
         </figure>
         <div className="titles">

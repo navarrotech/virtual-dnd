@@ -1,13 +1,24 @@
 import { useState } from 'react'
 
+// Typescript
+import type { ModalProps } from '.'
+
+// Images
+import city from 'images/city.jpeg'
+
+// Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDragon, faSync } from '@fortawesome/free-solid-svg-icons'
-import { ReactComponent as PawClaws } from 'icons/paw-claws-regular.svg'
-import { ReactComponent as HammerWar } from 'icons/hammer-war.svg'
+import { ReactComponent as PawClaws } from 'images/icons/paw-claws-regular.svg'
+import { ReactComponent as HammerWar } from 'images/icons/hammer-war.svg'
 
-import ChooseAvatar from "pages/Characters/Components/ChooseAvatar.jsx"
+import ChooseAvatar from "common/ChooseAvatar.jsx"
 
-import Styles from '../../_.module.sass'
+import Styles from '../_.module.sass'
+
+const API_DOMAIN = import.meta.env.VITE_API_DOMAIN + '/'
+
+const defaultNewProfilePicture = API_DOMAIN + "images/avatars/a10.png"
 
 // Uses localstorage if possible to remember your last saved choice
 const LS_Keys = {
@@ -26,7 +37,7 @@ const colors = [
     '#8235ff',
 ]
 
-export default function SpawnEntity({ saved, onFinish, ...props }){
+export default function SpawnEntity({ close }: ModalProps){
 
     const [ state, setState ] = useState({
         hasName: false,
@@ -35,13 +46,26 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
         race: '',
         class: '',
         color: localStorage && localStorage.getItem(LS_Keys.color) ? localStorage.getItem(LS_Keys.color) : '#FF3554',
-        image: localStorage && localStorage.getItem(LS_Keys.image) ? localStorage.getItem(LS_Keys.image) : 'https://firebasestorage.googleapis.com/v0/b/dnd-virtual.appspot.com/o/avatars%2Fa20.png?alt=media&token=570a1233-68ca-4196-92ed-ed1c7f8a8e02',
+        image: localStorage && localStorage.getItem(LS_Keys.image) ? localStorage.getItem(LS_Keys.image) : defaultNewProfilePicture,
         health: localStorage && localStorage.getItem(LS_Keys.health) ? localStorage.getItem(LS_Keys.health) : 30,
         armorClass: localStorage && localStorage.getItem(LS_Keys.armorClass) ? localStorage.getItem(LS_Keys.armorClass) : 12
     })
 
+    function onFinish(value: any){
+        if(value){
+            // TODO add character as NPC! :)
+            console.log(value)
+        }
+        close()
+    }
+
+    function saveAndContinue(){
+        setState({ ...state, hasName: true })
+    }
+    
     if(!state.hasName){
-        let is_disabled = !(state.name && state.name.length)
+        const is_disabled = !(state.name && state.name.length)
+
         return (
             <div className="choice">
                 <div className="choice-background"></div>
@@ -55,13 +79,13 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                         <div className="field">
                             <div className="control has-icons-left">
                                 <input
-                                    autoFocus={true}
+                                    autoFocus
                                     className="input is-large"
                                     type="text"
                                     placeholder="Name your creation..."
                                     value={state.name}
                                     onChange={({ target:{ value } }) => setState({ ...state, name:value })}
-                                    onKeyDown={({key}) => { if(key==='Enter' && !is_disabled){ setState({ ...state, hasName: true }) } }}
+                                    onKeyDown={({key}) => { if(key==='Enter' && !is_disabled){ saveAndContinue() } }}
                                 />
                                 <span className="icon is-left">
                                     <FontAwesomeIcon icon={faDragon}/>
@@ -79,6 +103,11 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                                     placeholder="Race (optional)"
                                     value={state.race}
                                     onChange={({ target:{ value } }) => setState({ ...state, race:value })}
+                                    onKeyDown={({ key, target }) => {
+                                        if(['Enter', 'Esc', 'Escape'].includes(key) && !is_disabled){
+                                            saveAndContinue()
+                                        }
+                                    }}
                                 />
                                 <span className="icon is-left">
                                     <PawClaws />
@@ -96,6 +125,11 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                                     placeholder="Class (optional)"
                                     value={state.class}
                                     onChange={({ target:{ value } }) => setState({ ...state, class:value })}
+                                    onKeyDown={({ key, target }) => {
+                                        if(['Enter', 'Esc', 'Escape'].includes(key) && !is_disabled){
+                                            saveAndContinue()
+                                        }
+                                    }}
                                 />
                                 <span className="icon is-left">
                                     <HammerWar />
@@ -110,7 +144,7 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                         <button className="button is-dark is-medium" type="button" onClick={() => onFinish(null)}>
                             <span>Cancel</span>
                         </button>
-                        <button className="button is-primary is-medium" type="button" onClick={() => { setState({ ...state, hasName: true }) }} disabled={is_disabled}>
+                        <button className="button is-primary is-medium" type="button" onClick={saveAndContinue} disabled={is_disabled}>
                             <span>Save &amp; Continue</span>
                         </button>
                     </footer>
@@ -134,7 +168,7 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                         <div className="column is-one-third mx-auto">
                             <div className={'block ' + Styles.SpawnEntityPreview}>
                                 <figure className="image is-1by1">
-                                    <img src='https://firebasestorage.googleapis.com/v0/b/dnd-virtual.appspot.com/o/game%2Fcity.jpg?alt=media&token=2b64d09e-d82b-4451-b056-db92e6e68f11' alt='city'/>
+                                    <img src={city} alt='city' />
                                 </figure>
                                 <div
                                     className={Styles.Entity}
@@ -143,12 +177,12 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                                         left: '50%'
                                     }}
                                 >
-                                    <img src={state.image} alt={state.name} draggable={false}/>
+                                    <img src={state.image || ''} alt={state.name} draggable={false} crossOrigin="anonymous" />
                                     <label className={Styles.EntityLabel}>{state.name}</label>
                                     <div
                                         className={Styles.EntityPop}
                                         style={{
-                                            background: state.color,
+                                            background: state.color || colors[0],
                                             width:      '25px',
                                             height:     '25px',
                                             minHeight:  '25px',
@@ -156,30 +190,23 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
                                     />
                                 </div>
                             </div>
-                                {/* <div className="block">
-                                    <figure className="image is-1by1" onClick={() => { setState({ ...state, showChooseAvatar: true }) }}>
-                                        <img src={state.image} alt={state.name} />
-                                    </figure>
-                                </div> */}
-                                <div className="block flexlist has-min-widths has-6-per-row is-compact">
-                                    {
-                                        colors.map(color => {
-                                            return <div
-                                                key={color}
-                                                className="item is-rounded is-clickable"
-                                                style={{
-                                                    background: color,
-                                                    border: `2px solid ${color===state.color?'#ffffff':color}`,
-                                                    transform: `scale(${color===state.color?'1.15':'1'})`
-                                                }}
-                                                onClick={() => {
-                                                    if(localStorage && localStorage.setItem){ localStorage.setItem(LS_Keys.color, color) }
-                                                    setState({ ...state, color })}
-                                                }
-                                            />
-                                        })
-                                    }
-                                </div>
+                                <div className="block flexlist has-min-widths has-6-per-row is-compact">{
+                                    colors.map(color => {
+                                        return <div
+                                            key={color}
+                                            className="item is-rounded is-clickable"
+                                            style={{
+                                                background: color,
+                                                border: `2px solid ${color===state.color?'#ffffff':color}`,
+                                                transform: `scale(${color===state.color?'1.15':'1'})`
+                                            }}
+                                            onClick={() => {
+                                                if(localStorage && localStorage.setItem){ localStorage.setItem(LS_Keys.color, color) }
+                                                setState({ ...state, color })}
+                                            }
+                                        />
+                                    })
+                                }</div>
                                 <button className="button is-light is-fullwidth" type="button" onClick={() => { setState({ ...state, showChooseAvatar: true }) }}>
                                     <span className="icon">
                                         <FontAwesomeIcon icon={faSync}/>
@@ -204,7 +231,7 @@ export default function SpawnEntity({ saved, onFinish, ...props }){
         </div>
         { state.showChooseAvatar
             ? <ChooseAvatar
-                current={state.image}
+                current={state.image || ''}
                 onChoose={(image) => {
                     if(image){
                         if(localStorage && localStorage.setItem){ localStorage.setItem(LS_Keys.image, image) }

@@ -126,50 +126,28 @@ input
         max-height: 64px
         max-height: 64px
 
-.choice
-    display: flex
-    align-items: center
-    flex-direction: column
-    justify-content: center
-    overflow: hidden
-    position: fixed
-    z-index: 39
-    bottom: 0
-    left: 0
-    right: 0
-    top: 0
+.choice-content
+    width: 100%
+
+    .choice-title,
+    .choice-title *
+        color: white
+        text-align: center
+        position: relative
+
+        h1:not(.title),
+        .title
+            font-size: 2.75rem
+        h2:not(.subtitle),
+        .subtitle
+            font-size: 2rem
+
+
+    .choice-title:not(:last-child)
+        margin-bottom: 1em
     
-    .choice-background
-        background: rgba(0,0,0,0.70)
-        // backdrop-filter: blur(10px)
-        position: absolute
-        bottom: 0
-        left: 0
-        right: 0
-        top: 0
-    
-    .choice-content
-        width: 100%
-
-        .choice-title,
-        .choice-title *
-            color: white
-            text-align: center
-            position: relative
-
-            h1:not(.title),
-            .title
-                font-size: 2.75rem
-            h2:not(.subtitle),
-            .subtitle
-                font-size: 2rem
-
-
-        .choice-title:not(:last-child)
-            margin-bottom: 1em
-        
-        .choice-body:not(:last-child)
-            margin-bottom: 2em
+    .choice-body:not(:last-child)
+        margin-bottom: 2em
 
 .w100
     width: 100%

@@ -1,4 +1,4 @@
-import Styles from '../_.module.sass'
+import Styles from 'routes/Play/_.module.sass'
 
 type Props = {
     current: number,

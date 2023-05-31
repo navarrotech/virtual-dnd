@@ -17,7 +17,7 @@ export type State = {
   map: ActiveMap,
   joinRequests: string[],
   banned: string[],
-  gamestate: GameState,
+  gamestate: GameState<any>,
   NPCs: { // TODO
     [key: string]: CurrentCharacter
   },
@@ -48,7 +48,7 @@ export type ChatMessage = {
   when: Date
 };
 
-export type SocketMessageType = 'chat' | 'note' | 'campaign' | 'player' | 'unauthorized' | 'ready' | 'init' | 'entity' | 'character'
+export type SocketMessageType = 'chat' | 'note' | 'player' | 'unauthorized' | 'ready' | 'init' | 'entity' | 'character' | 'gamestate'
 export type IncomingSocketMessage<T> = {
     type: SocketMessageType,
     data: T

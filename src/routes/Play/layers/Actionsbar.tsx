@@ -3,7 +3,7 @@ import type { Modals } from "../Modals"
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBolt, faBook, faCoins, faScroll } from '@fortawesome/free-solid-svg-icons'
+import { faBolt, faBook, faCoins, faDiceD20, faScroll } from '@fortawesome/free-solid-svg-icons'
 import { ReactComponent as HelmetIcon } from 'images/icons/helmet-battle.svg'
 // import { ReactComponent as TreasureIcon } from 'images/icons/treasure-chest.svg'
 // import { ReactComponent as SwordsIcon } from 'icons/swords.svg'
@@ -64,24 +64,18 @@ export default function ActionsBar(){
                     </div>
                 </>
                 : <>
-                    {/* <button className="button is-light is-fullwidth" type="button">
-                        <span className="icon">
-                            <SwordsIcon />
-                        </span>
-                        <span>Roll Initiative</span>
-                    </button> */}
                     <button className="button is-light is-fullwidth" type="button" onClick={openModal('spawn')}>
                         <span className="icon">
                             <HelmetIcon />
                         </span>
                         <span>Spawn Entity</span>
                     </button>
-                    {/* <button className="button is-light is-fullwidth" type="button" onClick={() => setRollChooser(true)}>
+                    <button className="button is-light is-fullwidth" type="button" onClick={openModal('asktoroll')}>
                         <span className="icon">
                             <FontAwesomeIcon icon={faDiceD20}/>
                         </span>
-                        <span>Make Player Roll</span>
-                    </button> */}
+                        <span>Ask To Roll</span>
+                    </button>
                 </>
             }
         </div>

@@ -13,6 +13,7 @@ import ErrorBoundary from 'common/ErrorBoundary.jsx'
 import Loader from "common/Loader"
 import Watermark from "images/logo.svg"
 import ChooseAvatar from "common/ChooseAvatar"
+import NameTag from "common/NameTag"
 
 // Redux
 import { shallowEqual, useStore } from "react-redux"
@@ -73,7 +74,6 @@ function WaterMark(){
 }
 
 function Sidebar() {
-    const user = useAppSelector(state => state.user.user)
     const showFriends  = useAppSelector(state => state.app.showFriends)
     const showSettings = useAppSelector(state => state.app.showSettings)
 
@@ -81,15 +81,7 @@ function Sidebar() {
 
     return (
         <div className={Styles.Sidebar}>
-            <div className={"nametag " + Styles.nametag}>
-                <figure className="image is-64x64 is-rounded is-clickable" onClick={() => dispatch(setSettings(!showSettings))}>
-                    <img src={API_URL + '/' + user.photoURL} alt={user.name} referrerPolicy="no-referrer" crossOrigin="anonymous" />
-                </figure>
-                <div className="titles">
-                    <p className="has-text-black has-text-weight-bold">{user.name}</p>
-                    <p className="has-text-black">Level 1 Apprentice</p>
-                </div>
-            </div>
+            <NameTag onClick={() => dispatch(setSettings(!showSettings))} />
             <div className={"buttons is-centered has-addons " + Styles.sidebarButtons}>
                 <button
                     className={"button is-" + (showFriends ? "primary" : "dark")}
@@ -170,7 +162,7 @@ function AddFriendModal({ closeModal }: { closeModal: () => any }){
                             placeholder="You can add friends with their email address"
                             value={text}
                             onChange={({ target:{ value } }) => setText(value)}
-                            onKeyDown={({ key, target }) => {
+                            onKeyDown={({ key }) => {
                                 if(['Enter', 'Esc', 'Escape'].includes(key)){
                                     search()
                                 }

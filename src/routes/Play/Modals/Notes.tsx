@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { useAppSelector } from 'core/redux'
 import { dispatch } from 'core/redux'
-import { setNotes, setReducerState } from 'redux/play/reducer'
+import { setReducerState } from 'redux/play/reducer'
 
 import type { ModalProps } from '.'
 

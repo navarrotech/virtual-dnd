@@ -1,21 +1,21 @@
 
 // Types
-import type { CurrentCharacter } from 'redux/campaigns/types.js';
+import type { CurrentCharacter } from 'redux/campaigns/types';
 
 // Icons
 // import { faShield } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // Redux
-import { dispatch, useAppSelector } from 'core/redux.js';
-import { setReducerState, toggleModal } from 'redux/play/reducer.js';
+import { dispatch, useAppSelector } from 'core/redux';
+import { setReducerState, toggleModal } from 'redux/play/reducer';
 
 // Utility
 import { startCase } from 'lodash-es';
 
 // UI
-import { InventoryList } from '../Modals/Inventory.js';
-import Healthbar from '../components/Healthbar.js'
+import { InventoryList } from '../Modals/Inventory';
+import Healthbar from 'common/Healthbar'
 
 import Styles from '../_.module.sass'
 

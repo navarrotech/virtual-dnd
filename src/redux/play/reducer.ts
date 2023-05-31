@@ -31,7 +31,10 @@ const initialState: State = {
   },
   joinRequests: [],
   banned: [],
-  gamestate: {},
+  gamestate: {
+    mode: 'passive',
+    data: {}
+  },
   NPCs: {},
   chat: {
     chat_id: '',
@@ -116,6 +119,7 @@ const slice = createSlice({
       const { type, data } = message
       switch (type) {
         case 'unauthorized':
+        case 'init':
         case 'ready':
           break;
         case 'chat':
@@ -124,8 +128,8 @@ const slice = createSlice({
         case 'note':
           state.notes = data
           break;
-        case 'campaign':
-          // state.current = data
+        case 'gamestate':
+          state.gamestate = data
           break;
         case 'entity':
           set(state.map.entities, [data.entityId, 'x'], data.x)

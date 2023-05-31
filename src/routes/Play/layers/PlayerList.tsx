@@ -1,5 +1,5 @@
 
-import Healthbar from '../components/Healthbar';
+import Healthbar from 'common/Healthbar';
 
 import Styles from '../_.module.sass'
 import { dispatch, useAppSelector } from 'core/redux';

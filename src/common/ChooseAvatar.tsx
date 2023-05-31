@@ -11,6 +11,8 @@ type Props = {
     current?: string
 }
 
+const API_DOMAIN = import.meta.env.VITE_API_DOMAIN + '/'
+
 export default function ChooseAvatar({ onChoose, current }: Props){
 
     const [ selected, setSelected ] = useState(current)
@@ -33,7 +35,7 @@ export default function ChooseAvatar({ onChoose, current }: Props){
                         {
                             urls.map((url) => <figure key={url} onClick={() => { setSelected(url); }}
                                 className={"image " + (url === selected ? Styles['is-selected'] : '')}>
-                                <img src={url} alt="" crossOrigin="anonymous"/>
+                                <img src={API_DOMAIN + url} alt="" crossOrigin="anonymous"/>
                             </figure>)
                         }
                     </div>

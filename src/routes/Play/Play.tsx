@@ -1,11 +1,14 @@
-// Components
+
+// Layers
 import Navbar from './layers/Navbar'
 import LiveChat from "./layers/LiveChat"
 import Map from './layers/Map'
 import ActionsBar from './layers/Actionsbar'
 import PlayerList from "./layers/PlayerList"
 import CharacterPanel from "./layers/CharacterPanel"
-// import GameState from './layers/GameState'
+
+// Advanced layers
+import GameState from './GameState'
 import Modals from './Modals'
 
 // Common
@@ -15,14 +18,15 @@ export default function Play(){
     return (<>
         <Navbar />
         <ErrorBoundary>
-            <Map            />
-            <ActionsBar     />
-            <PlayerList     />
+
+            <Map />
+            <ActionsBar />
+            <PlayerList />
             <CharacterPanel />
-            {/* <GameState      /> */}
-        </ErrorBoundary>
-        <ErrorBoundary>
+            
+            <GameState />
             <Modals />
+
         </ErrorBoundary>
         <LiveChat />
     </>)

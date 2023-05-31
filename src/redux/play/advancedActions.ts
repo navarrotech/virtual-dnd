@@ -37,11 +37,14 @@ export const initCampaign = (campaign: CampaignDoc): ThunkAction<any, RootState,
       )
     })
   
+  // console.log({ campaign })
+
   dispatch(setReducerState({ path: 'id', value: campaign.id }))
   dispatch(setReducerState({ path: 'name', value: campaign.name }))
   dispatch(setReducerState({ path: 'characterIds', value: campaign.character_ids }))
   dispatch(setReducerState({ path: 'owner', value: campaign.owner }))
   dispatch(setReducerState({ path: 'map', value: campaign.map }))
+  dispatch(setReducerState({ path: 'gamestate', value: campaign.state }))
   dispatch(_setRole(campaign.owner === userId ? 'dm' : 'player'))
   
   if(myCharacter){
