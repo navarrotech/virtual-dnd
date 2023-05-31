@@ -82,6 +82,9 @@ async function startWs(){
         }
         if(data.type === 'update'){
           dispatch(onChange(data))
+          if(data.table === 'dnd_user'){
+            axios.post('auth/refresh')
+          }
         }
       } catch (error) {
         console.error(error)

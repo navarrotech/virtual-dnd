@@ -14,27 +14,11 @@ export type State = {
   }
 }
 
-// TODO: Should rethink CampaignCharacter, and think about how it's saved?
-export type CampaignCharacter = {
-  current: {
-    level: number,
-    speed: number,
-    health: number,
-    maxHealth: number,
-    armorClass: number,
-    experience: number,
-    initiative: number,
-    gold: number
-  },
-  inventory: {
-    [key: string]: InventoryItem
-  },
-} & Character
-
 export type InventoryItem = {
   name: string,
-  image: string,
-  quantity: number
+  icon: string,
+  quantity: number,
+  description: string
 }
 
 export type CampaignDoc = {
@@ -105,5 +89,5 @@ export type CurrentCharacter = {
     initiative: number,
     gold: number
   },
-  inventory: any
+  inventory: Record<string, InventoryItem>,
 } & Character

@@ -10,13 +10,15 @@ export type State = {
   role: 'dm' | 'player',
   owner: string,
   activeModal: Modals,
+  modalMeta: any,
   myCharacter?: CurrentCharacter,
   myCharacterId?: string,
+  previewCharacter?: CurrentCharacter,
   map: ActiveMap,
   joinRequests: string[],
   banned: string[],
   gamestate: GameState,
-  NPCs: {
+  NPCs: { // TODO
     [key: string]: CurrentCharacter
   },
   chat: {
@@ -46,7 +48,7 @@ export type ChatMessage = {
   when: Date
 };
 
-export type SocketMessageType = 'chat' | 'note' | 'campaign' | 'player' | 'unauthorized' | 'ready' | 'init' | 'entity'
+export type SocketMessageType = 'chat' | 'note' | 'campaign' | 'player' | 'unauthorized' | 'ready' | 'init' | 'entity' | 'character'
 export type IncomingSocketMessage<T> = {
     type: SocketMessageType,
     data: T

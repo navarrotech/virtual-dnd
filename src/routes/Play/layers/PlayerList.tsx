@@ -2,7 +2,8 @@
 import Healthbar from '../components/Healthbar';
 
 import Styles from '../_.module.sass'
-import { useAppSelector } from 'core/redux';
+import { dispatch, useAppSelector } from 'core/redux';
+import { setReducerState, toggleModal } from 'redux/play/reducer';
 
 const API_DOMAIN = import.meta.env.VITE_API_DOMAIN as string
 
@@ -59,8 +60,17 @@ function Character({ id }: { id: string }){
     const player_name = character.player?.first_name
 
     return <div className={Styles.Player}>
-        {/* <Link className={"image is1by1 is-clickable " + Styles.image} to={`/play/${campaign_id}/player/${id}`}> */}
-        <div className={"image is1by1 is-clickable " + Styles.image}>
+        <div className={"image is1by1 is-clickable " + Styles.image} onClick={() => {
+            dispatch(
+                setReducerState({
+                    path: 'modalMeta',
+                    value: {
+                        playerId: id,
+                    }
+                })
+            )
+            dispatch(toggleModal('player'))
+        }}>
             <img src={API_DOMAIN + '/' + character.image} alt="" draggable={false} crossOrigin="anonymous" />
         </div>
         <div className={Styles.body}>

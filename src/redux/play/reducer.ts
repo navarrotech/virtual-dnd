@@ -17,6 +17,7 @@ const initialState: State = {
   role: 'player',
   owner: '',
   activeModal: null,
+  modalMeta: {},
   myCharacter: undefined,
   myCharacterId: undefined,
   map: {
@@ -105,6 +106,9 @@ const slice = createSlice({
     },
     [constants.SET_MODAL_OPEN]: (state, action: PayloadAction<Modals>) => {
       state.activeModal = action.payload;
+      if(action.payload === null){
+        state.modalMeta = {}
+      }
       return state;
     },
     [constants.ON_SOCKET]: (state, action: PayloadAction<any>) => {
@@ -127,9 +131,18 @@ const slice = createSlice({
           set(state.map.entities, [data.entityId, 'x'], data.x)
           set(state.map.entities, [data.entityId, 'y'], data.y)
           break;
+        case 'character': 
+          state.characters[data.id] = data.data;
+          if(state.myCharacterId === data.id){
+            state.myCharacter = data.data
+          }
+          if(state.previewCharacter?.id === data.id){
+            state.previewCharacter = data.data
+          }
+          break;
         case 'player-joined':
           set(state.players, data.user.id, data.user)
-          set(state.characters, data.character.id, { ...data.character, player: data.user })
+          set(state.characters, data.character.id, data.character)
           break;
       }
       return state;

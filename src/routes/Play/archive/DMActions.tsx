@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { ChooseRollDice } from '../components/menu/RollDice.jsx'
+import { ChooseRollDice } from '../Modals/RollDice.jsx'
 import SpawnEntity from '../components/menu/SpawnEntity.jsx'
 
 import Styles from '../_.module.sass'

@@ -7,6 +7,34 @@ $livechatRadius: 7px
 $playerImage: 80px
 $playerBorderRadius: 4px
 
+@keyframes flyUp
+  from 
+    transform: translateY(100%)
+  
+  to 
+    transform: translateY(0)
+
+@keyframes flyDown
+  from 
+    transform: translateY(-100%)
+  
+  to 
+    transform: translateY(0)
+
+@keyframes flyLeft
+  from 
+    transform: translateX(-100%)
+  
+  to 
+    transform: translateX(0)
+
+@keyframes flyRight
+  from 
+    transform: translateX(100%)
+  
+  to 
+    transform: translateX(0)
+
 .Game
     background: #fafafb
     position: relative
@@ -123,6 +151,7 @@ $playerBorderRadius: 4px
 .navbar
     @include shadow($strength: 8)
     padding: 0.25em 1em
+    animation: flyDown 500ms ease-in-out
     // background-color: $gray !important
 
 .WelcomeAndJoin
@@ -237,6 +266,7 @@ $playerBorderRadius: 4px
     top: 100px
     right: 1em
     z-index: 5
+    animation: flyRight 500ms ease-in-out
 
     .Player
         background: white
@@ -245,6 +275,7 @@ $playerBorderRadius: 4px
         max-width: 300px
         height: 80px
         border-radius: $playerBorderRadius
+        transition: transform 150ms ease
 
         &:not(:last-child)
             margin-bottom: 1.5em
@@ -300,6 +331,9 @@ $playerBorderRadius: 4px
             margin-top: 0.5em
             border-radius: 0 0 $playerBorderRadius 0
 
+        &:hover
+            transform: translateX(-10px) scale(1.05)
+
 .Healthbar
     position: relative
     display: block
@@ -335,26 +369,33 @@ $playerBorderRadius: 4px
 
 .CharacterPanel
     position: absolute
-    bottom: 3em
+    bottom: 1em
     left: 0
     right: 0
     margin: auto
     z-index: 5
 
-    :global(.container)
+    display: flex
+    flex-direction: row
+    align-items: flex-end
+    justify-content: center
+    gap: 1em
+
+    animation: flyUp 500ms ease-in-out
+
+    .container
         @include shadow(5)
+        position: relative
         background: #fafafb
         border-radius: 6px
         padding: 1em 1.5em
+        max-width: 960px
+        width: 100%
 
-    .Stats
-        .OddColumn
-            max-height: 140px
-            overflow-y: auto
-
-        :global(.box)
-            padding: 0.35rem 0.25em 0.75rem
-            margin: 0.25em
+        .isPreview
+            position: absolute
+            top: -2em
+            left: 0
 
     .Healthbar
         font-size: 1.15rem !important
@@ -379,6 +420,22 @@ $playerBorderRadius: 4px
             display: block
             width: fit-content
 
+.Stats
+    :global(.box)
+        padding: 0.35rem 0.25em 0.75rem
+        margin: 0.25em !important
+
+    &:not(.isViewCharacter) 
+        .statList
+            max-height: 110px
+            overflow: auto
+
+    &.isViewCharacter
+        :global(.box)
+            padding-top: 0.8em
+            max-height: 100px
+
+
 .UserActions
     // position: absolute
     // left: 1em
@@ -391,11 +448,14 @@ $playerBorderRadius: 4px
     gap: 0.75em
     width: 220px
 
+    animation: flyLeft 500ms ease-in-out
+
 .Inventory
     display: flex
     align-items: flex-start
     gap: 0.75em
     flex-flow: row wrap
+    min-width: 600px
 
     .InventorySlot
         position: relative
@@ -408,33 +468,55 @@ $playerBorderRadius: 4px
         flex-flow: column nowrap
         justify-content: center
 
+        border-radius: 4px
         background: #f0f0f1
 
         .inventoryLabel
             text-align: center
-            white-space: nowrap
+            line-height: 0.9
             margin: 0
             pointer-events: none
 
         .quantityLabel
             pointer-events: none
             position: absolute
-            top: -9px
-            right: -9px
-            background: $primary
+            top: -7px
+            right: -7px
+            background: $gray
             color: white
             border-radius: 50%
-            width: 24px
-            height: 24px
+            width: 20px
+            height: 20px
             text-align: center
             font-size: 0.8rem
-            padding-top: 0.2rem
+            padding-top: 0.1rem
 
-        // &.isEmpty
-        //     background: #f0f0f1
+        .icon
+            width: 48px
+            height: 48px
 
         &:hover
             background: #e6e6ea
+            transform: scale(1.1)
+
+            .quantityLabel
+                background: $primary
+        
+    &.isCompact
+        min-width: 355px
+        max-width: 355px
+
+        .icon
+            width: 27px
+            height: 27px
+
+        .inventoryLabel
+            font-size: 0.8rem
+            max-width: 60px
+
+        .InventorySlot
+            width: 60px
+            height: 60px
 
 .ChoiceBox
     transition: background 300ms ease, color 200ms ease
@@ -480,6 +562,34 @@ $playerBorderRadius: 4px
         :global(.subtitle)
             color: white
 
+.ViewPlayer
+    width: 80vw !important
+    min-height: 40vh !important
+    margin-bottom: 40vh !important
+
+    :global(.box)
+        height: 100%
+
+.AnimatedModal
+    transition: opacity 150ms ease
+
+    :global(.modal-card),
+    :global(.modal-content)
+        transition: transform 300ms ease
+
+    &.isAnimating
+        opacity: 0
+
+        :global(.modal-card),
+        :global(.modal-content)
+            transform: scale(0.9) translateY(50%)
+
+    &.isAnimated
+        opacity: 1
+
+        :global(.modal-card),
+        :global(.modal-content)
+            transform: scale(1) translateY(0)
 
 .NoteModal
     max-width: 1100px

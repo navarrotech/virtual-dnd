@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit"
 // import type { PayloadAction } from "@reduxjs/toolkit"
 import type { State, User } from "./types"
 
+import { constants as appConsts } from "redux/app/reducer"
+
 const initialState: State = {
   authorized: false,
   user: {
@@ -71,6 +73,19 @@ const slice = createSlice({
       state.user = initialState.user;
       return state;
     },
+    [appConsts.ON_CHANGE_WS](state, action) {
+      const { update_type, table, data } = action.payload
+      if(table !== 'dnd_user'){
+        return;
+      }
+      if(update_type === 'update'){
+        state.user = {
+          ...data,
+          name: data.first_name + ' ' + data.last_name
+        }
+      }
+      return state;
+    }
   }
 })
 

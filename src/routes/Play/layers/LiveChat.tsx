@@ -13,6 +13,7 @@ import { sendMessage } from 'redux/play/advancedActions'
 import moment from "moment"
 
 import Styles from '../_.module.sass'
+import { getState } from 'store'
 
 export default function LiveChat(){
 
@@ -58,12 +59,22 @@ function SendMessageBox(){
                 dispatch(showChat(false))
                 return
             }
-            if(key === 'Enter' && !showing && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA'){
-                dispatch(showChat(true))
-                if(element){
-                    element.focus()
+            else if(key === 'Enter' && !showing && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA'){
+                try {
+                    const state = getState()
+
+                    if(state.play.activeModal){
+                        return;
+                    }
+
+                    dispatch(showChat(true))
+                    if(element){
+                        element.focus()
+                    }
+                    event.preventDefault()
+                } catch(e){
+                    return;
                 }
-                event.preventDefault()
             }
         }
         document.addEventListener('keydown', listener)

@@ -4,12 +4,13 @@ import { useAppSelector } from 'core/redux'
 import { dispatch } from 'core/redux'
 import { setNotes, setReducerState } from 'redux/play/reducer'
 
+import type { ModalProps } from '.'
+
 import axios from 'axios'
 
 // import Styles from '../_.module.sass'
 
-type Props = { close: () => any }
-export default function Notes({ close }: Props){
+export default function Notes({ close }: ModalProps){
     // Styles.NoteModal
     return <div className={"modal-card"}>
         <header className="modal-card-head">

@@ -12,7 +12,7 @@ import { updateViaSocket } from 'routes/Play/socket';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYW5hdmFycm9jaXR5IiwiYSI6ImNsaTk0bGZhaTFucmQzZG56OTR6bG56ejgifQ.Y5xARmobGzL-dHdkMCHboA';
 
-const API_DOMAIN = import.meta.env.VITE_API_DOMAIN as string;
+const API_DOMAIN = import.meta.env.VITE_API_DOMAIN as string + '/';
 
 // Settings
 const boundingBox = 0.15;
@@ -82,7 +82,7 @@ export function initMapbox() {
   });
 }
 
-const setNewEntityPositionThrottle = throttle((entityId: string, x: number, y: number) => updateViaSocket('entity', { entityId, x, y }), 200);
+const setNewEntityPositionThrottle = throttle((entityId: string, x: number, y: number) => updateViaSocket('entity', { entityId, x, y }), 60);
 
 type Entities = {
   [key: string]: {
@@ -185,7 +185,7 @@ function imageToLayer(url: string, sizeX: number, sizeY: number){
 
   const source: AnySourceData = {
     type: 'image',
-    url: API_DOMAIN + '/' + url,
+    url: API_DOMAIN + url,
     coordinates: pixelsToCoords(sizeX, sizeY)
   }
 

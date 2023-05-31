@@ -68,19 +68,20 @@ function BigStat({ value, onChange, label }: { value: number, onChange: (event: 
                 <div className="control">
                     <input
                         className="input has-text-centered is-large"
-                        type="number"
-                        value={value}
-                        onKeyDown={onKeyDown}
-                        onChange={onChange}
+                        value={(score_modifier > 0 ? '+ ' : '') + score_modifier}
                         placeholder=""
+                        readOnly
                     />
                 </div>
                 <div className="control">
                     <input
                         className="input has-text-centered"
-                        value={'+ ' + score_modifier}
+                        style={{ backgroundColor: '#f7f7fa' }}
+                        type="number"
+                        value={value}
+                        onKeyDown={onKeyDown}
+                        onChange={onChange}
                         placeholder=""
-                        readOnly
                     />
                 </div>
             </div>
@@ -349,26 +350,26 @@ export default function EditorPageOne() {
                             <div className="block columns">
                                 
                                 <div className="column">
-                                    <InlineInput label="acrobatics (Dex)"       onChange={changeListener('stats.acrobatics')}     value={character.stats['acrobatics']}     />
-                                    <InlineInput label="animal handling (Wis)"  onChange={changeListener('stats.animalHandling')} value={character.stats['animalHandling']} />
-                                    <InlineInput label="arcana (Int)"           onChange={changeListener('stats.arcana')}         value={character.stats['arcana']}         />
-                                    <InlineInput label="athletics (Str)"        onChange={changeListener('stats.athletics')}      value={character.stats['athletics']}      />
-                                    <InlineInput label="deception (Cha)"        onChange={changeListener('stats.deception')}      value={character.stats['deception']}      />
-                                    <InlineInput label="history (Int)"          onChange={changeListener('stats.history')}        value={character.stats['history']}        />
-                                    <InlineInput label="insight (Wis)"          onChange={changeListener('stats.insight')}        value={character.stats['insight']}        />
-                                    <InlineInput label="intimidation (Cha)"     onChange={changeListener('stats.intimidation')}   value={character.stats['intimidation']}   />
-                                    <InlineInput label="investigation (Int)"    onChange={changeListener('stats.investigation')}  value={character.stats['investigation']}  />
+                                    <InlineInput label="acrobatics (Dex)"       onChange={changeListener('stats.acrobatics', true)}     value={character.stats['acrobatics']}     />
+                                    <InlineInput label="animal handling (Wis)"  onChange={changeListener('stats.animalHandling', true)} value={character.stats['animalHandling']} />
+                                    <InlineInput label="arcana (Int)"           onChange={changeListener('stats.arcana', true)}         value={character.stats['arcana']}         />
+                                    <InlineInput label="athletics (Str)"        onChange={changeListener('stats.athletics', true)}      value={character.stats['athletics']}      />
+                                    <InlineInput label="deception (Cha)"        onChange={changeListener('stats.deception', true)}      value={character.stats['deception']}      />
+                                    <InlineInput label="history (Int)"          onChange={changeListener('stats.history', true)}        value={character.stats['history']}        />
+                                    <InlineInput label="insight (Wis)"          onChange={changeListener('stats.insight', true)}        value={character.stats['insight']}        />
+                                    <InlineInput label="intimidation (Cha)"     onChange={changeListener('stats.intimidation', true)}   value={character.stats['intimidation']}   />
+                                    <InlineInput label="investigation (Int)"    onChange={changeListener('stats.investigation', true)}  value={character.stats['investigation']}  />
                                 </div>
                                 <div className="column">
-                                    <InlineInput label="medicine (Wis)"         onChange={changeListener('stats.medicine')}       value={character.stats['medicine']}       />
-                                    <InlineInput label="nature (Int)"           onChange={changeListener('stats.nature')}         value={character.stats['nature']}         />
-                                    <InlineInput label="perception (Wis)"       onChange={changeListener('stats.perception')}     value={character.stats['perception']}     />
-                                    <InlineInput label="performance (Cha)"      onChange={changeListener('stats.performance')}    value={character.stats['performance']}    />
-                                    <InlineInput label="persuasion (Cha)"       onChange={changeListener('stats.persuasion')}     value={character.stats['persuasion']}     />
-                                    <InlineInput label="religion (Int)"         onChange={changeListener('stats.religion')}       value={character.stats['religion']}       />
-                                    <InlineInput label="sleight Of Hand (Dex)"  onChange={changeListener('stats.sleightOfHand')}  value={character.stats['sleightOfHand']}  />
-                                    <InlineInput label="stealth (Dex)"          onChange={changeListener('stats.stealth')}        value={character.stats['stealth']}        />
-                                    <InlineInput label="survival (Wis)"         onChange={changeListener('stats.survival')}       value={character.stats['survival']}       />
+                                    <InlineInput label="medicine (Wis)"         onChange={changeListener('stats.medicine', true)}       value={character.stats['medicine']}       />
+                                    <InlineInput label="nature (Int)"           onChange={changeListener('stats.nature', true)}         value={character.stats['nature']}         />
+                                    <InlineInput label="perception (Wis)"       onChange={changeListener('stats.perception', true)}     value={character.stats['perception']}     />
+                                    <InlineInput label="performance (Cha)"      onChange={changeListener('stats.performance', true)}    value={character.stats['performance']}    />
+                                    <InlineInput label="persuasion (Cha)"       onChange={changeListener('stats.persuasion', true)}     value={character.stats['persuasion']}     />
+                                    <InlineInput label="religion (Int)"         onChange={changeListener('stats.religion', true)}       value={character.stats['religion']}       />
+                                    <InlineInput label="sleight Of Hand (Dex)"  onChange={changeListener('stats.sleightOfHand', true)}  value={character.stats['sleightOfHand']}  />
+                                    <InlineInput label="stealth (Dex)"          onChange={changeListener('stats.stealth', true)}        value={character.stats['stealth']}        />
+                                    <InlineInput label="survival (Wis)"         onChange={changeListener('stats.survival', true)}       value={character.stats['survival']}       />
                                 </div>
                                 
                             </div>
@@ -391,12 +392,12 @@ export default function EditorPageOne() {
                             <button className="delete" onClick={() => { setShowSavingThrowsModal(false) }}></button>
                         </header>
                         <section className="modal-card-body">
-                            <InlineInput label="strength"     onChange={changeListener('savingThrows.strength')}     value={character.savingThrows.strength}     />
-                            <InlineInput label="dexterity"    onChange={changeListener('savingThrows.dexterity')}    value={character.savingThrows.dexterity}    />
-                            <InlineInput label="constitution" onChange={changeListener('savingThrows.constitution')} value={character.savingThrows.constitution} />
-                            <InlineInput label="intelligence" onChange={changeListener('savingThrows.intelligence')} value={character.savingThrows.intelligence} />
-                            <InlineInput label="wisdom"       onChange={changeListener('savingThrows.wisdom')}       value={character.savingThrows.wisdom}       />
-                            <InlineInput label="charisma"     onChange={changeListener('savingThrows.charisma')}     value={character.savingThrows.charisma}     />
+                            <InlineInput label="strength"     onChange={changeListener('savingThrows.strength', true)}     value={character.savingThrows.strength}     />
+                            <InlineInput label="dexterity"    onChange={changeListener('savingThrows.dexterity', true)}    value={character.savingThrows.dexterity}    />
+                            <InlineInput label="constitution" onChange={changeListener('savingThrows.constitution', true)} value={character.savingThrows.constitution} />
+                            <InlineInput label="intelligence" onChange={changeListener('savingThrows.intelligence', true)} value={character.savingThrows.intelligence} />
+                            <InlineInput label="wisdom"       onChange={changeListener('savingThrows.wisdom', true)}       value={character.savingThrows.wisdom}       />
+                            <InlineInput label="charisma"     onChange={changeListener('savingThrows.charisma', true)}     value={character.savingThrows.charisma}     />
                         </section>
                         <footer className="modal-card-foot buttons is-right">
                             <button className="button" type="button" onClick={() => { setShowSavingThrowsModal(false) }}>

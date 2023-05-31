@@ -1,10 +1,14 @@
 import { useState } from 'react'
 
 import IconList from './Icons.jsx'
-import Styles from 'styles/ChooseAvatar.module.sass'
+import Styles from 'sass/ChooseAvatar.module.sass'
 
-export default function ChooseIcon({ onChoose, current }){
+type Props = {
+    onChoose: (icon: string | null) => void
+    current: string
+}
 
+export default function ChooseIcon({ onChoose, current }: Props){
     const [selected, setSelected] = useState(current)
 
     return (
@@ -18,7 +22,7 @@ export default function ChooseIcon({ onChoose, current }){
                 <section className="modal-card-body">
                     <div className={Styles.ChooseAvatarImages}>
                         { Object.keys(IconList).map((filename) =>{
-                            let { name, element } = IconList[filename];
+                            const { name, element } = IconList[filename];
                             return (<figure key={filename} onClick={() => { setSelected(filename); }} className={"image " + (filename === selected ? Styles['is-selected'] : '')}>
                                 <span className="icon is-large">
                                     <img src={element} alt={name}/>
@@ -39,5 +43,4 @@ export default function ChooseIcon({ onChoose, current }){
             </div>
         </div>
     )
-
 }

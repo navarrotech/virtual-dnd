@@ -4,7 +4,7 @@ import LiveChat from "./layers/LiveChat"
 import Map from './layers/Map'
 import ActionsBar from './layers/Actionsbar'
 import PlayerList from "./layers/PlayerList"
-// import CharacterPanel from "./layers/CharacterPanel"
+import CharacterPanel from "./layers/CharacterPanel"
 // import GameState from './layers/GameState'
 import Modals from './Modals'
 
@@ -18,7 +18,7 @@ export default function Play(){
             <Map            />
             <ActionsBar     />
             <PlayerList     />
-            {/* <CharacterPanel /> */}
+            <CharacterPanel />
             {/* <GameState      /> */}
         </ErrorBoundary>
         <ErrorBoundary>

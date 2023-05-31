@@ -18,7 +18,7 @@ export const initCampaign = (campaign: CampaignDoc): ThunkAction<any, RootState,
   const state = getState();
 
   const userId = state.user.user.id;
-  const players = state.play.players;
+  // const players = state.play.players;
 
   let myCharacter: any;
 
@@ -28,7 +28,7 @@ export const initCampaign = (campaign: CampaignDoc): ThunkAction<any, RootState,
       if(character.player_id === userId){
         myCharacter = character
       }
-      character.player = players[character.player_id]
+      // character.player = players[character.player_id]
       dispatch(
         setReducerState({
           path: `characters.${character.id}`,
