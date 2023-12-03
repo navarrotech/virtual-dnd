@@ -71,7 +71,7 @@ export default function GameSync(): any{
         return <Loader key='global-loader' fullpage={true} />
     }
 
-    return <div className={Styles.Game}>
+    return <div className={Styles.Game} id="PlayGame">
         <Outlet />
     </div>
 }

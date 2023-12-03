@@ -35,6 +35,7 @@ const initialState: State = {
     mode: 'passive',
     data: {}
   },
+  hideGamestate: false,
   NPCs: {},
   chat: {
     chat_id: '',
@@ -61,6 +62,7 @@ export const constants = {
   SET_SHOW_CHAT: 'PLAY/SET_SHOW_CHAT',
   SET_NEW_MESSAGE: 'PLAY/SET_NEW_MESSAGE',
   SET_STATE: 'PLAY/SET_STATE',
+  TOGGLE_GAMESTATE_MODAL: 'PLAY/TOGGLE_GAMESTATE_MODAL',
   SET_MODAL_OPEN: 'PLAY/SET_MODAL_OPEN',
 } as const
 
@@ -112,6 +114,10 @@ const slice = createSlice({
       if(action.payload === null){
         state.modalMeta = {}
       }
+      return state;
+    },
+    [constants.TOGGLE_GAMESTATE_MODAL]: (state) => {
+      state.hideGamestate = !state.hideGamestate;
       return state;
     },
     [constants.ON_SOCKET]: (state, action: PayloadAction<any>) => {
@@ -173,3 +179,4 @@ export const onWs = slice.actions[constants.ON_SOCKET]
 export const showChat = slice.actions[constants.SET_SHOW_CHAT]
 export const setReducerState = slice.actions[constants.SET_STATE]
 export const toggleModal = slice.actions[constants.SET_MODAL_OPEN]
+export const toggleGamestateModal = slice.actions[constants.TOGGLE_GAMESTATE_MODAL]

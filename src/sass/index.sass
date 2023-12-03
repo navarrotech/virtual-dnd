@@ -128,7 +128,7 @@ input
 
 .choice-content
     width: 100%
-
+    
     .choice-title,
     .choice-title *
         color: white
@@ -142,12 +142,17 @@ input
         .subtitle
             font-size: 2rem
 
-
     .choice-title:not(:last-child)
         margin-bottom: 1em
     
-    .choice-body:not(:last-child)
-        margin-bottom: 2em
+    .choice-body
+        margin-top: auto
+        min-height: 40vh
+
+        display: flex
+        aling-items: center
+        justify-content: center
+        flex-direction: column
 
 .w100
     width: 100%
@@ -224,9 +229,11 @@ input
     left: 0
     right: 0
     margin: auto
+    transition: transform 300ms ease
 
     > .notification
         padding: 0.75rem 1.5rem
+        transition: background 150ms ease
 
     &.is-top
         top: 120px
@@ -241,6 +248,15 @@ input
     &.is-right
         left: unset
         right: 120px
+
+    &:not(.noAnimation)
+        &:hover
+            transform: scale(1.05)
+            > .notification
+                background: $primary !important
+                color: white !important
+                * 
+                    color: white !important
 
 .progressbar
     display: block

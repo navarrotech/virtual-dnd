@@ -207,6 +207,8 @@ function SelectReason({ setPage, state, close }: PageProps){
     function finish(value:AskToRollPrompt['reason']='other'){
         updateViaSocket('gamestate', {
             mode: 'rolling',
+            isFinished: false,
+            finishedAt: null,
             data: {
                 dice: state.dice,
                 who: state.who,

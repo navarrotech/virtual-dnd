@@ -1,0 +1,81 @@
+@use '../../../sass/theme' as *
+@use 'sass:color'
+
+.WatchPlayersRoll
+
+    &.has-many-players
+        position: relative
+        display: flex
+        flex-direction: row
+        justify-content: space-around
+        flex-wrap: wrap
+
+        max-width: 1200px
+        width: 100%
+        margin: 0 auto
+
+        .RollingPlayer
+            :global(.image)
+                width: 100px
+                height: 100px
+
+            :global(.title)
+                font-size: 1.85rem !important
+
+            :global(.subtitle)
+                font-size: 1.2rem !important
+
+            .RollingStatus
+                font-size: 1.3rem !important
+                
+
+    &.has-2-players
+        position: relative
+        display: flex
+        flex-direction: row
+        justify-content: space-around
+
+        max-width: 850px
+        width: 100%
+        margin: 0 auto
+
+        .RollingPlayer
+            :global(.image)
+                width: 150px
+                height: 150px
+
+            :global(.title)
+                font-size: 2rem !important
+
+    &.has-1-players
+        position: relative
+        .RollingPlayer
+            :global(.image)
+                width: 200px
+                height: 200px
+
+            :global(.title)
+                font-size: 3rem !important
+
+
+.RollingPlayer
+    display: block
+
+    :global(.image)
+        border-radius: 50%
+        overflow: hidden
+        margin-bottom: 1em
+
+    * 
+        color: white !important
+        text-align: center
+
+    .RollingStatus
+        color: white
+        text-align: center
+        font-size: 1.6rem !important
+        text-transform: capitalize
+        display: flex
+        width: fit-content
+        margin: 0 auto
+        

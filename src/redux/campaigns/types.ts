@@ -66,6 +66,8 @@ export type ActiveMap = {
 
 export type GameState<T> = {
   mode: 'rolling' | 'combat' | 'passive' | 'setup',
+  isFinished: boolean,
+  finishedAt: string | null,
   data: T
 }
 
@@ -79,7 +81,7 @@ export type AskToRoll = {
       when: string,
     }
   },
-  reason: 'damage' | 'initiative' | 'ability' | 'skill' | 'save' | 'other' | '',
+  reason: 'damage' | 'initiative' | 'ability' | 'healing' | 'skill' | 'save' | 'other' | '',
 }
 
 export type Combat = {

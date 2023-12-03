@@ -18,6 +18,7 @@ export type State = {
   joinRequests: string[],
   banned: string[],
   gamestate: GameState<any>,
+  hideGamestate: boolean,
   NPCs: { // TODO
     [key: string]: CurrentCharacter
   },
