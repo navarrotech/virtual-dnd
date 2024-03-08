@@ -1,0 +1,112 @@
+version: 2.1
+
+executors:
+  primary:
+    docker:
+      - image: cimg/node:18.14.0
+    working_directory: ~/app
+
+jobs:
+  frontend:
+    executor: primary
+
+    steps:
+      - checkout
+
+      - restore_cache: 
+          keys: 
+            - frontend-dependencies-{{ checksum "frontend/package.json" }}
+            - frontend-dependencies-
+
+      - run:
+          name: Install Frontend
+          command: cd frontend && yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: frontend-dependencies-{{ checksum "frontend/package.json" }}
+
+      - run:
+          name: Build Frontend
+          command: cd frontend && yarn build
+
+      # - store_artifacts:
+      #     path: frontend/dist
+      #     destination: frontend
+
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. 
+          # This is a directory on the container which is taken to be the root directory of the workspace.
+          root: ~/app/frontend
+          # Must be relative path from root
+          paths:
+            - dist
+
+  api:
+    executor: primary
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/app/frontend
+
+      - run:
+          name: Copy frontend build into API /public folder
+          command: cp -r ~/app/frontend/dist ~/app
+
+      - restore_cache: 
+          keys: 
+            - api-dependencies-{{ checksum "api/package.json" }}
+            - api-dependencies-
+
+      - run:
+          name: Install API
+          command: cd api && yarn install
+
+      - run: 
+          name: Version API
+          command: |
+            cd api/src
+            VERSION=$(git rev-parse --short HEAD)
+            echo "export const version = '$VERSION';" > ./version.ts
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: api-dependencies-{{ checksum "api/package.json" }}
+
+      # I need to spend more time on this eventually
+      # For now, basic typescript pass/fail checking:
+      - run:
+          name: Typescript test API
+          command: cd api && yarn tsc --noEmit index.ts --esModuleInterop --downlevelIteration --skipLibCheck
+
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      - run:
+          name: Push image to Docker.io Hub
+          command: |
+            VERSION=$(git rev-parse --short HEAD)
+            docker build ./api -t "navarrocity/celtact-api:latest"  -f ./api/Dockerfile
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker push navarrocity/celtact-api:latest
+      # docker push "navarrocity/celtact-api:$VERSION"
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - frontend:
+          filters: 
+            branches:
+              only: main
+      - api:
+          requires: 
+            - frontend
+          filters:
+            branches:
+              only: main
